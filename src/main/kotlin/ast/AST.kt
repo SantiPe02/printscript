@@ -44,4 +44,5 @@ class VariableDeclaration(
 sealed interface Argument: AST
 class LiteralArgument(override val range: Range, val value: String, val type: String): Argument
 class VariableArgument(override val range: Range,  val name: String): Argument
-class MethodResult(override val range: Range): Argument
+class MethodResult(override val range: Range, val methodCall: Call): Argument
+
