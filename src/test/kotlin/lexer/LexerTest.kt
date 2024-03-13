@@ -16,7 +16,7 @@ class LexerTest {
         val token2 = TokenInfo(Token(TokenType.IDENTIFIER, "a"), Position(4, 4))
         val token3 = TokenInfo(Token(TokenType.SPECIAL_SYMBOL, ":"), Position(5, 5))
         val token4 = TokenInfo(Token(TokenType.KEYWORD, "number"), Position(7, 12))
-        val token5 = TokenInfo(Token(TokenType.SPECIAL_SYMBOL, "="), Position(14, 14))
+        val token5 = TokenInfo(Token(TokenType.OPERATOR, "="), Position(14, 14))
         val token6 = TokenInfo(Token(TokenType.LITERAL, "3"), Position(16, 16))
         val token7 = TokenInfo(Token(TokenType.SPECIAL_SYMBOL, ";"), Position(17, 17))
         val expected = listOf(token1, token2, token3, token4, token5, token6, token7)
@@ -31,7 +31,7 @@ class LexerTest {
         val token2 = TokenInfo(Token(TokenType.IDENTIFIER, "a"), Position(4, 4))
         val token3 = TokenInfo(Token(TokenType.SPECIAL_SYMBOL, ":"), Position(5, 5))
         val token4 = TokenInfo(Token(TokenType.KEYWORD, "string"), Position(7, 12))
-        val token5 = TokenInfo(Token(TokenType.SPECIAL_SYMBOL, "="), Position(14, 14))
+        val token5 = TokenInfo(Token(TokenType.OPERATOR, "="), Position(14, 14))
         val token6 = TokenInfo(Token(TokenType.LITERAL, "\"hello\""), Position(16, 22))
         val token7 = TokenInfo(Token(TokenType.SPECIAL_SYMBOL, ";"), Position(23, 23))
         val expected = listOf(token1, token2, token3, token4, token5, token6, token7)
@@ -46,7 +46,7 @@ class LexerTest {
         val token2 = TokenInfo(Token(TokenType.IDENTIFIER, "a"), Position(4, 4))
         val token3 = TokenInfo(Token(TokenType.SPECIAL_SYMBOL, ":"), Position(5, 5))
         val token4 = TokenInfo(Token(TokenType.KEYWORD, "number"), Position(7, 12))
-        val token5 = TokenInfo(Token(TokenType.SPECIAL_SYMBOL, "="), Position(14, 14))
+        val token5 = TokenInfo(Token(TokenType.OPERATOR, "="), Position(14, 14))
         val token6 = TokenInfo(Token(TokenType.LITERAL, "3"), Position(16, 16))
         val token7 = TokenInfo(Token(TokenType.OPERATOR, "+"), Position(18, 18))
         val token8 = TokenInfo(Token(TokenType.LITERAL, "2"), Position(20, 20))
@@ -63,7 +63,7 @@ class LexerTest {
         val token2 = TokenInfo(Token(TokenType.IDENTIFIER, "a"), Position(4, 4))
         val token3 = TokenInfo(Token(TokenType.SPECIAL_SYMBOL, ":"), Position(5, 5))
         val token4 = TokenInfo(Token(TokenType.KEYWORD, "number"), Position(7, 12))
-        val token5 = TokenInfo(Token(TokenType.SPECIAL_SYMBOL, "="), Position(14, 14))
+        val token5 = TokenInfo(Token(TokenType.OPERATOR, "="), Position(14, 14))
         val token6 = TokenInfo(Token(TokenType.LITERAL, "3"), Position(16, 16))
         val token7 = TokenInfo(Token(TokenType.OPERATOR, "/"), Position(18, 18))
         val token8 = TokenInfo(Token(TokenType.LITERAL, "2"), Position(20, 20))
@@ -80,7 +80,7 @@ class LexerTest {
         val token2 = TokenInfo(Token(TokenType.IDENTIFIER, "a"), Position(4, 4))
         val token3 = TokenInfo(Token(TokenType.SPECIAL_SYMBOL, ":"), Position(5, 5))
         val token4 = TokenInfo(Token(TokenType.KEYWORD, "number"), Position(7, 12))
-        val token5 = TokenInfo(Token(TokenType.SPECIAL_SYMBOL, "="), Position(14, 14))
+        val token5 = TokenInfo(Token(TokenType.OPERATOR, "="), Position(14, 14))
         val token6 = TokenInfo(Token(TokenType.LITERAL, "3"), Position(16, 16))
         val token7 = TokenInfo(Token(TokenType.OPERATOR, "*"), Position(18, 18))
         val token8 = TokenInfo(Token(TokenType.LITERAL, "2"), Position(20, 20))
@@ -97,7 +97,7 @@ class LexerTest {
         val token2 = TokenInfo(Token(TokenType.IDENTIFIER, "a"), Position(4, 4))
         val token3 = TokenInfo(Token(TokenType.SPECIAL_SYMBOL, ":"), Position(5, 5))
         val token4 = TokenInfo(Token(TokenType.KEYWORD, "number"), Position(7, 12))
-        val token5 = TokenInfo(Token(TokenType.SPECIAL_SYMBOL, "="), Position(14, 14))
+        val token5 = TokenInfo(Token(TokenType.OPERATOR, "="), Position(14, 14))
         val token6 = TokenInfo(Token(TokenType.LITERAL, "3"), Position(16, 16))
         val token7 = TokenInfo(Token(TokenType.OPERATOR, "-"), Position(18, 18))
         val token8 = TokenInfo(Token(TokenType.LITERAL, "2"), Position(20, 20))
@@ -114,7 +114,7 @@ class LexerTest {
         val token2 = TokenInfo(Token(TokenType.IDENTIFIER, "a"), Position(4, 4))
         val token3 = TokenInfo(Token(TokenType.SPECIAL_SYMBOL, ":"), Position(5, 5))
         val token4 = TokenInfo(Token(TokenType.KEYWORD, "boolean"), Position(7, 13))
-        val token5 = TokenInfo(Token(TokenType.SPECIAL_SYMBOL, "="), Position(15, 15))
+        val token5 = TokenInfo(Token(TokenType.OPERATOR, "="), Position(15, 15))
         val token6 = TokenInfo(Token(TokenType.LITERAL, "true"), Position(17, 20))
         val token7 = TokenInfo(Token(TokenType.SPECIAL_SYMBOL, ";"), Position(21, 21))
         val expected = listOf(token1, token2, token3, token4, token5, token6, token7)
@@ -136,7 +136,7 @@ class LexerTest {
         val token9 = TokenInfo(Token(TokenType.IDENTIFIER, "c"), Position(17, 17))
         val token10 = TokenInfo(Token(TokenType.SPECIAL_SYMBOL, ":"), Position(18, 18))
         val token11 = TokenInfo(Token(TokenType.KEYWORD, "string"), Position(20, 25))
-        val token12 = TokenInfo(Token(TokenType.SPECIAL_SYMBOL, "="), Position(27, 27))
+        val token12 = TokenInfo(Token(TokenType.OPERATOR, "="), Position(27, 27))
         val token13 = TokenInfo(Token(TokenType.LITERAL, "\"hello\""), Position(29, 35))
         val token14 = TokenInfo(Token(TokenType.SPECIAL_SYMBOL, ";"), Position(36, 36))
         val token15 = TokenInfo(Token(TokenType.SPECIAL_SYMBOL, "}"), Position(38, 38))
@@ -146,7 +146,7 @@ class LexerTest {
         val token19 = TokenInfo(Token(TokenType.IDENTIFIER, "c"), Position(51, 51))
         val token20 = TokenInfo(Token(TokenType.SPECIAL_SYMBOL, ":"), Position(52, 52))
         val token21 = TokenInfo(Token(TokenType.KEYWORD, "number"), Position(54, 59))
-        val token22 = TokenInfo(Token(TokenType.SPECIAL_SYMBOL, "="), Position(61, 61))
+        val token22 = TokenInfo(Token(TokenType.OPERATOR, "="), Position(61, 61))
         val token23 = TokenInfo(Token(TokenType.LITERAL, "2"), Position(63, 63))
         val token24 = TokenInfo(Token(TokenType.SPECIAL_SYMBOL, ";"), Position(64, 64))
         val token25 = TokenInfo(Token(TokenType.SPECIAL_SYMBOL, "}"), Position(66, 66))
@@ -177,6 +177,17 @@ class LexerTest {
             token24,
             token25
         )
+        assertEquals(expected, lexer.tokenize(input));
+    }
+
+    @Test
+    fun declaredVariable() {
+        val input = "x = 5";
+        val lexer = LexerImpl()
+        val token1 = TokenInfo(Token(TokenType.IDENTIFIER, "x"), Position(0, 0))
+        val token2 = TokenInfo(Token(TokenType.OPERATOR, "="), Position(2, 2))
+        val token3 = TokenInfo(Token(TokenType.LITERAL, "5"), Position(4, 4))
+        val expected = listOf(token1, token2, token3)
         assertEquals(expected, lexer.tokenize(input));
     }
 }
