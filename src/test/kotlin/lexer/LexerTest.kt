@@ -231,6 +231,25 @@ class LexerTest {
     }
 
     @Test
+    fun lexerDifferentTest(){
+        val input = "if (a != b) {return true;}"
+        val lexer = LexerImpl()
+        val token1 = TokenInfo(Token(TokenType.KEYWORD, "if"), Position(0, 1))
+        val token2 = TokenInfo(Token(TokenType.SPECIAL_SYMBOL, "("), Position(3, 3))
+        val token3 = TokenInfo(Token(TokenType.IDENTIFIER, "a"), Position(4, 4))
+        val token4 = TokenInfo(Token(TokenType.OPERATOR, "!="), Position(6, 7))
+        val token5 = TokenInfo(Token(TokenType.IDENTIFIER, "b"), Position(9, 9))
+        val token6 = TokenInfo(Token(TokenType.SPECIAL_SYMBOL, ")"), Position(10, 10))
+        val token7 = TokenInfo(Token(TokenType.SPECIAL_SYMBOL, "{"), Position(12, 12))
+        val token8 = TokenInfo(Token(TokenType.KEYWORD, "return"), Position(13, 18))
+        val token9 = TokenInfo(Token(TokenType.LITERAL, "true"), Position(20, 23))
+        val token10 = TokenInfo(Token(TokenType.SPECIAL_SYMBOL, ";"), Position(24, 24))
+        val token11 = TokenInfo(Token(TokenType.SPECIAL_SYMBOL, "}"), Position(25, 25))
+        val expected = listOf(token1, token2, token3, token4, token5, token6, token7, token8, token9, token10, token11)
+        assertEquals(expected, lexer.tokenize(input));
+    }
+
+    @Test
     fun lexerEqualTest(){
         val input = "if (a == b) {return true;}"
         val lexer = LexerImpl()
