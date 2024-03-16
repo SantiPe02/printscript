@@ -8,7 +8,7 @@ sealed interface Parser {
     fun parseTokens(tokenList: List<TokenInfo>): Scope
 }
 
-object MyParser : Parser {
+class MyParser : Parser {
 
     // position es para devolver el error, eg: error en linea 41, columna 9.
     override fun  parseTokens(tokenList: List<TokenInfo>): Scope {
@@ -89,24 +89,10 @@ object MyParser : Parser {
     fun declareVariable(tokens: List<TokenInfo>, range: Range, i: Int): Declaration
     {
         var j = i
-
-
-        val variableName = tokens[++j].token
-        if(!isOfType(variableName, TokenType.IDENTIFIER))
-            throw Exception("Invalid sintax: there should be a variable name IDENTIFIER after KEYWORD declaration")
-
-        val typeSpecialSymbol = tokens[++j].token
-        if(typeSpecialSymbol.text != ":")
-            throw Exception("Invalid sintax: there should be a ':' after the variable IDENTIFIER name")
-
-        val variableType = tokens[++j].token
-        if(!isOfType(variableType, TokenType.IDENTIFIER))
-            throw Exception("Invalid sintax: there should be a variable type IDENTIFIER  after SPECIAL SYMBOL")
-
-        val equalOperator = tokens[++j].token
-        if(equalOperator.text != "=")
-            throw Exception("Invalid sintax: there should be a '=' after the variable type IDENTIFIER")
-
+        val variableName = getTokenByType(tokens[++j].token, TokenType.IDENTIFIER)
+        val typeSpecialSymbol = getTokenByTextAndType(tokens[++j].token, ":", TokenType.SPECIAL_SYMBOL)
+        val variableType = getTokenByType(tokens[++j].token, TokenType.IDENTIFIER)
+        val equalOperator = getTokenByTextAndType(tokens[++j].token, "=", TokenType.OPERATOR)
         val k = j
         val arguments = getVariableArguments(tokens, ++j) // arguments could be empty, which is the same to saying let name:String;
 
@@ -114,7 +100,25 @@ object MyParser : Parser {
             1 -> declareByArgumentType(range, variableName.text, variableType.text, arguments[0])
             else -> declareMethodArgument(range, tokens, variableName.text, variableType.text, arguments, k)
         }
+    }
 
+    fun getTokenByType(token: Token, type: TokenType): Token {
+        if(token.type != type)
+            throw Exception("Invalid sintax: token should be of type $type")
+        return token
+    }
+
+    fun getTokenByText(token: Token, text: String): Token {
+        if(token.text != text)
+            throw Exception("Invalid syntax: \"$text\" missing")
+        return token
+    }
+
+    fun getTokenByTextAndType(token: Token, text: String, type: TokenType): Token {
+        // if by getting token by type and name and no error is thrown --> then it is valid
+        getTokenByType(token, type)
+        getTokenByText(token, text)
+        return token
     }
 
     fun isOfType(token: Token, type: TokenType): Boolean {
@@ -131,7 +135,6 @@ object MyParser : Parser {
                 break
             else
                 arguments.add(tokens[j])
-
             j++
         }
         return arguments
