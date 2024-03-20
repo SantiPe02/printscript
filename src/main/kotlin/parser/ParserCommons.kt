@@ -1,5 +1,6 @@
 package parser
 
+import ast.Range
 import token.TokenInfo
 import java.util.*
 
@@ -45,30 +46,30 @@ class ParserCommons {
         }
         return j
     }
+
     fun searchForFirstOperator(tokens: List<TokenInfo>, i: Int, endIndex: Int): Int {
-        // first searchs for + or - operators,
-        // then for * or / operators
-        // finaly, for ( or ) operators (usualy used in methods: test(1, 3)...)
-        val firstTerms: List<TokenInfo> = separateByFirstTerms(tokens, i, endIndex)
+        val firstTerms: List<Pair<TokenInfo, Int>> = separateByFirstTerms(tokens, i, endIndex)
         return getHighestLevelMethod(firstTerms, i)
     }
 
     // in test(test1(leo + diego), boca) + 4*5
     // the "first" terms are: test, +, 4, *, 5
-    fun separateByFirstTerms(tokens: List<TokenInfo>, i: Int, end: Int): List<TokenInfo>{
+    fun separateByFirstTerms(tokens: List<TokenInfo>, i: Int, end: Int): List<Pair<TokenInfo, Int>> {
         var j = i
-        val firstTerms = mutableListOf<TokenInfo>()
-        while(j < end) // si hay una suma o algo raro repetir los métodos y así...
-        {
-            if(isOpeningChar(tokens[j].token.text))
-                j = searchForClosingCharacter(tokens, tokens[j].token.text, j)
-            else{
-                firstTerms.add(tokens[j])
+        val firstTerms = mutableListOf<Pair<TokenInfo, Int>>() // Modified to hold pairs
+        while (j < end) {
+            if (isOpeningChar(tokens[j].token.text)) {
+                firstTerms.add(Pair(tokens[j], j))
+                j = searchForClosingCharacter(tokens, tokens[j].token.text, j) + 1
+            } else {
+                // Create a pair with the current token and its index
+                firstTerms.add(Pair(tokens[j], j))
                 j++
             }
         }
         return firstTerms
     }
+
 
     fun isOpeningChar(char: String): Boolean {
         return char == "(" || char == "{" || char == "["
@@ -76,27 +77,26 @@ class ParserCommons {
 
 
     /**In 4 * 5 + 5/8 - 3 the highest level method is the "+", the second is the "-" the third the "*" and fourth "/"*/
-    fun getHighestLevelMethod(firstTerm: List<TokenInfo>, i: Int): Int{
-        var j = 0
+    fun getHighestLevelMethod(firstTerm: List<Pair<TokenInfo, Int>>, i: Int): Int{
         var firstMultOrDiv = -1
         var firstParenthesis = -1
         for(token in firstTerm){
-            if(token.token.text == "+" || token.token.text == "-")
-                return i + j
-            else if(token.token.text == "*" || token.token.text == "/" && firstMultOrDiv == -1)
-                firstMultOrDiv = i + j
-            else if(token.token.text == "(" && firstParenthesis == -1)
-                firstParenthesis = i + j
-            j++
+            val t = token.first
+            if(t.token.text == "+" || t.token.text == "-") return i + token.second
+            else if(t.token.text == "*" || t.token.text == "/" && firstMultOrDiv == -1)firstMultOrDiv = i + token.second
+            else if(t.token.text == "(" && firstParenthesis == -1) firstParenthesis = i + token.second
         }
-        return if(firstMultOrDiv != -1) firstMultOrDiv else firstParenthesis
+        if(firstMultOrDiv != -1) return firstMultOrDiv
+        else if (firstParenthesis != -1) return firstParenthesis
+        else throw Exception("There is no operation left in the argument") // actually, when we work with list and diccionaries things may change
     }
+
 
     // in (Brujita(Chapu(Gata))) The closing char of the first "(" is the last ")".
     fun searchForClosingCharacter(tokens: List<TokenInfo>, tokenText: String, i: Int): Int {
         val closingCharText = oppositeChar(tokenText)
         var appsOfTokenText = 0 // times same token appears before the closing one.
-        var j = i
+        var j = i+1
         while (j < tokens.size) {
             val token = tokens[j].token
             if (token.type == TokenInfo.TokenType.SPECIAL_SYMBOL){
@@ -128,9 +128,9 @@ class ParserCommons {
             word.matches(Regex("-?\\d+(\\.\\d+)?")) -> "float"
             word.lowercase(Locale.getDefault()) == "true" || word.lowercase(Locale.getDefault()) == "false" -> "boolean"
             word.startsWith("\"") && word.endsWith("\"") -> "string"
-            //Todo: when it is a method, the type is the return value of that method,
-            // lists are methods, for example: list(1,2,3)... unless they ask otherwise
-            else -> throw Exception("Todo: data type not handeled yet")
+            // Todo: when it is a method, the type is the return value of that method.
+            //  Lists are methods, for example: list(1,2,3)... unless they ask otherwise
+            else -> throw Exception("Todo: data type not handled yet")
         }
     }
 
@@ -145,6 +145,10 @@ class ParserCommons {
         }
         throw Exception("Error: Missing $tokenText")
     }
-
+    fun getRangeOfTokenList(tokenList: List<TokenInfo>): Range {
+        val startPos = tokenList[0].position.startIndex
+        val endPos = tokenList[tokenList.size-1].position.endIndex
+        return Range(startPos, endPos);
+    }
 
 }

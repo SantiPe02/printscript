@@ -8,7 +8,7 @@ package ast
 sealed interface AST {
     val range: Range
 }
-class Range(val start: Long, val end: Long) {
+class Range(val start: Int, val end: Int) {
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true

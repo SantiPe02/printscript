@@ -5,5 +5,5 @@ import ast.Range
 import token.TokenInfo
 
 sealed interface DeclarationValidator {
-    fun declare(tokens: List<TokenInfo>, range: Range, i: Int): Declaration
+    fun declare(tokens: List<TokenInfo>, i: Int): Declaration
 }

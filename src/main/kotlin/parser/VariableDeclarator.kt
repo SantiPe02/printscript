@@ -12,16 +12,19 @@ class VariableDeclarator : DeclarationValidator {
         --> There is a lot of circular dependency. Maybe should put all the "ParserCommons()" inside parser.
     */
 
-    override fun declare(tokens: List<TokenInfo>, range: Range, i: Int): Declaration {
+    override fun declare(tokens: List<TokenInfo>,  i: Int): Declaration {
         var j = i
         val variableName = commons.getTokenByType(tokens[++j].token, TokenInfo.TokenType.IDENTIFIER)
+        val variable = tokens[j]
         commons.getTokenByTextAndType(tokens[++j].token, ":", TokenInfo.TokenType.SPECIAL_SYMBOL)
         val variableType = commons.getTokenByType(tokens[++j].token, TokenInfo.TokenType.KEYWORD)
         commons.getTokenByTextAndType(tokens[++j].token, "=", TokenInfo.TokenType.OPERATOR)
 
         val arguments = getVariableArguments(tokens, ++j) // arguments could be empty, which is the same to saying let name:String;
-        val variableArgument: Argument = VariableArgumentDeclarator().declareArgument(range, tokens, arguments, j)
-        return VariableDeclaration(range, variableName.text, variableType.text, variableArgument)
+        val variableArgument: Argument = VariableArgumentDeclarator().declareArgument(tokens, arguments, j)
+
+
+        return VariableDeclaration(commons.getRangeOfTokenList(listOf(variable)), variableName.text, variableType.text, variableArgument)
     }
 
 
