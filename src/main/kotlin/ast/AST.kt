@@ -61,6 +61,7 @@ class Scope(val type: String, override val range: Range, val body: Collection<AS
 
 /**
  * Contains information required for the call of a method.
+ * @param range: the range of the call, from the start of first argument to the end of the last.
  * @param name: the identifier of the method.
  * @param arguments: the values that the method is going to get.
  */
@@ -162,6 +163,8 @@ class VariableArgument(override val range: Range, val name: String) : Argument {
     }
 }
 
+
+// Range: range of the operator, in 5 + 3 range is Range(2,2)
 class MethodResult(override val range: Range, val methodCall: Call) : Argument {
     override fun equals(other: Any?): Boolean {
         if (this === other) return true

@@ -23,13 +23,11 @@ class MethodResultDeclarator : ArgumentDeclarator {
         val args: List<List<TokenInfo>> = createMethodByOperator(tokens, i, endIndex, i + methodOperator)
         val operator: TokenInfo = getOperatorMethod(tokens, i, i + methodOperator)
 
-        val flattenedArgs: List<TokenInfo> = args.flatten()
-        val operatorAndArgs: List<TokenInfo> = listOf(operator) + flattenedArgs
-        val orderedMethodAndArgs = sortTokenInfoListByPosition(operatorAndArgs)
+
+        val orderedArgs = sortTokenInfoListByPosition(args.flatten())
         val finalArguments = getFinalArgumentsOfMethodResult(args,arguments)
 
-
-        return MethodResult(commons.getRangeOfTokenList(orderedMethodAndArgs), Call(Range(0,0), operator.token.text, finalArguments))
+        return MethodResult(commons.getRangeOfTokenList(listOf(operator)), Call(commons.getRangeOfTokenList(orderedArgs), operator.token.text, finalArguments))
     }
 
     fun sortTokenInfoListByPosition(tokens: List<TokenInfo>): List<TokenInfo>{

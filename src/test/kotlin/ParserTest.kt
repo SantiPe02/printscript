@@ -42,7 +42,6 @@ class ParserTest {
     }
 
 
-    // Not supported yet, I believe
     @Test
     fun testSimpleLiteralVariableDeclarationFloat(){
         val code = "let a: float = 3.5;"
@@ -143,7 +142,7 @@ class ParserTest {
             "program",
             Range(0, 20),
             listOf(
-                VariableDeclaration(Range(4, 6), "sum", "int", MethodResult(Range(0, 0), Call((Range(0, 0)), "+", listOf(LiteralArgument(Range(15, 15), "3", "int"), LiteralArgument(Range(19, 19), "5", "int")))))));
+                VariableDeclaration(Range(4, 6), "sum", "int", MethodResult(Range(17, 17), Call((Range(15, 19)), "+", listOf(LiteralArgument(Range(15, 15), "3", "int"), LiteralArgument(Range(19, 19), "5", "int")))))));
 
         kotlin.test.assertEquals(expected, ast)
     }
@@ -156,9 +155,9 @@ class ParserTest {
         val ast = parser.parseTokens(tokens)
         val expected = Scope(
             "program",
-            Range(0, 0),
+            Range(0, 20),
             listOf(
-                VariableDeclaration( Range(0, 0), "sum", "int", MethodResult(Range(0, 0), Call((Range(0, 0)), "+", listOf(VariableArgument(Range(0, 0), "a"), LiteralArgument(Range(0, 0), "5", "int")))))));
+                VariableDeclaration( Range(4, 6), "sum", "int", MethodResult(Range(17, 17), Call((Range(15, 19)), "+", listOf(VariableArgument(Range(15, 15), "a"), LiteralArgument(Range(19, 19), "5", "int")))))));
 
 
         kotlin.test.assertEquals(expected, ast)
@@ -172,14 +171,14 @@ class ParserTest {
         val ast = parser.parseTokens(tokens)
         val expected = Scope(
             "program",
-            Range(0, 0),
+            Range(0, 24),
             listOf(
-                VariableDeclaration( Range(0, 0), "sum", "int",
-                    MethodResult(Range(0, 0), Call((Range(0, 0)), "+",
-                        listOf( LiteralArgument(Range(0, 0), "3", "int"),
-                                MethodResult(Range(0, 0), Call((Range(0, 0)), "*",
-                                    listOf( LiteralArgument(Range(0, 0), "5", "int"),
-                                            LiteralArgument(Range(0, 0), "2", "int"))))))))));
+                VariableDeclaration( Range(4, 6), "sum", "int",
+                    MethodResult(Range(17, 17), Call((Range(15, 23)), "+",
+                        listOf( LiteralArgument(Range(15, 15), "3", "int"),
+                                MethodResult(Range(21, 21), Call((Range(19, 32)), "*",
+                                    listOf( LiteralArgument(Range(19, 19), "5", "int"),
+                                            LiteralArgument(Range(23, 23), "2", "int"))))))))));
 
         kotlin.test.assertEquals(expected, ast)
     }
@@ -192,28 +191,37 @@ class ParserTest {
         val ast = parser.parseTokens(tokens)
         val expected = Scope(
             "program",
-            Range(0, 0),
+            Range(0, 24),
             listOf(
-                VariableDeclaration( Range(0, 0), "sum", "int",
-                    MethodResult(Range(0, 0), Call((Range(0, 0)), "+",
-                        listOf(MethodResult(Range(0, 0), Call((Range(0, 0)), "*",
-                            listOf( LiteralArgument(Range(0, 0), "3", "int"),
-                                    LiteralArgument(Range(0, 0), "5", "int")))),
-                            LiteralArgument(Range(0, 0), "2", "int")))))));
+                VariableDeclaration( Range(4, 6), "sum", "int",
+                    MethodResult(Range(21, 21), Call((Range(15, 23)), "+",
+                        listOf(MethodResult(Range(17, 17), Call((Range(15, 19)), "*",
+                            listOf( LiteralArgument(Range(15, 15), "3", "int"),
+                                    LiteralArgument(Range(19, 19), "5", "int")))),
+                            LiteralArgument(Range(23, 23), "2", "int")))))));
         kotlin.test.assertEquals(expected, ast)
     }
 
     @Test
     fun testVeryComplexMethodDeclarationWithOutParentheses(){
-        val code = "let sum:int = 3 * 5 + 2 - 4 / 2;"
+        val code = "let sum: int = 3 * 5 + 2 - 4 / 2;"
         val tokens = LexerImpl().tokenize(code)
         val parser: Parser = MyParser()
         val ast = parser.parseTokens(tokens)
         val expected = Scope(
             "program",
-            Range(0, 0),
+            Range(0, 32),
             listOf(
-                VariableDeclaration( Range(0, 0), "sum", "int", MethodResult(Range(0, 0), Call((Range(0, 0)), "+", listOf(MethodResult(Range(0, 0), Call((Range(0, 0)), "*", listOf(LiteralArgument(Range(0, 0), "3", "int"), LiteralArgument(Range(0, 0), "5", "int")))), MethodResult(Range(0, 0), Call((Range(0, 0)), "-", listOf(LiteralArgument(Range(0, 0), "2", "int"), MethodResult(Range(0, 0), Call((Range(0, 0)), "/", listOf(LiteralArgument(Range(0, 0), "4", "int"), LiteralArgument(Range(0, 0), "2", "int")))))))))))));
+                VariableDeclaration( Range(4, 6), "sum", "int",
+                    MethodResult(Range(21, 21), Call((Range(15, 31)), "+",
+                        listOf(MethodResult(Range(17, 17), Call((Range(15, 19)), "*",
+                            listOf( LiteralArgument(Range(15, 15), "3", "int"),
+                                    LiteralArgument(Range(19, 19), "5", "int")))),
+                            MethodResult(Range(25, 25), Call((Range(23, 31)), "-",
+                                    listOf(LiteralArgument(Range(23, 23), "2", "int"),
+                                        MethodResult(Range(29, 29), Call((Range(27, 31)), "/",
+                                            listOf( LiteralArgument(Range(27, 27), "4", "int"),
+                                                    LiteralArgument(Range(31, 31), "2", "int")))))))))))));
         kotlin.test.assertEquals(expected, ast)
     }
 
