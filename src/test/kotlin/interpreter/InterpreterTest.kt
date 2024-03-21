@@ -1,13 +1,18 @@
 package interpreter
 
 import ast.*
+import lexer.LexerImpl
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
+import parser.MyParser
+import parser.Parser
+import kotlin.test.assertNotNull
 
 class InterpreterTest {
 
     private val interpreter = Interpreter()
+    private val defaultInterpreter = DefaultInterpreter()
 
     @Test
     fun testDeclarationSentence() {
@@ -181,6 +186,23 @@ class InterpreterTest {
         val expected = mapOf("operation" to Literal(PrintScriptType.NUMBER, "-4.0"))
 
         assertEquals(expected, interpreter.variables)
+        assertTrue(report.outputs.isEmpty())
+        assertTrue(report.errors.isEmpty())
+    }
+
+    @Test
+    fun testPipeline() {
+        val code = "let sum: int = ((3 + 5) * (2 + 4));"
+        val tokens = LexerImpl().tokenize(code)
+        val parser: Parser = MyParser()
+        val ast = parser.parseTokens(tokens)
+        val report = defaultInterpreter.interpret(ast)
+        val target = defaultInterpreter.variables["sum"]
+
+        assertNotNull(target)
+        assertEquals("int", target.type)
+        assertEquals("48", target.value)
+        assertEquals(1, defaultInterpreter.variables.size)
         assertTrue(report.outputs.isEmpty())
         assertTrue(report.errors.isEmpty())
     }
