@@ -76,7 +76,9 @@ class ParserCommons {
     }
 
 
-    /**In 4 * 5 + 5/8 - 3 the highest level method is the "+", the second is the "-" the third the "*" and fourth "/"*/
+    /**In 4 * 5 + 5/8 - 3 the highest level method is the "+", the second is the "-" the third the "*" and fourth "/"
+     * ¿¿WHAT IT THERE ARE COMAS?? like in test(1, 2, 3)*/
+
     fun getHighestLevelMethod(firstTerm: List<Pair<TokenInfo, Int>>, i: Int): Int{
         var firstMultOrDiv = -1
         var firstParenthesis = -1

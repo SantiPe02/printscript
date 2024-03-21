@@ -25,7 +25,7 @@ class MethodResultDeclarator : ArgumentDeclarator {
 
 
         val orderedArgs = sortTokenInfoListByPosition(args.flatten())
-        val finalArguments = getFinalArgumentsOfMethodResult(args,arguments)
+        val finalArguments = getFinalArgumentsOfMethodResult(args, arguments)
 
         return MethodResult(commons.getRangeOfTokenList(listOf(operator)), Call(commons.getRangeOfTokenList(orderedArgs), operator.token.text, finalArguments))
     }
