@@ -331,6 +331,92 @@ class ParserTest {
 
     @Test
     fun test018_testMethodDeclarationWithOperationInside(){
+        val code = "let test: int = sum(3, 5 + 2);"
+        val tokens = LexerImpl().tokenize(code)
+        val parser: Parser = MyParser()
+        val ast = parser.parseTokens(tokens)
+        val expected = Scope(
+            "program",
+            Range(0, 29),
+            listOf(
+                VariableDeclaration( Range(4, 7), "test", "int",
+                    MethodResult(Range(16, 18), Call(Range(20, 27), "sum",
+                        listOf( LiteralArgument(Range(20, 20), "3", "int"),
+                                MethodResult(Range(25, 25), Call(Range(23, 27), "+",
+                                    listOf( LiteralArgument(Range(23, 23), "5", "int"),
+                                            LiteralArgument(Range(27, 27), "2", "int"))))))))));
 
+        kotlin.test.assertEquals(expected, ast)
     }
+
+
+    @Test
+    fun test019_testMethodInsideMethod(){
+        val code = "let test: int = sum(3, sum(5, 2));"
+        val tokens = LexerImpl().tokenize(code)
+        val parser: Parser = MyParser()
+        val ast = parser.parseTokens(tokens)
+        val expected = Scope(
+            "program",
+            Range(0, 33),
+            listOf(
+                VariableDeclaration( Range(4, 7), "test", "int",
+                    MethodResult(Range(16, 18), Call(Range(20, 31), "sum",
+                        listOf( LiteralArgument(Range(20, 20), "3", "int"),
+                            MethodResult(Range(23, 25), Call(Range(27, 30), "sum",
+                                listOf( LiteralArgument(Range(27, 27), "5", "int"),
+                                    LiteralArgument(Range(30, 30), "2", "int"))))))))));
+
+        kotlin.test.assertEquals(expected, ast)
+    }
+
+
+    // lo que pasa en sum(3, sum(5, 2)) es que ya de una te toma tres metodos: 3, sum(5 y 2)
+    @Test
+    fun test020_testSearchForClosingBracketsMethod(){
+        val code = "let test: int = sum(3, sum(5, 2));"
+
+        val tokens = LexerImpl().tokenize(code)
+        val commons = ParserCommons()
+        println(tokens[6].token.text)
+        println(tokens[15].token.text)
+        val gotChar = commons.searchForClosingCharacter(tokens,"(", 6)
+        val expected = 15
+        kotlin.test.assertEquals(expected, gotChar)
+    }
+
+    @Test
+    fun test020_testSearchForClosingBracketsMethodPt2(){
+        val code = "let test: int = sum(3, sum(5, 2));"
+
+        val tokens = LexerImpl().tokenize(code)
+        val commons = ParserCommons()
+        println(tokens[14].token.text)
+        val gotChar = commons.searchForClosingCharacter(tokens,"(", 10)
+        val expected = 14
+        kotlin.test.assertEquals(expected, gotChar)
+    }
+
+    @Test
+    fun test021_testComplexEcuationWithParenthesesButParenthesesAreNotIncludedInTheAST(){
+        val code = "let test: int = 3 + (5 * 2) + 4;"
+        val tokens = LexerImpl().tokenize(code)
+        val parser: Parser = MyParser()
+        val ast = parser.parseTokens(tokens)
+        val expected = Scope(
+            "program",
+            Range(0, 31),
+            listOf(
+                VariableDeclaration( Range(4, 7), "test", "int",
+                    MethodResult(Range(18, 18), Call(Range(16, 30), "+",
+                        listOf( LiteralArgument(Range(16, 16), "3", "int"),
+                            MethodResult(Range(28, 28), Call(Range(20, 30), "+",
+                                listOf( MethodResult(Range(23, 23), Call(Range(21, 25), "*",
+                                    listOf( LiteralArgument(Range(21, 21), "5", "int"),
+                                        LiteralArgument(Range(25, 25), "2", "int")))),
+                                    LiteralArgument(Range(30, 30), "4", "int"))))))))));
+
+        kotlin.test.assertEquals(expected, ast)
+    }
+
 }
