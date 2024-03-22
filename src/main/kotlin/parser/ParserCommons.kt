@@ -4,6 +4,7 @@ import ast.Range
 import token.TokenInfo
 import java.util.*
 
+/**The name is not convenient, ParserCommons is a class that handles working with tokens.*/
 class ParserCommons {
 
     fun getTokenByType(token: TokenInfo.Token, type: TokenInfo.TokenType): TokenInfo.Token {

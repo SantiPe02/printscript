@@ -9,7 +9,7 @@ import parser.ParserCommons
 class ParserTest {
 
     @Test
-    fun testSimpleLiteralVariableDeclarationInt(){
+    fun test001_testSimpleLiteralVariableDeclarationInt(){
         val code = "let a: int = 5;" // range 14, including spaces...
         val tokens = LexerImpl().tokenize(code)
         val parser: Parser = MyParser()
@@ -26,7 +26,7 @@ class ParserTest {
         kotlin.test.assertEquals(expected, ast)
     }
     @Test
-    fun testSimpleLiteralVariableDeclarationBool(){
+    fun test002_testSimpleLiteralVariableDeclarationBool(){
         val code = "let a: boolean = true;"
         val tokens = LexerImpl().tokenize(code)
         val parser: Parser = MyParser()
@@ -43,7 +43,7 @@ class ParserTest {
 
 
     @Test
-    fun testSimpleLiteralVariableDeclarationFloat(){
+    fun test003_testSimpleLiteralVariableDeclarationFloat(){
         val code = "let a: float = 3.5;"
         val tokens = LexerImpl().tokenize(code)
         val parser: Parser = MyParser()
@@ -59,7 +59,7 @@ class ParserTest {
     }
 
     @Test
-    fun testSimpleLiteralVariableDeclarationStringOfOneWord(){
+    fun test004_testSimpleLiteralVariableDeclarationStringOfOneWord(){
         val code = "let a: string = \"Juan\";"
         val tokens = LexerImpl().tokenize(code)
 
@@ -76,7 +76,7 @@ class ParserTest {
     }
 
     @Test
-    fun testConsecutiveLiteralDeclarations(){
+    fun test005_testConsecutiveLiteralDeclarations(){
         val code = "let a: string = \"Juan\"; let b: int = 5; let c: boolean = true;"
         val tokens = LexerImpl().tokenize(code)
 
@@ -97,7 +97,7 @@ class ParserTest {
     }
 
     @Test
-    fun testDeclarationWithVariableArgument(){
+    fun test006_testDeclarationWithVariableArgument(){
         val code = "let a: int = b;"
         val tokens = LexerImpl().tokenize(code)
         val parser: Parser = MyParser()
@@ -116,7 +116,7 @@ class ParserTest {
     // see, it doesn't check if the type of the variable is correct
     // but I don't think that is something for the parser to check
     @Test
-    fun testDeclarationsWithLiteralAndVariableArguments(){
+    fun test007_testDeclarationsWithLiteralAndVariableArguments(){
         val code = "let a: int = 5; let b: string = a;"
         val tokens = LexerImpl().tokenize(code)
         val parser: Parser = MyParser()
@@ -133,7 +133,7 @@ class ParserTest {
     }
 
     @Test
-    fun testSumMethodDeclaration(){
+    fun test008_testSumMethodDeclaration(){
         val code = "let sum: int = 3 + 5;"
         val tokens = LexerImpl().tokenize(code)
         val parser: Parser = MyParser()
@@ -148,7 +148,7 @@ class ParserTest {
     }
 
     @Test
-    fun testSumMethodDeclarationWithVariable(){
+    fun test009_testSumMethodDeclarationWithVariable(){
         val code = "let sum: int = a + 5;"
         val tokens = LexerImpl().tokenize(code)
         val parser: Parser = MyParser()
@@ -164,7 +164,7 @@ class ParserTest {
     }
 
     @Test
-    fun testSumAndMultiplicationMethodDeclaration(){
+    fun test010_testSumAndMultiplicationMethodDeclaration(){
         val code = "let sum: int = 3 + 5 * 2;"
         val tokens = LexerImpl().tokenize(code)
         val parser: Parser = MyParser()
@@ -184,7 +184,7 @@ class ParserTest {
     }
 
     @Test
-    fun testMultiplicationAndSumMethodDeclaration(){
+    fun test011_testMultiplicationAndSumMethodDeclaration(){
         val code = "let sum: int = 3 * 5 + 2;"
         val tokens = LexerImpl().tokenize(code)
         val parser: Parser = MyParser()
@@ -203,7 +203,7 @@ class ParserTest {
     }
 
     @Test
-    fun testVeryComplexMethodDeclarationWithOutParentheses(){
+    fun test012_testVeryComplexMethodDeclarationWithOutParentheses(){
         val code = "let sum: int = 3 * 5 + 2 - 4 / 2;"
         val tokens = LexerImpl().tokenize(code)
         val parser: Parser = MyParser()
@@ -226,7 +226,7 @@ class ParserTest {
     }
 
     @Test
-    fun testSearchForClosingCharacter(){
+    fun test013_testSearchForClosingCharacter(){
         val code = "((()))))"
         val tokens = LexerImpl().tokenize(code)
         val commons = ParserCommons()
@@ -236,7 +236,7 @@ class ParserTest {
     }
 
     @Test
-    fun testMethodDeclarationWithParentheses(){
+    fun test014_testMethodDeclarationWithParentheses(){
         val code = "let sum: int = (3 + 5) * 2;"
         val tokens = LexerImpl().tokenize(code)
         val parser: Parser = MyParser()
@@ -256,7 +256,7 @@ class ParserTest {
         kotlin.test.assertEquals(expected, ast)
     }
     @Test
-    fun testMethodDeclarationMultOfTwoParentheses(){
+    fun test015_testMethodDeclarationMultOfTwoParentheses(){
         val code = "let sum: int = (3 + 5) * (2 + 4);"
         val tokens = LexerImpl().tokenize(code)
         val parser: Parser = MyParser()
@@ -279,8 +279,10 @@ class ParserTest {
         kotlin.test.assertEquals(expected, ast)
     }
 
+
+    // solucionar el tema de que en realidad si usa parentesis non meterlos como method result. El parentesis no es un operator.
     @Test
-    fun testParenthesesInsideParentheses(){
+    fun test016_testParenthesesInsideParentheses(){
         val code = "let sum: int = ((3 + 5) * (2 + 4));"
         val tokens = LexerImpl().tokenize(code)
         val parser: Parser = MyParser()
@@ -304,8 +306,13 @@ class ParserTest {
         kotlin.test.assertEquals(expected, ast)
     }
 
+
+
+
+    // falta resolver el tema de las comas. No son operadores, son SEPARADORES.
+    // Quiza, en el getFinalArgumentsOfMethodResult fijarse en vez del tamaño, si hay operadores.
     @Test
-    fun testMethodDeclarationOfAMethodCall(){
+    fun test017_testMethodDeclarationOfAMethodCall(){
         val code = "let test: int = sum(3, 5);"
         val tokens = LexerImpl().tokenize(code)
         val parser: Parser = MyParser()
@@ -320,5 +327,10 @@ class ParserTest {
                                 LiteralArgument(Range(23, 23), "5", "int")))))));
 
         kotlin.test.assertEquals(expected, ast)
+    }
+
+    @Test
+    fun test018_testMethodDeclarationWithOperationInside(){
+
     }
 }
