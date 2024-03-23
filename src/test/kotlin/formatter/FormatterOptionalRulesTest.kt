@@ -103,28 +103,28 @@ class FormatterOptionalRulesTest {
     @Test
     fun test014_spacedAssignation_ifSpaceAssignationSpaceThenSpaceAssignationSpace() {
         val text = " = "
-        val formatter = Formatter(listOf(Formatter.Rule("\\s*=\\s*", " = ")))
+        val formatter = Formatter(listOf(Formatter.Rule("=", " = ")))
         assertEquals(" = ", formatter.formatString(text))
     }
 
     @Test
     fun test015_spacedAssignation_ifSpaceAssignationThenSpaceAssignationSpace() {
         val text = " ="
-        val formatter = Formatter(listOf(Formatter.Rule("\\s*=\\s*", " = ")))
+        val formatter = Formatter(listOf(Formatter.Rule("=", " = ")))
         assertEquals(" = ", formatter.formatString(text))
     }
 
     @Test
     fun test016_spacedAssignation_ifAssignationSpaceThenSpaceAssignationSpace() {
         val text = "= "
-        val formatter = Formatter(listOf(Formatter.Rule("\\s*=\\s*", " = ")))
+        val formatter = Formatter(listOf(Formatter.Rule("=", " = ")))
         assertEquals(" = ", formatter.formatString(text))
     }
 
     @Test
     fun test017_spacedAssignation_ifAssignationThenSpaceAssignationSpace() {
         val text = "="
-        val formatter = Formatter(listOf(Formatter.Rule("\\s*=\\s*", " = ")))
+        val formatter = Formatter(listOf(Formatter.Rule("=", " = ")))
         assertEquals(" = ", formatter.formatString(text))
     }
 
@@ -161,6 +161,20 @@ class FormatterOptionalRulesTest {
         val text = "\n\n\n\nprintln(\"text\")"
         val formatter = Formatter(listOf(Formatter.Rule("\n{4,}println", "\n\n\nprintln")))
         assertEquals("\n\n\nprintln(\"text\")", formatter.formatString(text))
+    }
+
+    @Test
+    fun test021_multiRules() {
+        val text = "let a :number=12;let b:number = 4;a= a/b;\n\n\n\nprintln(\"Result \" + a);"
+        val formatter = Formatter(listOf(
+            Formatter.Rule("\n{4,}println", "\n\n\nprintln"),
+            Formatter.Rule("\\s*=\\s*", " = "),
+            Formatter.Rule(":", " : ")
+        ))
+        assertEquals(
+            "let a : number = 12;\nlet b : number = 4;\na = a / b;\n\n\nprintln(\"Result \" + a);",
+            formatter.formatString(text)
+        )
     }
 
 
