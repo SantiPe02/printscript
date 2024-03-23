@@ -20,10 +20,9 @@ class MethodResultDeclarator : ArgumentDeclarator {
         val methodOperator: Int = commons.searchForFirstOperator(arguments, 0, arguments.size)
         val operator: TokenInfo = getOperatorMethod(tokens, i, i + methodOperator)
         val args: List<List<TokenInfo>> = createMethodByOperator(tokens, i, endIndex, i + methodOperator)
-        if(operator.token.text == "("){
-            val flattenedArgs = args.flatten()
-            return methodArgument(flattenedArgs, 0, flattenedArgs.size, flattenedArgs)
-        }
+        if(operator.token.text == "(")
+            return handleParenthesesOperator(args)
+
         val orderedArgs = sortTokenInfoListByPosition(args.flatten())
         val finalArguments = getFinalArgumentsOfMethodResult(args, arguments)
         return MethodResult(commons.getRangeOfTokenList(listOf(operator)), Call(commons.getRangeOfTokenList(orderedArgs), operator.token.text, finalArguments))
@@ -38,6 +37,10 @@ class MethodResultDeclarator : ArgumentDeclarator {
             "(" -> getParenthesesArguments(tokens, methodOperator)
             else -> throw Exception("Invalid operator")
         }
+    }
+    fun handleParenthesesOperator(args: List<List<TokenInfo>>) : MethodResult{
+        val flattenedArgs = args.flatten()
+        return methodArgument(flattenedArgs, 0, flattenedArgs.size, flattenedArgs)
     }
 
     fun separateArguments(tokens: List<TokenInfo>, i: Int, endIndex: Int, operatorIndex: Int): List<List<TokenInfo>> {

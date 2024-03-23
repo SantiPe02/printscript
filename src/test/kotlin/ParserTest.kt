@@ -246,12 +246,11 @@ class ParserTest {
             Range(0, 26),
             listOf(
                 VariableDeclaration( Range(4, 6), "sum", "int",
-                    MethodResult(Range(23, 23), Call((Range(15, 25)), "*",
-                        listOf(MethodResult(Range(15, 15), Call(Range(16,20), "(",
-                            listOf(MethodResult(Range(18,18),Call((Range(16, 20)), "+",
-                                listOf( LiteralArgument(Range(16, 16), "3", "int"),
-                                        LiteralArgument(Range(20, 20), "5", "int"))))))),
-                            LiteralArgument(Range(25, 25), "2", "int")))))));
+                    MethodResult(Range(23, 23), Call(Range(15,25), "*",
+                        listOf( MethodResult(Range(18, 18), Call((Range(16, 20)), "+",
+                            listOf( LiteralArgument(Range(16, 16), "3", "int"),
+                                    LiteralArgument(Range(20, 20), "5", "int")))),
+                                LiteralArgument(Range(25, 25), "2", "int")))))));
 
         kotlin.test.assertEquals(expected, ast)
     }
@@ -266,15 +265,13 @@ class ParserTest {
             Range(0, 32),
             listOf(
                 VariableDeclaration( Range(4, 6), "sum", "int",
-                    MethodResult(Range(23, 23), Call((Range(15, 31)), "*",
-                        listOf(MethodResult(Range(15, 15), Call(Range(16,20), "(",
-                            listOf(MethodResult(Range(18,18),Call((Range(16, 20)), "+",
-                                listOf( LiteralArgument(Range(16, 16), "3", "int"),
-                                    LiteralArgument(Range(20, 20), "5", "int"))))))),
-                            MethodResult(Range(25, 25), Call(Range(26, 30), "(",
-                                listOf(MethodResult(Range(28,28),Call((Range(26, 30)), "+",
+                    MethodResult(Range(23, 23), Call(Range(15,31), "*",
+                        listOf( MethodResult(Range(18, 18), Call((Range(16, 20)), "+",
+                                    listOf( LiteralArgument(Range(16, 16), "3", "int"),
+                                            LiteralArgument(Range(20, 20), "5", "int")))),
+                                MethodResult(Range(28, 28), Call(Range(26,30), "+",
                                     listOf( LiteralArgument(Range(26, 26), "2", "int"),
-                                            LiteralArgument(Range(30, 30), "4", "int")))))))))))));
+                                            LiteralArgument(Range(30, 30), "4", "int"))))))))));
 
         kotlin.test.assertEquals(expected, ast)
     }
@@ -292,16 +289,13 @@ class ParserTest {
             Range(0, 34),
             listOf(
                 VariableDeclaration( Range(4, 6), "sum", "int",
-                    MethodResult(Range(15, 15), Call(Range(16,32), "(",
-                        listOf(MethodResult(Range(24, 24), Call((Range(16, 32)), "*",
-                            listOf(MethodResult(Range(16, 16), Call(Range(17,21), "(",
-                                listOf(MethodResult(Range(19,19),Call((Range(17, 21)), "+",
+                    MethodResult(Range(24, 24), Call(Range(16,32), "*",
+                        listOf( MethodResult(Range(19, 19), Call((Range(17, 21)), "+",
                                     listOf( LiteralArgument(Range(17, 17), "3", "int"),
-                                            LiteralArgument(Range(21, 21), "5", "int"))))))),
-                            MethodResult(Range(26, 26), Call(Range(27,31), "(",
-                                listOf(MethodResult(Range(29,29),Call((Range(27, 31)), "+",
+                                            LiteralArgument(Range(21, 21), "5", "int")))),
+                                MethodResult(Range(29, 29), Call(Range(27,31), "+",
                                     listOf( LiteralArgument(Range(27, 27), "2", "int"),
-                                            LiteralArgument(Range(31, 31), "4", "int"))))))))))))))));
+                                            LiteralArgument(Range(31, 31), "4", "int"))))))))));
 
         kotlin.test.assertEquals(expected, ast)
     }
