@@ -386,7 +386,7 @@ class ParserTest {
     }
 
     @Test
-    fun test020_testSearchForClosingBracketsMethodPt2(){
+    fun test021_testSearchForClosingBracketsMethodPt2(){
         val code = "let test: int = sum(3, sum(5, 2));"
 
         val tokens = LexerImpl().tokenize(code)
@@ -398,7 +398,7 @@ class ParserTest {
     }
 
     @Test
-    fun test021_testComplexEcuationWithParenthesesButParenthesesAreNotIncludedInTheAST(){
+    fun test022_testComplexEcuationWithParenthesesButParenthesesAreNotIncludedInTheAST(){
         val code = "let test: int = 3 + (5 * 2) + 4;"
         val tokens = LexerImpl().tokenize(code)
         val parser: Parser = MyParser()

@@ -3,7 +3,6 @@ package parser
 import ast.Argument
 import ast.Call
 import ast.MethodResult
-import ast.Range
 import token.TokenInfo
 
 class MethodResultDeclarator : ArgumentDeclarator {
@@ -18,11 +17,13 @@ class MethodResultDeclarator : ArgumentDeclarator {
 
     fun methodArgument(tokens: List<TokenInfo>, i: Int, endIndex: Int, arguments: List<TokenInfo>): MethodResult {
 
-        // maybe, first, force handle here that if the first operator is a parentheses, do a recursive call to this method
-        val methodOperator: Int = commons.searchForFirstOperator(arguments, 0, arguments.size) // the issue this brings is that when we have a '(' without a method before, we will create a method, whose method name will be '('.
-        val args: List<List<TokenInfo>> = createMethodByOperator(tokens, i, endIndex, i + methodOperator)
+        val methodOperator: Int = commons.searchForFirstOperator(arguments, 0, arguments.size)
         val operator: TokenInfo = getOperatorMethod(tokens, i, i + methodOperator)
-
+        val args: List<List<TokenInfo>> = createMethodByOperator(tokens, i, endIndex, i + methodOperator)
+        if(operator.token.text == "("){
+            val flattenedArgs = args.flatten()
+            return methodArgument(flattenedArgs, 0, flattenedArgs.size, flattenedArgs)
+        }
         val orderedArgs = sortTokenInfoListByPosition(args.flatten())
         val finalArguments = getFinalArgumentsOfMethodResult(args, arguments)
         return MethodResult(commons.getRangeOfTokenList(listOf(operator)), Call(commons.getRangeOfTokenList(orderedArgs), operator.token.text, finalArguments))
@@ -47,6 +48,7 @@ class MethodResultDeclarator : ArgumentDeclarator {
 
     // if the parenteses doesnt mark a method, make it call method argument recursively.
     fun getParenthesesArguments( tokens: List<TokenInfo>, methodOperator: Int): List<List<TokenInfo>> {
+        // Actually, search for first operator, and work with that. If there is a single argument, return that element.
         val closingParentheses = commons.searchForClosingCharacter(tokens, "(", methodOperator)
         return listOf(tokens.subList(methodOperator+1, closingParentheses))
     }
@@ -62,10 +64,10 @@ class MethodResultDeclarator : ArgumentDeclarator {
     fun getOperatorWhenParentheses( tokens: List<TokenInfo>, i: Int, methodOperator: Int): TokenInfo{
         // two options, either it is test(args) or (args)
         if(methodOperator == 0)
-            return tokens[methodOperator]
+            return tokens[methodOperator] // NO. Call getOperatorMethod, with the inside values.
         return when(tokens[methodOperator-1].token.type){
             TokenInfo.TokenType.IDENTIFIER -> {tokens[methodOperator-1]}
-            else -> tokens[methodOperator]
+            else -> tokens[methodOperator] // Same. Call getOperatorMethod, with the inside values.
         }
     }
 
