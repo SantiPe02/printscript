@@ -44,7 +44,7 @@ class FormatterMandatoryRulesTest {
 
     @Test
     fun test006_SpaceBeforeAndAfterOperator_NiceFormatWithPlusThenNiceFormat() {
-        for (operator in listOf("+", "-", "*", "/", "=", ">", "<", "<=", ">=", "==", "!=")){
+        for (operator in listOf("+", "-", "*", "/")){
             val text = " $operator "
             assertEquals(text, Formatter().formatString(text))
         }
@@ -52,17 +52,19 @@ class FormatterMandatoryRulesTest {
 
     @Test
     fun test007_SpaceBeforeAndAfterOperator_NoSpacesThenAddSpaces() {
-        for (operator in listOf("+", "-", "*", "/", "=", ">", "<", "<=", ">=", "==", "!=")) {
-            val text = "+"
-            assertEquals(" + ", Formatter().formatString(text))
+        for (operator in listOf("+", "-", "*", "/")) {
+            val text = operator
+            assertEquals(" $operator ", Formatter().formatString(text))
         }
     }
 
     @Test
     fun test008_SpaceBeforeAndAfetOperator_NoSpacesAndSomeValuesThenAddSpacesBetweenOperatorAndValues() {
-        for (operator in listOf("+", "-", "*", "/", "=", ">", "<", "<=", ">=", "==", "!=")){
-            val text = "a+b"
-            assertEquals("a + b", Formatter().formatString(text))
+        for (operator in listOf("+", "-", "*", "/")){
+            val text = "a${operator}b"
+            assertEquals("a $operator b", Formatter().formatString(text))
         }
     }
+
+    //TODO: should test for operators and ; inside a String literal.
 }

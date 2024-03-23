@@ -2,20 +2,31 @@ package formater
 
 import util.operatorPattern
 
-
-class Formatter: IFormatter {
+/**
+ * If several rules with the same pattern it will only use the first rule
+ */
+class Formatter(val rules : List<Rule> = listOf()): IFormatter {
     override fun formatString(sourceCode: String): String {
-        return sourceCode.replace(Regex("\\s*($operatorPattern)\\s*| {2,}|;(?!\n)(?!$)")) {
-            if (it.groups[1] != null) " ${it.value.trim()} " // Add spaces around operators
-            else if (it.value == ";") ";\n" // Replace semicolons with semicolon followed by newline
-            else " " // Replace consecutive spaces with a single space
-        }
-
-
-        /**
-        var newText = Regex(operatorPattern).replace(sourceCode," $0 ")
-        newText = Regex(" {2,}").replace(newText, " ")
-        return Regex(";(?!\n)(?!$)").replace(newText, ";\n")
-        **/
+        return mandatoryFormatting(sourceCode.replace(Regex(rules.joinToString(separator = "|") { it.pattern })) {
+            findMatchingRule(it, rules)?.newText ?: it.value
+        })
     }
+
+    private fun mandatoryFormatting(sourceCode: String) : String =
+        sourceCode.replace(Regex("\\s*([-+*/])\\s*| {2,}|;(?!\n)(?!$)")) {
+        if (it.groups[1] != null) " ${it.value.trim()} "
+        else if (it.value == ";") ";\n"
+        else " "
+    }
+
+    private fun findMatchingRule(matchResult: MatchResult, ruleList: List<Rule>): Rule? {
+        for (rule in ruleList) {
+            if (matchResult.groupValues.any { it.isNotEmpty() && rule.pattern.toRegex().matches(it) }) {
+                return rule
+            }
+        }
+        return null
+    }
+
+    data class Rule(val pattern: String, val newText: String)
 }
