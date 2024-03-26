@@ -18,7 +18,7 @@ class MethodResultDeclarator : ArgumentDeclarator {
     fun methodArgument(tokens: List<TokenInfo>, i: Int, endIndex: Int, arguments: List<TokenInfo>): MethodResult {
 
         val methodOperator: Int = commons.searchForFirstOperator(arguments, 0, arguments.size)
-        val operator: TokenInfo = getOperatorMethod(tokens, i, i + methodOperator)
+        val operator: TokenInfo = getOperatorMethod(tokens, i + methodOperator)
         val args: List<List<TokenInfo>> = createMethodByOperator(tokens, i, endIndex, i + methodOperator)
         if(operator.token.text == "(")
             return handleParenthesesOperator(args)
@@ -56,15 +56,15 @@ class MethodResultDeclarator : ArgumentDeclarator {
         return listOf(tokens.subList(methodOperator+1, closingParentheses))
     }
 
-    fun getOperatorMethod(tokens: List<TokenInfo>, i: Int, methodOperator: Int): TokenInfo{
+    fun getOperatorMethod(tokens: List<TokenInfo>, methodOperator: Int): TokenInfo{
         return when(tokens[methodOperator].token.text){
             "+", "-", "*", "/" -> tokens[methodOperator]
-            "(" -> getOperatorWhenParentheses(tokens, i, methodOperator)
+            "(" -> getOperatorWhenParentheses(tokens, methodOperator)
             else -> throw Exception("Todo")
         }
     }
 
-    fun getOperatorWhenParentheses( tokens: List<TokenInfo>, i: Int, methodOperator: Int): TokenInfo{
+    fun getOperatorWhenParentheses( tokens: List<TokenInfo>, methodOperator: Int): TokenInfo{
         // two options, either it is test(args) or (args)
         if(methodOperator == 0)
             return tokens[methodOperator] // NO. Call getOperatorMethod, with the inside values.
