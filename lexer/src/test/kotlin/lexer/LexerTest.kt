@@ -1,11 +1,11 @@
 package lexer
 
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Test
 import token.TokenInfo
 import token.TokenInfo.TokenType
 import token.TokenInfo.Token
 import token.TokenInfo.Position
-import kotlin.test.Test
-import kotlin.test.assertEquals
 
 class LexerTest {
     @Test
@@ -34,6 +34,21 @@ class LexerTest {
         val token5 = TokenInfo(Token(TokenType.OPERATOR, "="), Position(14, 14))
         val token6 = TokenInfo(Token(TokenType.LITERAL, "\"hello\""), Position(16, 22))
         val token7 = TokenInfo(Token(TokenType.SPECIAL_SYMBOL, ";"), Position(23, 23))
+        val expected = listOf(token1, token2, token3, token4, token5, token6, token7)
+        assertEquals(expected, lexer.tokenize(input));
+    }
+
+    @Test
+    fun lexerStringOfMultipleWordsTest(){
+        val input = "let a: string = \"hello world\";"
+        val lexer = LexerImpl()
+        val token1 = TokenInfo(Token(TokenType.KEYWORD, "let"), Position(0, 2))
+        val token2 = TokenInfo(Token(TokenType.IDENTIFIER, "a"), Position(4, 4))
+        val token3 = TokenInfo(Token(TokenType.SPECIAL_SYMBOL, ":"), Position(5, 5))
+        val token4 = TokenInfo(Token(TokenType.KEYWORD, "string"), Position(7, 12))
+        val token5 = TokenInfo(Token(TokenType.OPERATOR, "="), Position(14, 14))
+        val token6 = TokenInfo(Token(TokenType.LITERAL, "\"hello world\""), Position(16, 28))
+        val token7 = TokenInfo(Token(TokenType.SPECIAL_SYMBOL, ";"), Position(29, 29))
         val expected = listOf(token1, token2, token3, token4, token5, token6, token7)
         assertEquals(expected, lexer.tokenize(input));
     }
@@ -265,6 +280,51 @@ class LexerTest {
         val token10 = TokenInfo(Token(TokenType.SPECIAL_SYMBOL, ";"), Position(24, 24))
         val token11 = TokenInfo(Token(TokenType.SPECIAL_SYMBOL, "}"), Position(25, 25))
         val expected = listOf(token1, token2, token3, token4, token5, token6, token7, token8, token9, token10, token11)
+        assertEquals(expected, lexer.tokenize(input));
+    }
+
+    @Test
+    fun lexerStringWithSpacesInBetweenTest(){
+        val input = "let a: String = \"hello world\";";
+        val lexer = LexerImpl()
+        val token1 = TokenInfo(Token(TokenType.KEYWORD, "let"), Position(0, 2))
+        val token2 = TokenInfo(Token(TokenType.IDENTIFIER, "a"), Position(4, 4))
+        val token3 = TokenInfo(Token(TokenType.SPECIAL_SYMBOL, ":"), Position(5, 5))
+        val token4 = TokenInfo(Token(TokenType.KEYWORD, "String"), Position(7, 12))
+        val token5 = TokenInfo(Token(TokenType.OPERATOR, "="), Position(14, 14))
+        val token6 = TokenInfo(Token(TokenType.LITERAL, "\"hello world\""), Position(16, 28))
+        val token7 = TokenInfo(Token(TokenType.SPECIAL_SYMBOL, ";"), Position(29, 29))
+        val expected = listOf(token1, token2, token3, token4, token5, token6, token7)
+        assertEquals(expected, lexer.tokenize(input));
+    }
+
+    @Test
+    fun lexerStringWithKeywordNameTest(){
+        val input = "let a: String = \"String\";";
+        val lexer = LexerImpl()
+        val token1 = TokenInfo(Token(TokenType.KEYWORD, "let"), Position(0, 2))
+        val token2 = TokenInfo(Token(TokenType.IDENTIFIER, "a"), Position(4, 4))
+        val token3 = TokenInfo(Token(TokenType.SPECIAL_SYMBOL, ":"), Position(5, 5))
+        val token4 = TokenInfo(Token(TokenType.KEYWORD, "String"), Position(7, 12))
+        val token5 = TokenInfo(Token(TokenType.OPERATOR, "="), Position(14, 14))
+        val token6 = TokenInfo(Token(TokenType.LITERAL, "\"String\""), Position(16, 23))
+        val token7 = TokenInfo(Token(TokenType.SPECIAL_SYMBOL, ";"), Position(24, 24))
+        val expected = listOf(token1, token2, token3, token4, token5, token6, token7)
+        assertEquals(expected, lexer.tokenize(input));
+    }
+
+    @Test
+    fun lexerFloatNumberTest() {
+        val input = "let a: float = 3.14;"
+        val lexer = LexerImpl()
+        val token1 = TokenInfo(Token(TokenType.KEYWORD, "let"), Position(0, 2))
+        val token2 = TokenInfo(Token(TokenType.IDENTIFIER, "a"), Position(4, 4))
+        val token3 = TokenInfo(Token(TokenType.SPECIAL_SYMBOL, ":"), Position(5, 5))
+        val token4 = TokenInfo(Token(TokenType.KEYWORD, "float"), Position(7, 11))
+        val token5 = TokenInfo(Token(TokenType.OPERATOR, "="), Position(13, 13))
+        val token6 = TokenInfo(Token(TokenType.LITERAL, "3.14"), Position(15, 18))
+        val token7 = TokenInfo(Token(TokenType.SPECIAL_SYMBOL, ";"), Position(19, 19))
+        val expected = listOf(token1, token2, token3, token4, token5, token6, token7)
         assertEquals(expected, lexer.tokenize(input));
     }
 }
