@@ -39,6 +39,21 @@ class LexerTest {
     }
 
     @Test
+    fun lexerStringOfMultipleWordsTest(){
+        val input = "let a: string = \"hello world\";"
+        val lexer = LexerImpl()
+        val token1 = TokenInfo(Token(TokenType.KEYWORD, "let"), Position(0, 2))
+        val token2 = TokenInfo(Token(TokenType.IDENTIFIER, "a"), Position(4, 4))
+        val token3 = TokenInfo(Token(TokenType.SPECIAL_SYMBOL, ":"), Position(5, 5))
+        val token4 = TokenInfo(Token(TokenType.KEYWORD, "string"), Position(7, 12))
+        val token5 = TokenInfo(Token(TokenType.OPERATOR, "="), Position(14, 14))
+        val token6 = TokenInfo(Token(TokenType.LITERAL, "\"hello world\""), Position(16, 28))
+        val token7 = TokenInfo(Token(TokenType.SPECIAL_SYMBOL, ";"), Position(29, 29))
+        val expected = listOf(token1, token2, token3, token4, token5, token6, token7)
+        assertEquals(expected, lexer.tokenize(input));
+    }
+
+    @Test
     fun lexerSumOperatorTest(){
         val input = "let a: number = 3 + 2;"
         val lexer = LexerImpl()
