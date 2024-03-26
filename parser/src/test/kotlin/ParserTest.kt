@@ -1,5 +1,6 @@
 import ast.*
 import lexer.LexerImpl
+import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 import parser.MyParser
 import parser.Parser
@@ -23,7 +24,7 @@ class ParserTest {
 
         println(expected.range.start)
         println(expected.range.end)
-        kotlin.test.assertEquals(expected, ast)
+        assertEquals(expected, ast)
     }
     @Test
     fun test002_testSimpleLiteralVariableDeclarationBool(){
@@ -38,7 +39,7 @@ class ParserTest {
                 VariableDeclaration( Range(4, 4), "a", "boolean", LiteralArgument(Range(17, 20), "true", "boolean"))
             ))
 
-        kotlin.test.assertEquals(expected, ast)
+        assertEquals(expected, ast)
     }
 
 
@@ -55,7 +56,7 @@ class ParserTest {
                 VariableDeclaration( Range(4, 4), "a", "float", LiteralArgument(Range(15, 17), "3.5", "float"))
             ))
 
-        kotlin.test.assertEquals(expected, ast)
+        assertEquals(expected, ast)
     }
 
     @Test
@@ -72,7 +73,7 @@ class ParserTest {
                 VariableDeclaration( Range(4, 4), "a", "string", LiteralArgument(Range(16, 21), "\"Juan\"", "string"))
             ))
 
-        kotlin.test.assertEquals(expected, ast)
+        assertEquals(expected, ast)
     }
 
     @Test
@@ -93,7 +94,7 @@ class ParserTest {
 
         println(ast.body)
         println(expected.body)
-        kotlin.test.assertEquals(expected, ast)
+        assertEquals(expected, ast)
     }
 
     @Test
@@ -109,7 +110,7 @@ class ParserTest {
                 VariableDeclaration(Range(4, 4), "a", "int", VariableArgument(Range(13, 13), "b")))
         )
 
-        kotlin.test.assertEquals(expected, ast)
+        assertEquals(expected, ast)
     }
 
 
@@ -129,7 +130,7 @@ class ParserTest {
                 VariableDeclaration( Range(20, 20), "b", "string", VariableArgument(Range(32, 32), "a"))
             ))
 
-        kotlin.test.assertEquals(expected, ast)
+        assertEquals(expected, ast)
     }
 
     @Test
@@ -144,7 +145,7 @@ class ParserTest {
             listOf(
                 VariableDeclaration(Range(4, 6), "sum", "int", MethodResult(Range(17, 17), Call((Range(15, 19)), "+", listOf(LiteralArgument(Range(15, 15), "3", "int"), LiteralArgument(Range(19, 19), "5", "int")))))));
 
-        kotlin.test.assertEquals(expected, ast)
+        assertEquals(expected, ast)
     }
 
     @Test
@@ -160,7 +161,7 @@ class ParserTest {
                 VariableDeclaration( Range(4, 6), "sum", "int", MethodResult(Range(17, 17), Call((Range(15, 19)), "+", listOf(VariableArgument(Range(15, 15), "a"), LiteralArgument(Range(19, 19), "5", "int")))))));
 
 
-        kotlin.test.assertEquals(expected, ast)
+        assertEquals(expected, ast)
     }
 
     @Test
@@ -180,7 +181,7 @@ class ParserTest {
                                     listOf( LiteralArgument(Range(19, 19), "5", "int"),
                                             LiteralArgument(Range(23, 23), "2", "int"))))))))));
 
-        kotlin.test.assertEquals(expected, ast)
+        assertEquals(expected, ast)
     }
 
     @Test
@@ -199,7 +200,7 @@ class ParserTest {
                             listOf( LiteralArgument(Range(15, 15), "3", "int"),
                                     LiteralArgument(Range(19, 19), "5", "int")))),
                             LiteralArgument(Range(23, 23), "2", "int")))))));
-        kotlin.test.assertEquals(expected, ast)
+        assertEquals(expected, ast)
     }
 
     @Test
@@ -222,7 +223,7 @@ class ParserTest {
                                         MethodResult(Range(29, 29), Call((Range(27, 31)), "/",
                                             listOf( LiteralArgument(Range(27, 27), "4", "int"),
                                                     LiteralArgument(Range(31, 31), "2", "int")))))))))))));
-        kotlin.test.assertEquals(expected, ast)
+        assertEquals(expected, ast)
     }
 
     @Test
@@ -232,7 +233,7 @@ class ParserTest {
         val commons = ParserCommons()
         val gotChar = commons.searchForClosingCharacter(tokens,"(", 0)
         val expected = 5
-        kotlin.test.assertEquals(expected, gotChar)
+        assertEquals(expected, gotChar)
     }
 
     @Test
@@ -252,7 +253,7 @@ class ParserTest {
                                     LiteralArgument(Range(20, 20), "5", "int")))),
                                 LiteralArgument(Range(25, 25), "2", "int")))))));
 
-        kotlin.test.assertEquals(expected, ast)
+        assertEquals(expected, ast)
     }
     @Test
     fun test015_testMethodDeclarationMultOfTwoParentheses(){
@@ -273,7 +274,7 @@ class ParserTest {
                                     listOf( LiteralArgument(Range(26, 26), "2", "int"),
                                             LiteralArgument(Range(30, 30), "4", "int"))))))))));
 
-        kotlin.test.assertEquals(expected, ast)
+        assertEquals(expected, ast)
     }
 
 
@@ -297,7 +298,7 @@ class ParserTest {
                                     listOf( LiteralArgument(Range(27, 27), "2", "int"),
                                             LiteralArgument(Range(31, 31), "4", "int"))))))))));
 
-        kotlin.test.assertEquals(expected, ast)
+        assertEquals(expected, ast)
     }
 
 
@@ -320,7 +321,7 @@ class ParserTest {
                         listOf( LiteralArgument(Range(20, 20), "3", "int"),
                                 LiteralArgument(Range(23, 23), "5", "int")))))));
 
-        kotlin.test.assertEquals(expected, ast)
+        assertEquals(expected, ast)
     }
 
     @Test
@@ -340,7 +341,7 @@ class ParserTest {
                                     listOf( LiteralArgument(Range(23, 23), "5", "int"),
                                             LiteralArgument(Range(27, 27), "2", "int"))))))))));
 
-        kotlin.test.assertEquals(expected, ast)
+        assertEquals(expected, ast)
     }
 
 
@@ -361,7 +362,7 @@ class ParserTest {
                                 listOf( LiteralArgument(Range(27, 27), "5", "int"),
                                     LiteralArgument(Range(30, 30), "2", "int"))))))))));
 
-        kotlin.test.assertEquals(expected, ast)
+        assertEquals(expected, ast)
     }
 
 
@@ -376,7 +377,7 @@ class ParserTest {
         println(tokens[15].token.text)
         val gotChar = commons.searchForClosingCharacter(tokens,"(", 6)
         val expected = 15
-        kotlin.test.assertEquals(expected, gotChar)
+        assertEquals(expected, gotChar)
     }
 
     @Test
@@ -388,7 +389,7 @@ class ParserTest {
         println(tokens[14].token.text)
         val gotChar = commons.searchForClosingCharacter(tokens,"(", 10)
         val expected = 14
-        kotlin.test.assertEquals(expected, gotChar)
+        assertEquals(expected, gotChar)
     }
 
     @Test
@@ -410,7 +411,7 @@ class ParserTest {
                                         LiteralArgument(Range(25, 25), "2", "int")))),
                                     LiteralArgument(Range(30, 30), "4", "int"))))))))));
 
-        kotlin.test.assertEquals(expected, ast)
+        assertEquals(expected, ast)
     }
 
 }
