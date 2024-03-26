@@ -1,11 +1,11 @@
 package lexer
 
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Test
 import token.TokenInfo
 import token.TokenInfo.TokenType
 import token.TokenInfo.Token
 import token.TokenInfo.Position
-import kotlin.test.Test
-import kotlin.test.assertEquals
 
 class LexerTest {
     @Test
