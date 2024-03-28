@@ -414,4 +414,36 @@ class ParserTest {
         assertEquals(expected, ast)
     }
 
+    @Test
+    fun test023_testSumOfTwoVariableArguments(){
+        val code = "let sum: int = a + b;"
+        val tokens = LexerImpl().tokenize(code)
+        val parser: Parser = MyParser()
+        val ast = parser.parseTokens(tokens)
+        val expected = Scope(
+            "program",
+            Range(0, 20),
+            listOf(
+                VariableDeclaration(Range(4, 6), "sum", "int",
+                    MethodResult(Range(17, 17), Call((Range(15, 19)), "+",
+                        listOf( VariableArgument(Range(15, 15), "a"),
+                                VariableArgument(Range(19, 19), "b")))))));
+        assertEquals(expected, ast)
+    }
+    @Test
+    fun test024_testSumOfTwoVariableArguments_withFirstVariableArgBeingAlsoTheIdentifier(){
+        val code = "let a: int = a + b;"
+        val tokens = LexerImpl().tokenize(code)
+        val parser: Parser = MyParser()
+        val ast = parser.parseTokens(tokens)
+        val expected = Scope(
+            "program",
+            Range(0, 18),
+            listOf(
+                VariableDeclaration(Range(4, 4), "a", "int",
+                    MethodResult(Range(15, 15), Call((Range(13, 17)), "+",
+                        listOf( VariableArgument(Range(13, 13), "a"),
+                                VariableArgument(Range(17, 17), "b")))))));
+        assertEquals(expected, ast)
+    }
 }
