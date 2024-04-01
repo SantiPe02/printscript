@@ -415,7 +415,7 @@ class ParserTest {
     }
 
     @Test
-    fun test023_testSumOfTwoVariableArguments(){
+    fun test027_testSumOfTwoVariableArguments(){
         val code = "let sum: int = a + b;"
         val tokens = LexerImpl().tokenize(code)
         val parser: Parser = MyParser()
@@ -431,7 +431,7 @@ class ParserTest {
         assertEquals(expected, ast)
     }
     @Test
-    fun test024_testSumOfTwoVariableArguments_withFirstVariableArgBeingAlsoTheIdentifier(){
+    fun test028_testSumOfTwoVariableArguments_withFirstVariableArgBeingAlsoTheIdentifier(){
         val code = "let a: int = a + b;"
         val tokens = LexerImpl().tokenize(code)
         val parser: Parser = MyParser()
