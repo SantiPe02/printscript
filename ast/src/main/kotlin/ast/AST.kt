@@ -31,6 +31,7 @@ class Range(val start: Int, val end: Int) {
 class Scope(val type: String, override val range: Range, val body: Collection<AST>) : AST {
 
     override fun equals(other: Any?): Boolean {
+
         if (this === other) return true
         if (other !is Scope) return false
 
@@ -55,8 +56,6 @@ class Scope(val type: String, override val range: Range, val body: Collection<AS
         return result
     }
 }
-
-
 
 
 /**
@@ -90,6 +89,7 @@ class Call(override val range: Range, val name: String, val arguments: Collectio
  * There are different type of declarations
  */
 sealed interface Declaration : AST
+
 /**
  * class with the information for variable declarations.
  * @param variableName: the name of the variable being declared
@@ -183,4 +183,44 @@ class MethodResult(override val range: Range, val methodCall: Call) : Argument {
     }
 }
 
+class DeclarationStatement(override val range: Range, val variableName: String, val variableType: String) : Declaration {
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (other !is DeclarationStatement) return false
+
+        if (range != other.range) return false
+        if (variableName != other.variableName) return false
+        if (variableType != other.variableType) return false
+
+        return true
+    }
+
+    override fun hashCode(): Int {
+        var result = range.hashCode()
+        result = 31 * result + variableName.hashCode()
+        result = 31 * result + variableType.hashCode()
+        return result
+    }
+}
+
+class AssignmentStatement(override val range: Range, val variableName: String, val value: Argument) : Declaration {
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return false
+        if (other !is AssignmentStatement) return false
+
+        if (range != other.range) return false
+        if (variableName != other.variableName) return false
+        if (value != other.value) return false
+
+        return true
+    }
+
+    override fun hashCode(): Int {
+        var result = range.hashCode()
+        result = 31 * result + variableName.hashCode()
+        result = 31 * result + value.hashCode()
+        return result
+    }
+}
 

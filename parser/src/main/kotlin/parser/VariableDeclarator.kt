@@ -12,23 +12,53 @@ class VariableDeclarator : DeclarationValidator {
         --> There is a lot of circular dependency. Maybe should put all the "ParserCommons()" inside parser.
     */
 
+
+    // 3 casos:
+    // 1. let name:String = "Carlos Salvador";
+    // 2. let name:String;
+    // 3. name = "Carlos Salvador";
+    // y luego también puede pasar que: name > < != <= >= number (son methods, creo)
     override fun declare(tokens: List<TokenInfo>,  i: Int): Declaration {
         var j = i
         val variableName = commons.getTokenByType(tokens[++j].token, TokenInfo.TokenType.IDENTIFIER)
         val variable = tokens[j]
-        commons.getTokenByTextAndType(tokens[++j].token, ":", TokenInfo.TokenType.SPECIAL_SYMBOL)
+
+        ++j
+        if(commons.isOfTextAndType(tokens[j].token, ":", TokenInfo.TokenType.SPECIAL_SYMBOL))
+            return handleVariableDeclaration(tokens, j, variable, variableName)
+        else if(commons.isOfTextAndType(tokens[j].token, "=", TokenInfo.TokenType.OPERATOR)){
+            return AssignmentStatement(commons.getRangeOfTokenList(listOf(variable)), variableName.text, getVariableArgument(tokens, ++j))}
+        else
+            throw Exception("Invalid variable declaration")
+
+    }
+
+    private fun handleVariableDeclaration(tokens: List<TokenInfo>, i:Int, variable:TokenInfo, variableName:TokenInfo.Token): Declaration{
+        var j = i;
         val variableType = commons.getTokenByType(tokens[++j].token, TokenInfo.TokenType.KEYWORD)
-        commons.getTokenByTextAndType(tokens[++j].token, "=", TokenInfo.TokenType.OPERATOR)
 
-        val arguments = getVariableArguments(tokens, ++j) // arguments could be empty, which is the same to saying let name:String;
-        val variableArgument: Argument = VariableArgumentDeclarator().declareArgument(tokens, arguments, j)
+        ++j
+        return if(commons.isOfTextAndType(tokens[j].token, "=", TokenInfo.TokenType.OPERATOR))
+            fullVariableDeclaration(tokens, j, variable, variableName, variableType)
+        else if(commons.isEndOfVarChar(tokens, j))
+            DeclarationStatement(commons.getRangeOfTokenList(listOf(variable)), variableName.text, variableType.text);
+        else
+            throw Exception("Invalid variable declaration")
+    }
 
-
+    private fun fullVariableDeclaration(tokens: List<TokenInfo>, i:Int, variable:TokenInfo, variableName:TokenInfo.Token, variableType:TokenInfo.Token): Declaration {
+        var j = i;
+        val variableArgument: Argument = getVariableArgument(tokens, ++j)
         return VariableDeclaration(commons.getRangeOfTokenList(listOf(variable)), variableName.text, variableType.text, variableArgument)
     }
 
+    private fun getVariableArgument(tokens: List<TokenInfo>, i:Int): Argument{
+        val arguments = getVariableArguments(tokens, i)
 
-    fun getVariableArguments(tokens: List<TokenInfo>, i: Int): List<TokenInfo> {
+        return VariableArgumentDeclarator().declareArgument(tokens, arguments, i)
+    }
+
+    private fun getVariableArguments(tokens: List<TokenInfo>, i: Int): List<TokenInfo> {
         val arguments = mutableListOf<TokenInfo>()
         var j = i
         while(j < tokens.size) // si hay una suma o algo raro repetir los métodos y así...
