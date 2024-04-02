@@ -1,0 +1,14 @@
+plugins {
+    id 'printscript.kotlin-library-conventions'
+}
+
+dependencies {
+    //printScript
+    implementation(project(":lexer"))
+    implementation(project(":parser"))
+    implementation(project(":ast"))
+
+    //external
+    implementation("com.google.code.gson:gson:2.9.0")
+    implementation("org.yaml:snakeyaml:2.0")
+}
