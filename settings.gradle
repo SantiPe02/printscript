@@ -19,4 +19,5 @@ include 'token'
 include 'parser'
 include 'util'
 include 'cli'
+include 'formatter'
 
