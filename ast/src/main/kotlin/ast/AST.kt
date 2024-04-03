@@ -30,7 +30,6 @@ class Range(val start: Int, val end: Int) {
  */
 class Scope(val type: String, override val range: Range, val body: Collection<AST>) : AST {
     override fun equals(other: Any?): Boolean {
-
         if (this === other) return true
         if (other !is Scope) return false
 
@@ -201,7 +200,6 @@ class DeclarationStatement(override val range: Range, val variableName: String, 
 }
 
 class AssignmentStatement(override val range: Range, val variableName: String, val value: Argument) : Declaration {
-
     override fun equals(other: Any?): Boolean {
         if (this === other) return false
         if (other !is AssignmentStatement) return false
@@ -220,4 +218,3 @@ class AssignmentStatement(override val range: Range, val variableName: String, v
         return result
     }
 }
-

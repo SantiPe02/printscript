@@ -15,7 +15,8 @@ sealed interface Parser {
 
 class MyParser : Parser {
     private val commons = ParserCommons()
-    override fun  parseTokens(tokenList: List<TokenInfo>): Scope {
+
+    override fun parseTokens(tokenList: List<TokenInfo>): Scope {
         val astNodes = mutableListOf<AST>()
         var i = 0
         while (i < tokenList.size) {
@@ -37,7 +38,7 @@ class MyParser : Parser {
             TokenType.KEYWORD -> parseKeyword(tokens, token, i)
             TokenType.SPECIAL_SYMBOL -> parseSpecial(token)
             TokenType.OPERATOR -> parseOperator(token)
-            TokenType.IDENTIFIER ->  parseIdentifier(tokens, token, i)
+            TokenType.IDENTIFIER -> parseIdentifier(tokens, token, i)
             TokenType.LITERAL -> parseLiteral(token)
         }
     }
@@ -73,7 +74,7 @@ class MyParser : Parser {
     ): Int {
         return when (token.type) {
             TokenType.KEYWORD -> lengthOfKeywordDeclaration(tokens, token, i)
-            TokenType.IDENTIFIER -> commons.lengthTillFirstAppearanceOfToken(tokens, TokenType.SPECIAL_SYMBOL, ";" , i)
+            TokenType.IDENTIFIER -> commons.lengthTillFirstAppearanceOfToken(tokens, TokenType.SPECIAL_SYMBOL, ";", i)
             else -> 1 // As for now...
         }
     }
@@ -93,9 +94,13 @@ class MyParser : Parser {
         return LiteralArgument(Range(0, 0), token.text, "String")
     }
 
-    private fun parseIdentifier(tokens: List<TokenInfo>, token: Token, i: Int): AST {
+    private fun parseIdentifier(
+        tokens: List<TokenInfo>,
+        token: Token,
+        i: Int,
+    ): AST {
         // As for now, the only way an identifier can be used is as a variable: a = 4;
-        return declareVariable(tokens, i-1);
+        return declareVariable(tokens, i - 1)
     }
 
     // I don't think you can start with operators If you cant, this method should throw always error.

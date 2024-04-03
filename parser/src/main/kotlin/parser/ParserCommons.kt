@@ -204,9 +204,11 @@ class ParserCommons {
         return Range(startPos, endPos)
     }
 
-    fun isOfTextAndType(token: TokenInfo.Token, s: String, operator: TokenInfo.TokenType): Boolean {
+    fun isOfTextAndType(
+        token: TokenInfo.Token,
+        s: String,
+        operator: TokenInfo.TokenType,
+    ): Boolean {
         return token.text == s && token.type == operator
     }
-
-
 }

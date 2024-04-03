@@ -7,72 +7,78 @@ import formater.FormatterConfiguration
 import formater.IConfigurationReader
 import java.io.File
 
-object JsonConfigurationReader: IConfigurationReader {
+object JsonConfigurationReader : IConfigurationReader {
     override fun getFileExtension(): String = "json"
 
     override fun readFileAndBuildRules(configFile: File): Result<FormatterConfiguration> {
-        if (configFile.extension != "json")
+        if (configFile.extension != "json") {
             return Result.failure(Exception("The method was expecting a json file but got a ${configFile.extension}"))
+        }
         return try {
-             Result.success(createGson().fromJson(configFile.readText(), FormatterConfiguration::class.java))
+            Result.success(createGson().fromJson(configFile.readText(), FormatterConfiguration::class.java))
         } catch (e: Exception) {
             Result.failure(e)
         }
     }
 
-    //TODO: refactor this, it's not pretty, maybe a builder pattern for the Config?
-    private fun createGson() : Gson {
+    // TODO: refactor this, it's not pretty, maybe a builder pattern for the Config?
+    private fun createGson(): Gson {
         val gsonBuilder = GsonBuilder()
-        gsonBuilder.registerTypeAdapter(FormatterConfiguration::class.java, JsonDeserializer { json, _, _ ->
-            val jsonObject = json.asJsonObject
+        gsonBuilder.registerTypeAdapter(
+            FormatterConfiguration::class.java,
+            JsonDeserializer { json, _, _ ->
+                val jsonObject = json.asJsonObject
 
-            //standard values
-            var spaceBeforeColon = true
-            var spaceAfterColon = true
-            var spaceBeforeAndAfterEqual = true
-            var lineJumpsBeforePrintln = 1
+                // standard values
+                var spaceBeforeColon = true
+                var spaceAfterColon = true
+                var spaceBeforeAndAfterEqual = true
+                var lineJumpsBeforePrintln = 1
 
-            val jsonFieldSpaceBeforeColon = jsonObject.get("SpaceBeforeColon")
-            if (jsonFieldSpaceBeforeColon != null) {
-                try {spaceBeforeColon = jsonFieldSpaceBeforeColon.asBoolean}
-                catch (e: Exception) {
-                    println("WARNING: the field of Space Before Colon was not a boolean type")
+                val jsonFieldSpaceBeforeColon = jsonObject.get("SpaceBeforeColon")
+                if (jsonFieldSpaceBeforeColon != null) {
+                    try {
+                        spaceBeforeColon = jsonFieldSpaceBeforeColon.asBoolean
+                    } catch (e: Exception) {
+                        println("WARNING: the field of Space Before Colon was not a boolean type")
+                    }
                 }
-            }
 
-            val jsonFieldSpaceAfterColon = jsonObject.get("spaceAfterColon")
-            if (jsonFieldSpaceAfterColon != null) {
-                try {spaceAfterColon = jsonFieldSpaceAfterColon.asBoolean}
-                catch (e: Exception) {
-                    println("WARNING: the field of Space After Colon was not a boolean type")
+                val jsonFieldSpaceAfterColon = jsonObject.get("spaceAfterColon")
+                if (jsonFieldSpaceAfterColon != null) {
+                    try {
+                        spaceAfterColon = jsonFieldSpaceAfterColon.asBoolean
+                    } catch (e: Exception) {
+                        println("WARNING: the field of Space After Colon was not a boolean type")
+                    }
                 }
-            }
 
-            val jsonFieldSpaceEquals = jsonObject.get("spaceBeforeAndAfterEqual")
-            if (jsonFieldSpaceEquals != null) {
-                try {spaceBeforeAndAfterEqual = jsonFieldSpaceEquals.asBoolean}
-                catch (e: Exception) {
-                    println("WARNING: the field of Space Before And After Equal was not a boolean type")
+                val jsonFieldSpaceEquals = jsonObject.get("spaceBeforeAndAfterEqual")
+                if (jsonFieldSpaceEquals != null) {
+                    try {
+                        spaceBeforeAndAfterEqual = jsonFieldSpaceEquals.asBoolean
+                    } catch (e: Exception) {
+                        println("WARNING: the field of Space Before And After Equal was not a boolean type")
+                    }
                 }
-            }
 
-            val jsonFieldLineJumpPrintln = jsonObject.get("lineJumpsBeforePrintln")
-            if (jsonFieldLineJumpPrintln != null) {
-                try {
-                    val lineJumpBeforePrintLineAux = jsonFieldLineJumpPrintln.asInt
-                    if (lineJumpBeforePrintLineAux !in 0..3) {
-                        println("WARNING: lineJumpBeforePrintln was not a value between 0 and 3 (inclusive)")
-                    } else
-                        lineJumpsBeforePrintln = lineJumpBeforePrintLineAux
+                val jsonFieldLineJumpPrintln = jsonObject.get("lineJumpsBeforePrintln")
+                if (jsonFieldLineJumpPrintln != null) {
+                    try {
+                        val lineJumpBeforePrintLineAux = jsonFieldLineJumpPrintln.asInt
+                        if (lineJumpBeforePrintLineAux !in 0..3) {
+                            println("WARNING: lineJumpBeforePrintln was not a value between 0 and 3 (inclusive)")
+                        } else {
+                            lineJumpsBeforePrintln = lineJumpBeforePrintLineAux
+                        }
+                    } catch (e: Exception) {
+                        println("WARNING: the field of lineJumpBeforePrintln was not a int type")
+                    }
                 }
-                catch (e: Exception) {
-                    println("WARNING: the field of lineJumpBeforePrintln was not a int type")
-                }
-            }
 
-
-            FormatterConfiguration(spaceBeforeColon, spaceAfterColon, spaceBeforeAndAfterEqual, lineJumpsBeforePrintln)
-        })
+                FormatterConfiguration(spaceBeforeColon, spaceAfterColon, spaceBeforeAndAfterEqual, lineJumpsBeforePrintln)
+            },
+        )
         return gsonBuilder.create()
     }
 }

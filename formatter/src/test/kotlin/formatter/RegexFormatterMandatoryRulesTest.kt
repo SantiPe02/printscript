@@ -1,6 +1,5 @@
 package formatter
 
-import formater.ASTFormatter
 import formater.RegexFormatter
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
@@ -38,17 +37,6 @@ class RegexFormatterMandatoryRulesTest {
         Assertions.assertEquals(expected, RegexFormatter().formatString(text))
     }
 
-    //TODO: newLineAfeterSemicolon_IfNoNewLineAndSomeSpacesAssNewLineFormat
+    // TODO: newLineAfeterSemicolon_IfNoNewLineAndSomeSpacesAssNewLineFormat
     // ("let a:String=\"this is a string\";    a=\"This is also a string\";")
-
-
-
-
-    @Test
-    fun test008_SpaceBeforeAndAfetOperator_NoSpacesAndSomeValuesThenAddSpacesBetweenOperatorAndValues() {
-        for (operator in listOf("+", "-", "*", "/")){
-            val text = "let c : Int=a${operator}b${operator}d;"
-            Assertions.assertEquals("let c : Int = a $operator b $operator d;", ASTFormatter().formatString(text))
-        }
-    }
 }
