@@ -3,5 +3,9 @@ plugins {
 }
 
 dependencies {
-    implementation("com.github.ajalt:clikt:2.8.0")
+    implementation(project(":formatter"))
+
+    implementation("com.github.ajalt.clikt:clikt:4.2.0")
+
+    testImplementation("io.mockk:mockk:1.12.0")
 }
