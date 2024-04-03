@@ -69,12 +69,13 @@ tasks.register("ktlintFormat", JavaExec) {
     args "-F", "src/**/*.kt", "**.kts", "!**/build/**"
 }
 
-task installGitHooks(type: Copy) {
-    from new File(rootProject.rootDir, 'hooks/pre-commit')
-    into { new File(rootProject.rootDir, '.git/hooks') }
-}
-
-build.dependsOn installGitHooks
 tasks.named('check') {
     dependsOn("ktlintFormat")
 }
+
+tasks.register("installGitHooks", Copy) {
+    from new File(rootProject.rootDir, "hooks/pre-commit")
+    into { new File(rootProject.rootDir, ".git/hooks") }
+}
+
+build.dependsOn("installGitHooks")
