@@ -1,16 +1,18 @@
 package parser
 
-import ast.*
+import ast.Argument
+import ast.Declaration
+import ast.VariableDeclaration
 import token.TokenInfo
 
 class VariableDeclarator : DeclarationValidator {
-    val commons:ParserCommons = ParserCommons();
+    val commons: ParserCommons = ParserCommons()
 
     /* todo:
         --> ¿What if I have let num:int > 6?
         --> Brackets should close.
         --> There is a lot of circular dependency. Maybe should put all the "ParserCommons()" inside parser.
-    */
+     */
 
 
     // 3 casos:
@@ -61,16 +63,15 @@ class VariableDeclarator : DeclarationValidator {
     private fun getVariableArguments(tokens: List<TokenInfo>, i: Int): List<TokenInfo> {
         val arguments = mutableListOf<TokenInfo>()
         var j = i
-        while(j < tokens.size) // si hay una suma o algo raro repetir los métodos y así...
+        while (j < tokens.size) // si hay una suma o algo raro repetir los métodos y así...
         {
-            if(commons.isEndOfVarChar(tokens, j)){
+            if (commons.isEndOfVarChar(tokens, j)) {
                 break
+            } else {
+                arguments.add(tokens[j])
             }
-            else{
-                arguments.add(tokens[j])}
             j++
         }
         return arguments
     }
-
 }
