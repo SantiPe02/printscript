@@ -6,6 +6,7 @@ package token
  * To find more information about the TokenType go to the documentation.
  */
 class TokenInfo(val token: Token, val position: Position) {
+
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (other !is TokenInfo) return false
@@ -19,16 +20,14 @@ class TokenInfo(val token: Token, val position: Position) {
         result = 31 * result + position.hashCode()
         return result
     }
-
     data class Position(val startIndex: Int, val endIndex: Int)
-
     data class Token(val type: TokenType, val text: String)
-
     enum class TokenType {
         KEYWORD,
         SPECIAL_SYMBOL,
         OPERATOR,
         IDENTIFIER,
-        LITERAL,
+        LITERAL
     }
 }
+
