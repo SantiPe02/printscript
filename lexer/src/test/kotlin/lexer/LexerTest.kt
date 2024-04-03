@@ -10,7 +10,7 @@ import token.TokenInfo.TokenType
 class LexerTest {
     @Test
     fun lexerNumberTest() {
-        val input = "let a: number = 8;"
+        val input = "let a: number = 3;"
         val lexer = LexerImpl()
         val token1 = TokenInfo(Token(TokenType.KEYWORD, "let"), Position(0, 2))
         val token2 = TokenInfo(Token(TokenType.IDENTIFIER, "a"), Position(4, 4))

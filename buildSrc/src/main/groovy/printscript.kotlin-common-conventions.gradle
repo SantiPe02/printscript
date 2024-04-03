@@ -78,4 +78,6 @@ tasks.register("installGitHooks", Copy) {
     into { new File(rootProject.rootDir, ".git/hooks") }
 }
 
-build.dependsOn("installGitHooks")
+tasks.named("build") {
+    dependsOn("installGitHooks")
+}
