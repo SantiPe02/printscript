@@ -8,8 +8,11 @@ import java.nio.charset.Charset
 class FileFormatter(val textFormatter: IFormatter) {
     fun format(dir: String) {
         val file = File(dir)
-        if (file.isDirectory) file.listFiles()?.forEach {format(it.path)}
-        else if (file.isFile) formatFile(file)
+        if (file.isDirectory) {
+            file.listFiles()?.forEach { format(it.path) }
+        } else if (file.isFile) {
+            formatFile(file)
+        }
     }
 
     private fun formatFile(file: File) {
@@ -17,7 +20,7 @@ class FileFormatter(val textFormatter: IFormatter) {
         val temptFile = File(file.parent, "tempt.ps")
 
         file.inputStream().buffered().use { inputStream ->
-            temptFile.outputStream().buffered().use {outputStream ->
+            temptFile.outputStream().buffered().use { outputStream ->
                 readFileAndWriteFormattedCode(inputStream, outputStream)
             }
         }
@@ -34,7 +37,7 @@ class FileFormatter(val textFormatter: IFormatter) {
     private fun readFileAndWriteFormattedCode(
         inputStream: BufferedInputStream,
         outputStream: BufferedOutputStream,
-        blockSize : Int = 4096
+        blockSize: Int = 4096,
     ) {
         val buffer = ByteArray(blockSize)
         var bytesRead = inputStream.read(buffer)

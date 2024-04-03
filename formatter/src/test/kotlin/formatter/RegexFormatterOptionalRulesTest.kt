@@ -165,17 +165,17 @@ class RegexFormatterOptionalRulesTest {
     @Test
     fun test021_multiRules() {
         val text = "let a :number=12;let b:number = 4;a= a/b;\n\n\n\nprintln(\"Result \" + a);"
-        val formatter = RegexFormatter(
-            listOf(
-                RegexFormatter.Rule("\\s*=\\s*", " = "),
-                RegexFormatter.Rule(":", " : "),
-                RegexFormatter.Rule("\n{4,}println", "\n\n\nprintln")
+        val formatter =
+            RegexFormatter(
+                listOf(
+                    RegexFormatter.Rule("\\s*=\\s*", " = "),
+                    RegexFormatter.Rule(":", " : "),
+                    RegexFormatter.Rule("\n{4,}println", "\n\n\nprintln"),
+                ),
             )
-        )
         Assertions.assertEquals(
             "let a : number = 12;\nlet b : number = 4;\na = a / b;\n\n\nprintln(\"Result \" + a);",
-            formatter.formatString(text)
+            formatter.formatString(text),
         )
     }
-
 }

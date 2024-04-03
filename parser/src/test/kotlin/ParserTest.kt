@@ -1,4 +1,6 @@
+import ast.AssignmentStatement
 import ast.Call
+import ast.DeclarationStatement
 import ast.LiteralArgument
 import ast.MethodResult
 import ast.Range
@@ -27,7 +29,6 @@ class ParserTest {
                     VariableDeclaration(Range(4, 4), "a", "int", LiteralArgument(Range(13, 13), "5", "int")),
                 ),
             )
-
 
         assertEquals(expected, ast)
     }
@@ -641,13 +642,7 @@ class ParserTest {
         val code = "let test: int = sum(3, sum(5, 2));"
         val tokens = LexerImpl().tokenize(code)
         val commons = ParserCommons()
-<<<<<<< HEAD
-        println(tokens[6].token.text)
-        println(tokens[15].token.text)
         val gotChar = commons.searchForClosingCharacter(tokens, "(", 6)
-=======
-        val gotChar = commons.searchForClosingCharacter(tokens,"(", 6)
->>>>>>> master
         val expected = 15
         assertEquals(expected, gotChar)
     }
@@ -658,12 +653,7 @@ class ParserTest {
 
         val tokens = LexerImpl().tokenize(code)
         val commons = ParserCommons()
-<<<<<<< HEAD
-        println(tokens[14].token.text)
         val gotChar = commons.searchForClosingCharacter(tokens, "(", 10)
-=======
-        val gotChar = commons.searchForClosingCharacter(tokens,"(", 10)
->>>>>>> master
         val expected = 14
         assertEquals(expected, gotChar)
     }
@@ -720,94 +710,130 @@ class ParserTest {
 
         assertEquals(expected, ast)
     }
-<<<<<<< HEAD
-}
-=======
 
     @Test
-    fun test023_expresionStatementTest(){
+    fun test023_expresionStatementTest() {
         val code = "let a: int;"
         val tokens = LexerImpl().tokenize(code)
         val parser: Parser = MyParser()
         val ast = parser.parseTokens(tokens)
-        val expected = Scope(
-            "program",
-            Range(0, 10),
-            listOf( DeclarationStatement(Range(4, 4), "a", "int")));
+        val expected =
+            Scope(
+                "program",
+                Range(0, 10),
+                listOf(DeclarationStatement(Range(4, 4), "a", "int")),
+            )
         assertEquals(ast, expected)
     }
 
     @Test
-    fun test024_variableDeclarationInTwoDifferentParts(){
+    fun test024_variableDeclarationInTwoDifferentParts() {
         val code = "let a: int; a = 54;"
         val tokens = LexerImpl().tokenize(code)
         val parser: Parser = MyParser()
         val ast = parser.parseTokens(tokens)
-        val expected = Scope(
-            "program",
-            Range(0, 18),
-            listOf( DeclarationStatement(Range(4, 4), "a", "int"),
-                    AssignmentStatement(Range(12,12), "a", LiteralArgument(Range(16,17), "54", "int"))));
+        val expected =
+            Scope(
+                "program",
+                Range(0, 18),
+                listOf(
+                    DeclarationStatement(Range(4, 4), "a", "int"),
+                    AssignmentStatement(Range(12, 12), "a", LiteralArgument(Range(16, 17), "54", "int")),
+                ),
+            )
 
         assertEquals(ast, expected)
     }
 
     @Test
-    fun test025_assignementStatement(){
+    fun test025_assignementStatement() {
         val code = "a = 54;"
         val tokens = LexerImpl().tokenize(code)
         val parser: Parser = MyParser()
         val ast = parser.parseTokens(tokens)
-        val expected = Scope(
-            "program",
-            Range(0, 6),
-            listOf( AssignmentStatement(Range(0, 0), "a", LiteralArgument(Range(4, 5), "54", "int"))))
+        val expected =
+            Scope(
+                "program",
+                Range(0, 6),
+                listOf(AssignmentStatement(Range(0, 0), "a", LiteralArgument(Range(4, 5), "54", "int"))),
+            )
 
         assertEquals(ast, expected)
     }
 
     @Test
-    fun test026_assignementStatementArgumentIsLiteralAndCorrect(){
+    fun test026_assignementStatementArgumentIsLiteralAndCorrect() {
         val code = "a = 54;"
         val tokens = LexerImpl().tokenize(code)
         val parser: Parser = MyParser()
         val ast = parser.parseTokens(tokens)
         val first = ast.body.first()
-        if(first is AssignmentStatement){
+        if (first is AssignmentStatement) {
             assertEquals(first.value, LiteralArgument(Range(4, 5), "54", "int"))
         }
     }
+
     @Test
-    fun test027_testSumOfTwoVariableArguments(){
+    fun test027_testSumOfTwoVariableArguments() {
         val code = "let sum: int = a + b;"
         val tokens = LexerImpl().tokenize(code)
         val parser: Parser = MyParser()
         val ast = parser.parseTokens(tokens)
-        val expected = Scope(
-            "program",
-            Range(0, 20),
-            listOf(
-                VariableDeclaration(Range(4, 6), "sum", "int",
-                    MethodResult(Range(17, 17), Call((Range(15, 19)), "+",
-                        listOf( VariableArgument(Range(15, 15), "a"),
-                                VariableArgument(Range(19, 19), "b")))))));
+        val expected =
+            Scope(
+                "program",
+                Range(0, 20),
+                listOf(
+                    VariableDeclaration(
+                        Range(4, 6),
+                        "sum",
+                        "int",
+                        MethodResult(
+                            Range(17, 17),
+                            Call(
+                                (Range(15, 19)),
+                                "+",
+                                listOf(
+                                    VariableArgument(Range(15, 15), "a"),
+                                    VariableArgument(Range(19, 19), "b"),
+                                ),
+                            ),
+                        ),
+                    ),
+                ),
+            )
         assertEquals(expected, ast)
     }
+
     @Test
-    fun test028_testSumOfTwoVariableArguments_withFirstVariableArgBeingAlsoTheIdentifier(){
+    fun test028_testSumOfTwoVariableArguments_withFirstVariableArgBeingAlsoTheIdentifier() {
         val code = "let a: int = a + b;"
         val tokens = LexerImpl().tokenize(code)
         val parser: Parser = MyParser()
         val ast = parser.parseTokens(tokens)
-        val expected = Scope(
-            "program",
-            Range(0, 18),
-            listOf(
-                VariableDeclaration(Range(4, 4), "a", "int",
-                    MethodResult(Range(15, 15), Call((Range(13, 17)), "+",
-                        listOf( VariableArgument(Range(13, 13), "a"),
-                                VariableArgument(Range(17, 17), "b")))))));
+        val expected =
+            Scope(
+                "program",
+                Range(0, 18),
+                listOf(
+                    VariableDeclaration(
+                        Range(4, 4),
+                        "a",
+                        "int",
+                        MethodResult(
+                            Range(15, 15),
+                            Call(
+                                (Range(13, 17)),
+                                "+",
+                                listOf(
+                                    VariableArgument(Range(13, 13), "a"),
+                                    VariableArgument(Range(17, 17), "b"),
+                                ),
+                            ),
+                        ),
+                    ),
+                ),
+            )
         assertEquals(expected, ast)
     }
 }
->>>>>>> master
