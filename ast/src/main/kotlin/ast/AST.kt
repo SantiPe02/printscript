@@ -8,8 +8,8 @@ package ast
 sealed interface AST {
     val range: Range
 }
-class Range(val start: Int, val end: Int) {
 
+class Range(val start: Int, val end: Int) {
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (other !is Range) return false
@@ -29,7 +29,6 @@ class Range(val start: Int, val end: Int) {
  * @param body: the things that the scope is composed of.
  */
 class Scope(val type: String, override val range: Range, val body: Collection<AST>) : AST {
-
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (other !is Scope) return false
@@ -56,9 +55,6 @@ class Scope(val type: String, override val range: Range, val body: Collection<AS
     }
 }
 
-
-
-
 /**
  * Contains information required for the call of a method.
  * @param range: the range of the call, from the start of first argument to the end of the last.
@@ -76,6 +72,7 @@ class Call(override val range: Range, val name: String, val arguments: Collectio
 
         return true
     }
+
     override fun hashCode(): Int {
         var result = range.hashCode()
         result = 31 * result + name.hashCode()
@@ -84,12 +81,12 @@ class Call(override val range: Range, val name: String, val arguments: Collectio
     }
 }
 
-
 /**
  * Used to contain data of declarations.
  * There are different type of declarations
  */
 sealed interface Declaration : AST
+
 /**
  * class with the information for variable declarations.
  * @param variableName: the name of the variable being declared
@@ -100,8 +97,8 @@ class VariableDeclaration(
     override val range: Range,
     val variableName: String,
     val variableType: String,
-    val value: Argument
-) : Declaration{
+    val value: Argument,
+) : Declaration {
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (other !is VariableDeclaration) return false
@@ -123,12 +120,12 @@ class VariableDeclaration(
     }
 }
 
-sealed interface Argument: AST
+sealed interface Argument : AST
+
 class LiteralArgument(override val range: Range, val value: String, val type: String) : Argument {
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (other !is LiteralArgument) return false
-
 
         if (range != other.range) return false
         if (value != other.value) return false
@@ -163,7 +160,6 @@ class VariableArgument(override val range: Range, val name: String) : Argument {
     }
 }
 
-
 // Range: range of the operator, in 5 + 3 range is Range(2,2)
 class MethodResult(override val range: Range, val methodCall: Call) : Argument {
     override fun equals(other: Any?): Boolean {
@@ -182,5 +178,3 @@ class MethodResult(override val range: Range, val methodCall: Call) : Argument {
         return result
     }
 }
-
-

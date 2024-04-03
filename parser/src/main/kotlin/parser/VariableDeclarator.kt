@@ -1,18 +1,23 @@
 package parser
 
-import ast.*
+import ast.Argument
+import ast.Declaration
+import ast.VariableDeclaration
 import token.TokenInfo
 
 class VariableDeclarator : DeclarationValidator {
-    val commons:ParserCommons = ParserCommons();
+    val commons: ParserCommons = ParserCommons()
 
     /* todo:
         --> ¿What if I have let num:int > 6?
         --> Brackets should close.
         --> There is a lot of circular dependency. Maybe should put all the "ParserCommons()" inside parser.
-    */
+     */
 
-    override fun declare(tokens: List<TokenInfo>,  i: Int): Declaration {
+    override fun declare(
+        tokens: List<TokenInfo>,
+        i: Int,
+    ): Declaration {
         var j = i
         val variableName = commons.getTokenByType(tokens[++j].token, TokenInfo.TokenType.IDENTIFIER)
         val variable = tokens[j]
@@ -23,24 +28,24 @@ class VariableDeclarator : DeclarationValidator {
         val arguments = getVariableArguments(tokens, ++j) // arguments could be empty, which is the same to saying let name:String;
         val variableArgument: Argument = VariableArgumentDeclarator().declareArgument(tokens, arguments, j)
 
-
         return VariableDeclaration(commons.getRangeOfTokenList(listOf(variable)), variableName.text, variableType.text, variableArgument)
     }
 
-
-    fun getVariableArguments(tokens: List<TokenInfo>, i: Int): List<TokenInfo> {
+    fun getVariableArguments(
+        tokens: List<TokenInfo>,
+        i: Int,
+    ): List<TokenInfo> {
         val arguments = mutableListOf<TokenInfo>()
         var j = i
-        while(j < tokens.size) // si hay una suma o algo raro repetir los métodos y así...
+        while (j < tokens.size) // si hay una suma o algo raro repetir los métodos y así...
         {
-            if(commons.isEndOfVarChar(tokens, j)){
+            if (commons.isEndOfVarChar(tokens, j)) {
                 break
+            } else {
+                arguments.add(tokens[j])
             }
-            else{
-                arguments.add(tokens[j])}
             j++
         }
         return arguments
     }
-
 }
