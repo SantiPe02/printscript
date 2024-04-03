@@ -18,4 +18,5 @@ include 'ast'
 include 'token'
 include 'parser'
 include 'util'
+include 'formatter'
 

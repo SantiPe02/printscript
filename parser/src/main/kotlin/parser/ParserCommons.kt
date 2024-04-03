@@ -203,4 +203,10 @@ class ParserCommons {
         val endPos = tokenList[tokenList.size - 1].position.endIndex
         return Range(startPos, endPos)
     }
+
+    fun isOfTextAndType(token: TokenInfo.Token, s: String, operator: TokenInfo.TokenType): Boolean {
+        return token.text == s && token.type == operator
+    }
+
+
 }
