@@ -13,14 +13,16 @@ class RegexFormatter(val rules: List<Rule> = listOf()) : IFormatter {
             findMatchingRule(it, rules)?.newText ?: it.value
         }
 
-    private fun buildCombinedPatter(rules: List<Rule>): String = rules.joinToString(separator = "|") { it.pattern }
+    private fun buildCombinedPatter(rules: List<Rule>): String = """("[^"]*")|""" + rules.joinToString(separator = "|") { it.pattern }
 
     private fun mandatoryFormatting(sourceCode: String): String =
-        sourceCode.replace(Regex("\\s*([-+*/])\\s*| {2,}|;(?!\n)(?!$)")) {
+        sourceCode.replace(Regex("""\s*([-+*/])\s*|("[^"]*")| {2,}|;(?!\n)(?!$)""")) {
             if (it.groups[1] != null) {
                 " ${it.value.trim()} "
             } else if (it.value == ";") {
                 ";\n"
+            } else if (it.value.matches(Regex("""("[^"]*")"""))) {
+                it.value
             } else {
                 " "
             }

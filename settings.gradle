@@ -19,4 +19,5 @@ include 'token'
 include 'parser'
 include 'util'
 include 'formatter'
-
+include 'jacocoreport'
+include 'linter'

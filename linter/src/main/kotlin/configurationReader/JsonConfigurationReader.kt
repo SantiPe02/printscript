@@ -2,14 +2,12 @@ package configurationReader
 
 import IConfigurationReader
 import LinterConfiguration
-import ast.AST
-import java.io.File
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import com.google.gson.JsonDeserializer
+import java.io.File
 
-object JsonConfigurationReader: IConfigurationReader {
-
+object JsonConfigurationReader : IConfigurationReader {
     override fun getFileExtension(): String = "json"
 
     override fun readFileAndBuildRules(configFile: File): Result<LinterConfiguration> {
@@ -68,5 +66,3 @@ object JsonConfigurationReader: IConfigurationReader {
         return gsonBuilder.create()
     }
 }
-
-

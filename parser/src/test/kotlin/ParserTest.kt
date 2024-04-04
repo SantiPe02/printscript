@@ -838,23 +838,50 @@ class ParserTest {
     }
 
     @Test
-    fun test029_testIsolatedMethodCall(){
+    fun test029_testIsolatedMethodCall() {
         val code = "println(34);"
         val tokens = LexerImpl().tokenize(code)
         val parser: Parser = MyParser()
         val ast = parser.parseTokens(tokens)
-        val expected = Scope("program", Range(0, 11), listOf(MethodResult(Range(0, 6), Call(Range(8, 9), "println", listOf(LiteralArgument(Range(8, 9), "34", "int"))))))
+        val expected =
+            Scope(
+                "program",
+                Range(0, 11),
+                listOf(MethodResult(Range(0, 6), Call(Range(8, 9), "println", listOf(LiteralArgument(Range(8, 9), "34", "int"))))),
+            )
         assertEquals(expected, ast)
     }
 
     @Test
-    fun test030_testIsolatedMethodCallWithInsideMethod(){
+    fun test030_testIsolatedMethodCallWithInsideMethod() {
         val code = "println(34 + 4);"
         val tokens = LexerImpl().tokenize(code)
         val parser: Parser = MyParser()
         val ast = parser.parseTokens(tokens)
-        val expected = Scope("program", Range(0, 15), listOf(MethodResult(Range(0, 6), Call(Range(8, 13), "println", listOf(MethodResult(Range(11, 11), Call(Range(8, 13), "+", listOf(LiteralArgument(Range(8, 9), "34", "int"), LiteralArgument(Range(13, 13), "4", "int")))))))))
+        val expected =
+            Scope(
+                "program",
+                Range(0, 15),
+                listOf(
+                    MethodResult(
+                        Range(0, 6),
+                        Call(
+                            Range(8, 13),
+                            "println",
+                            listOf(
+                                MethodResult(
+                                    Range(11, 11),
+                                    Call(
+                                        Range(8, 13),
+                                        "+",
+                                        listOf(LiteralArgument(Range(8, 9), "34", "int"), LiteralArgument(Range(13, 13), "4", "int")),
+                                    ),
+                                ),
+                            ),
+                        ),
+                    ),
+                ),
+            )
         assertEquals(expected, ast)
     }
-
 }

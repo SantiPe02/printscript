@@ -8,7 +8,11 @@ import token.TokenInfo
 class MethodResultDeclarator : ArgumentDeclarator {
     val commons = ParserCommons()
 
-    override fun declareArgument(tokens: List<TokenInfo>, arguments: List<TokenInfo>, i: Int): MethodResult {
+    override fun declareArgument(
+        tokens: List<TokenInfo>,
+        arguments: List<TokenInfo>,
+        i: Int,
+    ): MethodResult {
         val endIndex = commons.getEndOfVarIndex(tokens, i)
         val argument = methodArgument(tokens, i, endIndex, arguments)
 

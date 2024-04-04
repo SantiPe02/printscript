@@ -3,8 +3,10 @@ import ast.Range
 import ast.Scope
 import ast.VariableDeclaration
 import lexer.LexerImpl
-import linterRules.*
-import org.junit.jupiter.api.Assertions.*
+import linterRules.CamelCaseRule
+import linterRules.PrintlnWithoutExpressionRule
+import linterRules.UndeclaratedVariableStatementRule
+import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 import parser.MyParser
 import parser.Parser
@@ -24,7 +26,7 @@ class LinterTest {
 
     @Test
     fun test002_testIsNotCamelCase() {
-        val code = "let my_variable: int = 1;" //¡Es un scope! El primer elemento del body es el variableDeclaration
+        val code = "let my_variable: int = 1;" // ¡Es un scope! El primer elemento del body es el variableDeclaration
         val camelCaseRule = CamelCaseRule()
         val tokens = LexerImpl().tokenize(code)
         val parser: Parser = MyParser()
@@ -56,7 +58,7 @@ class LinterTest {
     }
 
     @Test
-    fun test005_testLinterWithCamelCaseRule(){
+    fun test005_testLinterWithCamelCaseRule() {
         val code = "let myVariable: int = 1; let my_variable: int = 1;"
         val tokens = LexerImpl().tokenize(code)
         val parser: Parser = MyParser()
@@ -68,9 +70,8 @@ class LinterTest {
         assertEquals(linter.lintScope(ast, rules), expectedResult)
     }
 
-
     @Test
-    fun test006_testLinterWithCamelCaseAndPrintlnRule(){
+    fun test006_testLinterWithCamelCaseAndPrintlnRule() {
         val code = "let myVariable: int = 1; println(\"Hello, World!\" + 1);"
         val tokens = LexerImpl().tokenize(code)
         val parser: Parser = MyParser()
@@ -82,7 +83,7 @@ class LinterTest {
     }
 
     @Test
-    fun test007_UndeclaredVariableStatementRule_itIsNeverDeclared(){
+    fun test007_UndeclaredVariableStatementRule_itIsNeverDeclared() {
         val code = "let myVariable: int;"
         val tokens = LexerImpl().tokenize(code)
         val parser: Parser = MyParser()
@@ -92,8 +93,9 @@ class LinterTest {
         val expectedResult = listOf(WarningResult(Range(4, 13), "myVariable is never declared."))
         assertEquals(linter.lintScope(ast, rules), expectedResult)
     }
+
     @Test
-    fun test008_UndeclaredVariableStatementRule_itIsDeclared(){
+    fun test008_UndeclaredVariableStatementRule_itIsDeclared() {
         val code = "let myVariable: int; myVariable = 1;"
         val tokens = LexerImpl().tokenize(code)
         val parser: Parser = MyParser()
