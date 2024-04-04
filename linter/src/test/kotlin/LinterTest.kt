@@ -70,7 +70,6 @@ class LinterTest {
         assertEquals(linter.lintScope(ast, rules), expectedResult)
     }
 
-    // failing at parser.kt 112.
     @Test
     fun test006_testLinterWithCamelCaseAndPrintlnRule() {
         val code = "let myVariable: int = 1; println(\"Hello, World!\" + 1);"

@@ -44,21 +44,14 @@ class MyParser : Parser {
     }
 
     // ¿Eventualmente hacer un KeywordParser?
-    private fun parseKeyword(
-        tokens: List<TokenInfo>,
-        token: Token,
-        i: Int,
-    ): AST {
+    private fun parseKeyword(tokens: List<TokenInfo>, token: Token, i: Int): AST {
         return when (token.text) {
             "let" -> declareVariable(tokens, i)
             else -> throw Exception("Invalid keyword")
         }
     }
 
-    private fun declareVariable(
-        tokens: List<TokenInfo>,
-        i: Int,
-    ): Declaration {
+    private fun declareVariable(tokens: List<TokenInfo>, i: Int): Declaration {
         val variableDec = VariableDeclarator()
         return variableDec.declare(tokens, i)
     }
@@ -94,22 +87,14 @@ class MyParser : Parser {
         return LiteralArgument(Range(0, 0), token.text, "String")
     }
 
-    private fun parseIdentifier(
-        tokens: List<TokenInfo>,
-        token: Token,
-        i: Int,
-    ): AST {
-        // two cases, as for now
-        // used as a variable: a = 4;
-        // used as a isolated method declaration: println("Hello World");
-        // so, if after the identifier there is an '(' or a '.' (test.method()), we handle method call.
 
-        if (tokens[i + 1].token.text == "(") {
-            val closingParenthesisIndex = commons.searchForClosingCharacter(tokens, "(", i + 1)
-            println(closingParenthesisIndex)
+    // two cases, as for now
+    // 1. used as a variable: a = 4;
+    // 2. used as a isolated method declaration: println("Hello World");
+    private fun parseIdentifier(tokens: List<TokenInfo>, token: Token, i: Int): AST {
+        if(tokens[i+1].token.text == "(") {
+            val closingParenthesisIndex = commons.searchForClosingCharacter(tokens, "(", i+1)
             val methodDec = MethodResultDeclarator()
-            println(i)
-            // ++closingParenthesisIndex
             return methodDec.methodArgument(tokens, i, closingParenthesisIndex, tokens.subList(i, closingParenthesisIndex + 1))
         }
 
