@@ -40,12 +40,9 @@ class RegexFormatterMandatoryRulesTest {
     // TODO: newLineAfeterSemicolon_IfNoNewLineAndSomeSpacesAssNewLineFormat
     // ("let a:String=\"this is a string\";    a=\"This is also a string\";")
 
-
-
-
     @Test
     fun test008_SpaceBeforeAndAfetOperator_NoSpacesAndSomeValuesThenAddSpacesBetweenOperatorAndValues() {
-        for (operator in listOf("+", "-", "*", "/")){
+        for (operator in listOf("+", "-", "*", "/")) {
             val text = "let c : Int = a${operator}b${operator}d;"
             Assertions.assertEquals("let c : Int = a $operator b $operator d;", RegexFormatter().formatString(text))
         }
