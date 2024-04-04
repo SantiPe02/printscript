@@ -20,4 +20,5 @@ include 'parser'
 include 'util'
 include 'cli'
 include 'formatter'
-
+include 'jacocoreport'
+include 'linter'

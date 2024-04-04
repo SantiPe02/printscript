@@ -3,7 +3,9 @@ package commands
 import ast.Range
 import com.github.ajalt.clikt.testing.test
 import lexer.LexerImpl
-import org.junit.jupiter.api.Assertions.*
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertNotEquals
+import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 import parser.MyParser
 import java.io.File
@@ -19,7 +21,7 @@ class AnalyzingCommandTest {
     @Test
     fun test002_ifCallAnalyzingCommandWithoutExistingSourcecodeFileThenError() {
         val fileDir = "souce.ps"
-        val configFile = File.createTempFile("config",".json")
+        val configFile = File.createTempFile("config", ".json")
         val command = Analyzing(LexerImpl(), MyParser(), MockLinter(listOf()))
 
         val result = command.test("$fileDir ${configFile.path.replace("\\", "/")}")
@@ -31,7 +33,7 @@ class AnalyzingCommandTest {
     @Test
     fun test003_ifCallAnalyzingCommandWithoutExistingConfigFileThenError() {
         val fileDir = "config.json"
-        val sourceFile = File.createTempFile("source",".ps")
+        val sourceFile = File.createTempFile("source", ".ps")
         val command = Analyzing(LexerImpl(), MyParser(), MockLinter(listOf()))
 
         val result = command.test("${sourceFile.path.replace("\\", "/")} $fileDir")
@@ -58,8 +60,14 @@ class AnalyzingCommandTest {
         val sourceFile = File.createTempFile("source", ".ps")
         sourceFile.writeText("let a : number = 1;")
         val configFile = File.createTempFile("config", ".json")
-        val command = Analyzing(LexerImpl(), MyParser(), MockLinter(
-            listOf(WarningResult(Range(0,1), "warning1"), WarningResult(Range(1,2), "warning2"))))
+        val command =
+            Analyzing(
+                LexerImpl(),
+                MyParser(),
+                MockLinter(
+                    listOf(WarningResult(Range(0, 1), "warning1"), WarningResult(Range(1, 2), "warning2")),
+                ),
+            )
 
         val result = command.test("${sourceFile.path.replace("\\", "/")} ${configFile.path.replace("\\", "/")}")
 

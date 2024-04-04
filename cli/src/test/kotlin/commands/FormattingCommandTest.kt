@@ -8,7 +8,7 @@ import java.io.File
 
 class FormattingCommandTest {
     @Test
-    fun test001_whenFormattingCommandWithoutArgsThenCommandFailWithMessage(){
+    fun test001_whenFormattingCommandWithoutArgsThenCommandFailWithMessage() {
         val result = Formatting().test("")
         assertTrue(result.statusCode != 0)
         assertTrue(result.output.contains("Usage"))
@@ -27,8 +27,8 @@ class FormattingCommandTest {
      */
     @Test
     fun test003_whenFormattingCommandWithNotExistingSourcecodeFileThenRunSmooth() {
-        val configFile = File.createTempFile("config",".json")
-        //since this json does not contain data the standard config is being use
+        val configFile = File.createTempFile("config", ".json")
+        // since this json does not contain data the standard config is being use
         configFile.appendText("{\"one\":\"two\"}")
 
         val result = Formatting().test("file1.ps ${configFile.path.replace("\\", "/")}")
@@ -38,8 +38,8 @@ class FormattingCommandTest {
 
     @Test
     fun test004_whenFormatMethodFailsThenAnFailWithMessage() {
-        val configFile = File.createTempFile("config",".txt")
-        //since this json does not contain data the standard config is being use
+        val configFile = File.createTempFile("config", ".txt")
+        // since this json does not contain data the standard config is being use
         configFile.appendText("{\"one\":\"two\"}")
 
         val result = Formatting().test("file1.ps ${configFile.path.replace("\\", "/")}")

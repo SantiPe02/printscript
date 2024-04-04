@@ -7,8 +7,8 @@ import formater.format
 import java.io.File
 
 class Formatting : CliktCommand() {
-    val file : String by argument(help = "the file direction to format")
-    val config : String by argument(help = "The configuration file for the formatter")
+    val file: String by argument(help = "the file direction to format")
+    val config: String by argument(help = "The configuration file for the formatter")
 
     override fun run() {
         val configFile = File(config)

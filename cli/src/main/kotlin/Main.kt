@@ -6,7 +6,8 @@ import commands.Printscript
 import lexer.LexerImpl
 import parser.MyParser
 
-fun main(args: Array<String>): Unit = Printscript().subcommands(
-    Formatting(),
-    Analyzing(LexerImpl(), MyParser(), MockLinter(listOf()))
-).main(args)
+fun main(args: Array<String>): Unit =
+    Printscript().subcommands(
+        Formatting(),
+        Analyzing(LexerImpl(), MyParser(), MockLinter(listOf())),
+    ).main(args)

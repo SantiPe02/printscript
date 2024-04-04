@@ -3,7 +3,7 @@ package formater.configurationReader
 import formater.IConfigurationReader
 
 class ConfigurationReaderProvider {
-    fun getReader(extension: String) : Result<IConfigurationReader> {
+    fun getReader(extension: String): Result<IConfigurationReader> {
         return when (extension) {
             "json" -> Result.success(JsonConfigurationReader)
             "yaml" -> Result.success(YamlConfigurationReader)

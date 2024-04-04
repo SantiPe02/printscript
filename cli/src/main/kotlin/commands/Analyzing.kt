@@ -9,9 +9,9 @@ import lexer.Lexer
 import parser.Parser
 import java.io.File
 
-class Analyzing(val lexer: Lexer, val parser : Parser, val linter: Linter) : CliktCommand() {
-    val file : String by argument()
-    val configFile : String by argument()
+class Analyzing(val lexer: Lexer, val parser: Parser, val linter: Linter) : CliktCommand() {
+    val file: String by argument()
+    val configFile: String by argument()
 
     override fun run() {
         val fileInstance = File(file)
@@ -20,7 +20,7 @@ class Analyzing(val lexer: Lexer, val parser : Parser, val linter: Linter) : Cli
         val configFile = File(configFile)
         if (!configFile.exists()) throw CliktError("The configuration file could not be found in $configFile")
 
-        //TODO("Get rules")
+        // TODO("Get rules")
         val warnings = linter.lint(parser.parseTokens(lexer.tokenize(fileInstance.readText())), listOf())
         echo("Analyze finished with ${warnings.size} warnings")
         warnings.forEach { warning -> echo("${warning.message} in range ${warning.range.start}:${warning.range.end}") }
@@ -28,20 +28,26 @@ class Analyzing(val lexer: Lexer, val parser : Parser, val linter: Linter) : Cli
 }
 
 sealed interface Linter {
-    fun lint(ast: AST, rules: List<LinterRule>) : List<WarningResult>
+    fun lint(
+        ast: AST,
+        rules: List<LinterRule>,
+    ): List<WarningResult>
 }
 
 class MockLinter(val warnings: List<WarningResult>) : Linter {
-    override fun lint(ast: AST, rules: List<LinterRule>): List<WarningResult> = warnings
+    override fun lint(
+        ast: AST,
+        rules: List<LinterRule>,
+    ): List<WarningResult> = warnings
 }
 
-sealed interface LinterRule{
+sealed interface LinterRule {
     fun ruleIsValid(tree: AST): ValidationResult
 }
 
-sealed interface ValidationResult{}
+sealed interface ValidationResult
 
-class WarningResult(val range: Range, val message: String): ValidationResult {
+class WarningResult(val range: Range, val message: String) : ValidationResult {
     fun getWarning(): Pair<Range, String> = Pair(range, message)
 
     override fun equals(other: Any?): Boolean {

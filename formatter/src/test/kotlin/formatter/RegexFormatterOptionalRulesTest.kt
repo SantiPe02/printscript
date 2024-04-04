@@ -156,26 +156,43 @@ class RegexFormatterOptionalRulesTest {
     }
 
     @Test
-    fun test021_changeLinePrintln_if4NPrintlnThen3NPrintln() {
+    fun test022_changeLinePrintln_if4NPrintlnThen3NPrintln() {
         val text = "\n\n\n\nprintln(\"text\")"
         val formatter = RegexFormatter(listOf(RegexFormatter.Rule("\n{4,}println", "\n\n\nprintln")))
         Assertions.assertEquals("\n\n\nprintln(\"text\")", formatter.formatString(text))
     }
 
     @Test
-    fun test021_multiRules() {
+    fun test023_multiRules() {
         val text = "let a :number=12;let b:number = 4;a= a/b;\n\n\n\nprintln(\"Result \" + a);"
-        val formatter = RegexFormatter(
-            listOf(
-                RegexFormatter.Rule("\\s*=\\s*", " = "),
-                RegexFormatter.Rule(":", " : "),
-                RegexFormatter.Rule("\n{4,}println", "\n\n\nprintln")
+        val formatter =
+            RegexFormatter(
+                listOf(
+                    RegexFormatter.Rule("\\s*=\\s*", " = "),
+                    RegexFormatter.Rule(":", " : "),
+                    RegexFormatter.Rule("\n{4,}println", "\n\n\nprintln"),
+                ),
             )
-        )
         Assertions.assertEquals(
             "let a : number = 12;\nlet b : number = 4;\na = a / b;\n\n\nprintln(\"Result \" + a);",
-            formatter.formatString(text)
+            formatter.formatString(text),
         )
     }
 
+    @Test
+    fun test024_multiRulesWithTextWithPatternsInside_ThenNoModifiedText() {
+        val text = "let a :string=\"hola ; como+estas:ponele un println\";let b:number = 4;a= a/b;\n\n\n\nprintln(\"Result \" + a);"
+        val formatter =
+            RegexFormatter(
+                listOf(
+                    RegexFormatter.Rule("\\s*=\\s*", " = "),
+                    RegexFormatter.Rule(":", " : "),
+                    RegexFormatter.Rule("\n{4,}println", "\n\n\nprintln"),
+                ),
+            )
+        Assertions.assertEquals(
+            "let a : string = \"hola ; como+estas:ponele un println\";\nlet b : number = 4;\na = a / b;\n\n\nprintln(\"Result \" + a);",
+            formatter.formatString(text),
+        )
+    }
 }
