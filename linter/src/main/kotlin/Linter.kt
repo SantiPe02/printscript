@@ -1,4 +1,5 @@
 import ast.AST
+import result.validation.WarningResult
 
 /**
     'Until you make the unconscious conscious, it will direct your life
@@ -8,7 +9,7 @@ import ast.AST
  */
 
 sealed interface Linter {
-    fun lint(ASTFile: AST)
+    fun lint(ASTFile: AST) : List<WarningResult>
 }
 
 // For each DECLARATION, we are going to lint.
@@ -18,7 +19,7 @@ sealed interface Linter {
 
 // AST tendrá un método que devuelva TODAS las declaraciones (?)
 class MyLinter : Linter {
-    override fun lint(ASTFile: AST) {
+    override fun lint(ASTFile: AST) : List<WarningResult>{
     // básicamente, traer todas las reglas del configReader, luego, por cada Scope, recursivamente llamar a todos los AST internos
     // y aplicar las reglas para cada uno.
 
@@ -28,9 +29,12 @@ class MyLinter : Linter {
         // para cada caso especifico resolvete.
         // finalmente, devolver una lista con todos los warnings q fuiste reciviendo
         // para testear, assertEquals(List(WarningResult(x), WarningResult(y)...), MyLinter().lint(ASTFile))
+        return emptyList()
+
 
 
     }
+
 
 }
 
