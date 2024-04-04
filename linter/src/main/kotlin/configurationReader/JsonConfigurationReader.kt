@@ -34,6 +34,7 @@ object JsonConfigurationReader: IConfigurationReader {
                 // standard values
                 var camelCase = true
                 var printlnWithoutExpression = true
+                var undeclaredVariableStatement = true
 
                 val jsonFieldSpaceBeforeColon = jsonObject.get("camelCase")
                 if (jsonFieldSpaceBeforeColon != null) {
@@ -52,8 +53,16 @@ object JsonConfigurationReader: IConfigurationReader {
                         println("WARNING: the field of println Without Expression was not a boolean type")
                     }
                 }
+                val jsonUndeclaredVariableStatement = jsonObject.get("undeclaredVariableStatement")
+                if (jsonUndeclaredVariableStatement != null) {
+                    try {
+                        undeclaredVariableStatement = jsonUndeclaredVariableStatement.asBoolean
+                    } catch (e: Exception) {
+                        println("WARNING: the field of Undeclared Variable Statement was not a boolean type")
+                    }
+                }
 
-                LinterConfiguration(camelCase, printlnWithoutExpression)
+                LinterConfiguration(camelCase, printlnWithoutExpression, undeclaredVariableStatement)
             },
         )
         return gsonBuilder.create()
