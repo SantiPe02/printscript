@@ -10,7 +10,7 @@ interface InputProvider {
     fun getContent(): String
 }
 
-class FileInput(private val path: String): InputProvider {
+class FileInput(private val path: String) : InputProvider {
     override fun getContent(): String {
         return try {
             val file = File(path)

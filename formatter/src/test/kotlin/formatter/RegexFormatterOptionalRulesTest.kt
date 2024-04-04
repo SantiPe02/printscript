@@ -182,17 +182,17 @@ class RegexFormatterOptionalRulesTest {
     @Test
     fun test024_multiRulesWithTextWithPatternsInside_ThenNoModifiedText() {
         val text = "let a :string=\"hola ; como+estas:ponele un println\";let b:number = 4;a= a/b;\n\n\n\nprintln(\"Result \" + a);"
-        val formatter = RegexFormatter(
-            listOf(
-                RegexFormatter.Rule("\\s*=\\s*", " = "),
-                RegexFormatter.Rule(":", " : "),
-                RegexFormatter.Rule("\n{4,}println", "\n\n\nprintln")
+        val formatter =
+            RegexFormatter(
+                listOf(
+                    RegexFormatter.Rule("\\s*=\\s*", " = "),
+                    RegexFormatter.Rule(":", " : "),
+                    RegexFormatter.Rule("\n{4,}println", "\n\n\nprintln"),
+                ),
             )
-        )
         Assertions.assertEquals(
             "let a : string = \"hola ; como+estas:ponele un println\";\nlet b : number = 4;\na = a / b;\n\n\nprintln(\"Result \" + a);",
-            formatter.formatString(text)
+            formatter.formatString(text),
         )
     }
-
 }
