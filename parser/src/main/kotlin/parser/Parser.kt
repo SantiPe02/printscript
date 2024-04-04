@@ -99,7 +99,17 @@ class MyParser : Parser {
         token: Token,
         i: Int,
     ): AST {
-        // As for now, the only way an identifier can be used is as a variable: a = 4;
+        // two cases, as for now
+        // used as a variable: a = 4;
+        // used as a isolated method declaration: println("Hello World");
+        // so, if after the identifier there is an '(' or a '.' (test.method()), we handle method call.
+
+        if(tokens[i+1].token.text == "(") {
+            val closingParenthesisIndex = commons.searchForClosingCharacter(tokens, "(", i+1)
+            val methodDec = MethodResultDeclarator()
+            return methodDec.methodArgument(tokens, i, closingParenthesisIndex, tokens) //++closingParenthesisIndex
+        }
+
         return declareVariable(tokens, i - 1)
     }
 
