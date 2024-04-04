@@ -1,9 +1,6 @@
 package linterRules
 
-import ast.AST
-import ast.Declaration
-import ast.Range
-import ast.VariableDeclaration
+import ast.*
 import result.validation.ValidResult
 import result.validation.ValidationResult
 import result.validation.WarningResult
@@ -12,7 +9,7 @@ import result.validation.WarningResult
 // the rule is quite simple.
 
 class CamelCaseRule:LinterRule {
-    override fun ruleIsValid(tree: AST): ValidationResult {
+    override fun ruleIsValid(scope: Scope, tree: AST): ValidationResult {
         return if(tree is Declaration)
             isCamelCase(tree)
         else

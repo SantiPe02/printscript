@@ -1,3 +1,4 @@
+import ast.MethodResult
 import ast.Range
 import ast.Scope
 import ast.VariableDeclaration
@@ -18,7 +19,7 @@ class LinterTest {
         val tokens = LexerImpl().tokenize(code)
         val parser: Parser = MyParser()
         val ast: Scope = parser.parseTokens(tokens) as Scope
-        assertEquals(camelCaseRule.ruleIsValid(ast.body.first()), ValidResult())
+        assertEquals(camelCaseRule.ruleIsValid(ast, ast.body.first()), ValidResult())
     }
 
     @Test
@@ -27,9 +28,9 @@ class LinterTest {
         val camelCaseRule = CamelCaseRule()
         val tokens = LexerImpl().tokenize(code)
         val parser: Parser = MyParser()
-        val ast: Scope = parser.parseTokens(tokens) as Scope
+        val ast: Scope = parser.parseTokens(tokens)
         println(ast.body.first()::class)
-        assertEquals(camelCaseRule.ruleIsValid(ast.body.first())::class, WarningResult::class)
+        assertEquals(camelCaseRule.ruleIsValid(ast, ast.body.first())::class, WarningResult::class)
     }
 
     @Test
@@ -39,7 +40,8 @@ class LinterTest {
         val parser: Parser = MyParser()
         val ast = parser.parseTokens(tokens)
         val rule = PrintlnWithoutExpressionRule()
-        assertEquals(rule.ruleIsValid(ast.body.first()), ValidResult())
+        val first = ast.body.first() as MethodResult
+        assertEquals(rule.ruleIsValid(ast, first.methodCall), ValidResult())
     }
 
     @Test
@@ -49,7 +51,8 @@ class LinterTest {
         val parser: Parser = MyParser()
         val ast = parser.parseTokens(tokens)
         val rule = PrintlnWithoutExpressionRule()
-        assertEquals(rule.ruleIsValid(ast.body.first())::class, WarningResult::class)
+        val first = ast.body.first() as MethodResult
+        assertEquals(rule.ruleIsValid(ast, first.methodCall)::class, WarningResult::class)
     }
 
     @Test
@@ -60,9 +63,45 @@ class LinterTest {
         val ast = parser.parseTokens(tokens)
         val linter = MyLinter()
         val rules = listOf(CamelCaseRule())
-        val wrongVar = ast.body.elementAtOrNull(1)as VariableDeclaration
+        val wrongVar = ast.body.elementAtOrNull(1) as VariableDeclaration
         val expectedResult = listOf(WarningResult(Range(29, 39), "${wrongVar.variableName} is not in Camel Case"))
-        assertEquals(linter.lint(ast, rules), expectedResult)
+        assertEquals(linter.lintScope(ast, rules), expectedResult)
     }
 
+
+    // failing at parser.kt 112.
+    @Test
+    fun test006_testLinterWithCamelCaseAndPrintlnRule(){
+        val code = "let myVariable: int = 1; println(\"Hello, World!\" + 1);"
+        val tokens = LexerImpl().tokenize(code)
+        val parser: Parser = MyParser()
+        val ast = parser.parseTokens(tokens)
+        val linter = MyLinter()
+        val rules = listOf(CamelCaseRule(), PrintlnWithoutExpressionRule())
+        val expectedResult = listOf(WarningResult(Range(33, 51), "println should not have an expression inside it."))
+        assertEquals(linter.lintScope(ast, rules), expectedResult)
+    }
+
+    @Test
+    fun test007_UndeclaredVariableStatementRule_itIsNeverDeclared(){
+        val code = "let myVariable: int;"
+        val tokens = LexerImpl().tokenize(code)
+        val parser: Parser = MyParser()
+        val ast = parser.parseTokens(tokens)
+        val linter = MyLinter()
+        val rules = listOf(UndeclaratedVariableStatementRule())
+        val expectedResult = listOf(WarningResult(Range(4, 13), "myVariable is never declared."))
+        assertEquals(linter.lintScope(ast, rules), expectedResult)
+    }
+    @Test
+    fun test008_UndeclaredVariableStatementRule_itIsDeclared(){
+        val code = "let myVariable: int; myVariable = 1;"
+        val tokens = LexerImpl().tokenize(code)
+        val parser: Parser = MyParser()
+        val ast = parser.parseTokens(tokens)
+        val linter = MyLinter()
+        val rules = listOf(UndeclaratedVariableStatementRule())
+        val expectedResult = listOf<WarningResult>()
+        assertEquals(linter.lintScope(ast, rules), expectedResult)
+    }
 }

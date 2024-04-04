@@ -1,10 +1,11 @@
 package linterRules
 
 import ast.AST
+import ast.Scope
 import result.validation.ValidationResult
 
 
 sealed interface LinterRule{
-    fun ruleIsValid(tree: AST): ValidationResult
+    fun ruleIsValid(scope: Scope, tree: AST): ValidationResult
 }
 
