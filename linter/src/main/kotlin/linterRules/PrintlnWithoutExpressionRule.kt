@@ -9,21 +9,25 @@ import result.validation.ValidationResult
 import result.validation.WarningResult
 
 class PrintlnWithoutExpressionRule : LinterRule {
-    override fun ruleIsValid(scope: Scope, tree: AST): ValidationResult {
+    override fun ruleIsValid(
+        scope: Scope,
+        tree: AST,
+    ): ValidationResult {
         // la lista del call .size == 1 && !MethodDeclaration.
-        return if(tree is Call){
-            if(tree.name != "println")
+        return if (tree is Call) {
+            if (tree.name != "println") {
                 ValidResult()
-            else {
-                if(tree.arguments.size == 1 && !(tree.arguments.first() is MethodResult))
+            } else {
+                if (tree.arguments.size == 1 && !(tree.arguments.first() is MethodResult)) {
                     ValidResult()
-                else if(tree.arguments.isEmpty())
+                } else if (tree.arguments.isEmpty()) {
                     ValidResult()
-                else
+                } else {
                     WarningResult(tree.range, "println should not have an expression inside it.")
+                }
             }
-        } else
+        } else {
             ValidResult()
-
+        }
     }
 }

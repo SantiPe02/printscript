@@ -1,3 +1,3 @@
 package result.validation
 
-sealed interface ValidationResult{}
+sealed interface ValidationResult
