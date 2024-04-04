@@ -109,7 +109,7 @@ class MyParser : Parser {
             println(closingParenthesisIndex)
             val methodDec = MethodResultDeclarator()
             println(i)
-            return methodDec.methodArgument(tokens, i-1, closingParenthesisIndex, tokens) //++closingParenthesisIndex
+            return methodDec.methodArgument(tokens, i, closingParenthesisIndex, tokens.subList(i, closingParenthesisIndex+1)) //++closingParenthesisIndex
         }
 
         return declareVariable(tokens, i - 1)
