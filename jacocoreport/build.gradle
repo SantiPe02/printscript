@@ -17,6 +17,21 @@ dependencies {
     jacocoAggregation project(':util')
 }
 
+tasks.named('check') {
+    dependsOn(jacocoTestCoverageVerification)
+    dependsOn(testCodeCoverageReport)
+}
+
+tasks.register('jacocoTestCoverageVerification', JacocoCoverageVerification) {
+    violationRules {
+        rule {
+            limit {
+                minimum = 0.8
+            }
+        }
+    }
+}
+
 reporting {
     reports {
         testCodeCoverageReport(JacocoCoverageReport) {
