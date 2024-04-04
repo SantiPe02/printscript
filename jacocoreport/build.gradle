@@ -1,0 +1,41 @@
+plugins {
+    id 'base'
+    id 'jacoco-report-aggregation'
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    jacocoAggregation project(':ast')
+    jacocoAggregation project(':formatter')
+    jacocoAggregation project(':interpreter')
+    jacocoAggregation project(':lexer')
+    jacocoAggregation project(':parser')
+    jacocoAggregation project(':token')
+    jacocoAggregation project(':util')
+}
+
+tasks.named('check') {
+    dependsOn(jacocoTestCoverageVerification)
+    dependsOn(testCodeCoverageReport)
+}
+
+tasks.register('jacocoTestCoverageVerification', JacocoCoverageVerification) {
+    violationRules {
+        rule {
+            limit {
+                minimum = 0.8
+            }
+        }
+    }
+}
+
+reporting {
+    reports {
+        testCodeCoverageReport(JacocoCoverageReport) {
+            testType = TestSuiteType.UNIT_TEST
+        }
+    }
+}
