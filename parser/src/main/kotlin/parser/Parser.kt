@@ -106,8 +106,10 @@ class MyParser : Parser {
 
         if(tokens[i+1].token.text == "(") {
             val closingParenthesisIndex = commons.searchForClosingCharacter(tokens, "(", i+1)
+            println(closingParenthesisIndex)
             val methodDec = MethodResultDeclarator()
-            return methodDec.methodArgument(tokens, i, closingParenthesisIndex, tokens) //++closingParenthesisIndex
+            println(i)
+            return methodDec.methodArgument(tokens, i-1, closingParenthesisIndex, tokens) //++closingParenthesisIndex
         }
 
         return declareVariable(tokens, i - 1)
