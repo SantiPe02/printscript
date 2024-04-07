@@ -65,11 +65,15 @@ class AnalyzingCommandTest {
         sourceFile.writeText("let a : number = 1;")
         val configFile = File.createTempFile("config", ".json")
         val command =
-            Analyzing(LexerImpl(), MyParser(),
-                MockLinter(listOf(
+            Analyzing(
+                LexerImpl(),
+                MyParser(),
+                MockLinter(
+                    listOf(
                         WarningResult(Range(0, 1), "warning1"),
-                        WarningResult(Range(1, 2), "warning2")
-                ))
+                        WarningResult(Range(1, 2), "warning2"),
+                    ),
+                ),
             )
 
         val result = command.test("${sourceFile.path.replace("\\", "/")} ${configFile.path.replace("\\", "/")}")
