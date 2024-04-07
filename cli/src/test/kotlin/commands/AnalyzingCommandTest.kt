@@ -28,6 +28,7 @@ class AnalyzingCommandTest {
 
         assertNotEquals(0, result.statusCode)
         assertEquals("The file could not be found in $fileDir\n", result.output)
+        configFile.deleteOnExit()
     }
 
     @Test
@@ -40,6 +41,7 @@ class AnalyzingCommandTest {
 
         assertNotEquals(0, result.statusCode)
         assertEquals("The configuration file could not be found in $fileDir\n", result.output)
+        sourceFile.deleteOnExit()
     }
 
     @Test
@@ -53,6 +55,8 @@ class AnalyzingCommandTest {
 
         assertEquals(0, result.statusCode)
         assertEquals("Analyze finished with 0 warnings\n", result.output)
+        configFile.deleteOnExit()
+        sourceFile.deleteOnExit()
     }
 
     @Test
@@ -61,17 +65,18 @@ class AnalyzingCommandTest {
         sourceFile.writeText("let a : number = 1;")
         val configFile = File.createTempFile("config", ".json")
         val command =
-            Analyzing(
-                LexerImpl(),
-                MyParser(),
-                MockLinter(
-                    listOf(WarningResult(Range(0, 1), "warning1"), WarningResult(Range(1, 2), "warning2")),
-                ),
+            Analyzing(LexerImpl(), MyParser(),
+                MockLinter(listOf(
+                        WarningResult(Range(0, 1), "warning1"),
+                        WarningResult(Range(1, 2), "warning2")
+                ))
             )
 
         val result = command.test("${sourceFile.path.replace("\\", "/")} ${configFile.path.replace("\\", "/")}")
 
         assertEquals(0, result.statusCode)
         assertEquals("Analyze finished with 2 warnings\nwarning1 in range 0:1\nwarning2 in range 1:2\n", result.output)
+        configFile.deleteOnExit()
+        sourceFile.deleteOnExit()
     }
 }
