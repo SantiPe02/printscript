@@ -1,13 +1,17 @@
 package commands
 
+import Linter
 import ast.Range
+import ast.Scope
 import com.github.ajalt.clikt.testing.test
 import lexer.LexerImpl
+import linterRules.LinterRule
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertNotEquals
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 import parser.MyParser
+import result.validation.WarningResult
 import java.io.File
 
 class AnalyzingCommandTest {
@@ -82,5 +86,12 @@ class AnalyzingCommandTest {
         assertEquals("Analyze finished with 2 warnings\nwarning1 in range 0:1\nwarning2 in range 1:2\n", result.output)
         configFile.deleteOnExit()
         sourceFile.deleteOnExit()
+    }
+
+    class MockLinter(val warnings: List<WarningResult>) : Linter {
+        override fun lintScope(
+            scope: Scope,
+            rules: List<LinterRule>,
+        ): List<WarningResult> = warnings
     }
 }

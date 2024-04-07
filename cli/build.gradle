@@ -7,6 +7,8 @@ dependencies {
     implementation(project(":ast"))
     implementation(project(":lexer"))
     implementation(project(":parser"))
+    implementation(project(":interpreter"))
+    implementation(project(":linter"))
 
     implementation("com.github.ajalt.clikt:clikt:4.2.0")
 
