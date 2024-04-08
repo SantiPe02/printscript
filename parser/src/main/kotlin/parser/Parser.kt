@@ -45,7 +45,11 @@ class MyParser : Parser {
     }
 
     // ¿Eventualmente hacer un KeywordParser?
-    private fun parseKeyword(tokens: List<TokenInfo>, tokenInfo: TokenInfo, i: Int): AST {
+    private fun parseKeyword(
+        tokens: List<TokenInfo>,
+        tokenInfo: TokenInfo,
+        i: Int,
+    ): AST {
         val token = tokenInfo.token
         return when (token.text) {
             // if it is not 'let', treat it like an identifier. e.g: object(); --> object works an identifier, cause it' an instance.
@@ -54,7 +58,10 @@ class MyParser : Parser {
         }
     }
 
-    private fun declareVariable(tokens: List<TokenInfo>, i: Int): Declaration {
+    private fun declareVariable(
+        tokens: List<TokenInfo>,
+        i: Int,
+    ): Declaration {
         val variableDec = VariableDeclarator()
         return variableDec.declare(tokens, i)
     }
@@ -82,7 +89,8 @@ class MyParser : Parser {
     ): Int {
         return when (token.text) {
             "let" -> commons.lengthTillFirstAppearanceOfToken(tokens, TokenType.SPECIAL_SYMBOL, ";", i)
-            else -> commons.lengthTillFirstAppearanceOfToken(tokens, TokenType.SPECIAL_SYMBOL, ";", i) // acctually, should always return this, unless expected differenty, like classes
+            // acctually, should always return this, unless expected differenty, like classes
+            else -> commons.lengthTillFirstAppearanceOfToken(tokens, TokenType.SPECIAL_SYMBOL, ";", i)
         }
     }
 
@@ -90,14 +98,16 @@ class MyParser : Parser {
         return LiteralArgument(Range(0, 0), token.text, "String")
     }
 
-
     // two cases, as for now
     // 1. used as a variable: a = 4;
     // 2. used as a isolated method declaration: println("Hello World");
-    private fun parseIdentifier(tokens: List<TokenInfo>, tokenInfo: TokenInfo, i: Int): AST {
-
+    private fun parseIdentifier(
+        tokens: List<TokenInfo>,
+        tokenInfo: TokenInfo,
+        i: Int,
+    ): AST {
         // if it is a method call.
-        if(tokens[i+1].token.text == "(") {
+        if (tokens[i + 1].token.text == "(") {
             return handleMethodCall(tokens, tokenInfo, i)
         }
 
@@ -107,10 +117,14 @@ class MyParser : Parser {
     // ESTO ESTÁ MAL, PORQUE Lo tengo q llamar para cada caso
     // tanto para let... method()
     // como para method() así sin más.
-    fun handleMethodCall(tokens: List<TokenInfo>, tokenInfo: TokenInfo, i: Int): AST{
+    fun handleMethodCall(
+        tokens: List<TokenInfo>,
+        tokenInfo: TokenInfo,
+        i: Int,
+    ): AST {
         val methodDec = MethodResultDeclarator()
 
-        val closingParenthesisIndex = commons.searchForClosingCharacter(tokens, "(", i+1)
+        val closingParenthesisIndex = commons.searchForClosingCharacter(tokens, "(", i + 1)
         return methodDec.declareArgument(tokens, tokens.subList(i, closingParenthesisIndex + 1), i)
     }
 

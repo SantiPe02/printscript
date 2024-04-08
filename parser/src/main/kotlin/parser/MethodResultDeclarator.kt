@@ -26,7 +26,7 @@ class MethodResultDeclarator : ArgumentDeclarator {
         i: Int,
         endIndex: Int,
         arguments: List<TokenInfo>,
-        currentRange: Range
+        currentRange: Range,
     ): MethodResult {
         val methodOperator: Int = commons.searchForFirstOperator(arguments, 0, arguments.size)
         val operator: TokenInfo = getOperatorMethod(tokens, i + methodOperator)
@@ -34,8 +34,9 @@ class MethodResultDeclarator : ArgumentDeclarator {
         if (operator.token.text == "(") {
             return handleParenthesesOperator(args, currentRange)
         }
-        if(tokens[i+methodOperator].token.text == "(" && tokens[i+methodOperator+1].token.text == ")" )
+        if (tokens[i + methodOperator].token.text == "(" && tokens[i + methodOperator + 1].token.text == ")") {
             return emptyMethodArgument(currentRange, operator)
+        }
 
         val orderedArgs = sortTokenInfoListByPosition(args.flatten())
         val finalArguments = getFinalArgumentsOfMethodResult(args, arguments)
@@ -62,8 +63,10 @@ class MethodResultDeclarator : ArgumentDeclarator {
         }
     }
 
-    fun handleParenthesesOperator(args: List<List<TokenInfo>>, currentRange: Range): MethodResult {
-
+    fun handleParenthesesOperator(
+        args: List<List<TokenInfo>>,
+        currentRange: Range,
+    ): MethodResult {
         val flattenedArgs = args.flatten()
         return methodArgument(flattenedArgs, 0, flattenedArgs.size, flattenedArgs, currentRange)
     }
@@ -112,7 +115,7 @@ class MethodResultDeclarator : ArgumentDeclarator {
             TokenInfo.TokenType.OPERATOR -> {
                 tokens[methodOperator]
             }
-            else -> tokens[methodOperator -1] // Same. Call getOperatorMethod, with the inside values.
+            else -> tokens[methodOperator - 1] // Same. Call getOperatorMethod, with the inside values.
         }
     }
 
@@ -172,13 +175,16 @@ class MethodResultDeclarator : ArgumentDeclarator {
         return newArgs
     }
 
-    fun emptyMethodArgument(range: Range, operator: TokenInfo): MethodResult{
+    fun emptyMethodArgument(
+        range: Range,
+        operator: TokenInfo,
+    ): MethodResult {
         println(range.start)
         println(range.end)
         println(operator.token.text)
         return MethodResult(
             range,
-            Call(range, operator.token.text, listOf())
+            Call(range, operator.token.text, listOf()),
         )
     }
 }

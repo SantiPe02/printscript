@@ -886,7 +886,7 @@ class ParserTest {
     }
 
     @Test
-    fun test031_testEmptyMethodCall(){
+    fun test031_testEmptyMethodCall() {
         val code = "object();"
         val tokens = LexerImpl().tokenize(code)
         val parser: Parser = MyParser()
@@ -895,26 +895,38 @@ class ParserTest {
         val expected = Scope("program", Range(0, 8), listOf(MethodResult(Range(0, 7), Call(Range(0, 7), "object", listOf()))))
         assertEquals(expected, ast)
     }
+
     @Test
-    fun test032_testEmptyMethodCallWithVariableDeclaration(){
+    fun test032_testEmptyMethodCallWithVariableDeclaration() {
         val code = "let a: String = object();"
         val tokens = LexerImpl().tokenize(code)
         val parser: Parser = MyParser()
         val ast = parser.parseTokens(tokens)
-        val expected = Scope("program", Range(0, 24), listOf(VariableDeclaration(Range(4, 4), "a", "String", MethodResult(Range(16, 23), Call(Range(16, 23), "object", listOf())))))
+        val expected =
+            Scope(
+                "program",
+                Range(0, 24),
+                listOf(
+                    VariableDeclaration(Range(4, 4), "a", "String", MethodResult(Range(16, 23), Call(Range(16, 23), "object", listOf()))),
+                ),
+            )
         assertEquals(ast, expected)
     }
 
     @Test
-    fun test032_testVariableDeclarationWithAnObjectThatAintStringNorNumberNorBool(){
+    fun test032_testVariableDeclarationWithAnObjectThatAintStringNorNumberNorBool() {
         val code = "let a: object = object();"
         val tokens = LexerImpl().tokenize(code)
         val parser: Parser = MyParser()
         val ast = parser.parseTokens(tokens)
-        val expected = Scope("program", Range(0, 24), listOf(VariableDeclaration(Range(4, 4), "a", "object", MethodResult(Range(16, 23), Call(Range(16, 23), "object", listOf())))))
+        val expected =
+            Scope(
+                "program",
+                Range(0, 24),
+                listOf(
+                    VariableDeclaration(Range(4, 4), "a", "object", MethodResult(Range(16, 23), Call(Range(16, 23), "object", listOf()))),
+                ),
+            )
         assertEquals(ast, expected)
     }
-
-
-
 }
