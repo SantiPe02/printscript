@@ -14,7 +14,7 @@ import result.validation.WarningResult
  Jung, C.G.
  */
 
-sealed interface Linter {
+interface Linter {
     fun lintScope(
         scope: Scope,
         rules: List<LinterRule>,
