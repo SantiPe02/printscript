@@ -3,6 +3,7 @@ package parser
 import ast.Argument
 import ast.Call
 import ast.MethodResult
+import ast.Range
 import token.TokenInfo
 
 class MethodResultDeclarator : ArgumentDeclarator {
@@ -14,7 +15,8 @@ class MethodResultDeclarator : ArgumentDeclarator {
         i: Int,
     ): MethodResult {
         val endIndex = commons.getEndOfVarIndex(tokens, i)
-        val argument = methodArgument(tokens, i, endIndex, arguments)
+        val currentRange = commons.getRangeOfTokenList(arguments)
+        val argument = methodArgument(tokens, i, endIndex, arguments, currentRange)
 
         return argument
     }
@@ -24,13 +26,16 @@ class MethodResultDeclarator : ArgumentDeclarator {
         i: Int,
         endIndex: Int,
         arguments: List<TokenInfo>,
+        currentRange: Range
     ): MethodResult {
         val methodOperator: Int = commons.searchForFirstOperator(arguments, 0, arguments.size)
         val operator: TokenInfo = getOperatorMethod(tokens, i + methodOperator)
         val args: List<List<TokenInfo>> = createMethodByOperator(tokens, i, endIndex, i + methodOperator)
         if (operator.token.text == "(") {
-            return handleParenthesesOperator(args)
+            return handleParenthesesOperator(args, currentRange)
         }
+        if(tokens[i+methodOperator].token.text == "(" && tokens[i+methodOperator+1].token.text == ")" )
+            return emptyMethodArgument(currentRange, operator)
 
         val orderedArgs = sortTokenInfoListByPosition(args.flatten())
         val finalArguments = getFinalArgumentsOfMethodResult(args, arguments)
@@ -57,9 +62,10 @@ class MethodResultDeclarator : ArgumentDeclarator {
         }
     }
 
-    fun handleParenthesesOperator(args: List<List<TokenInfo>>): MethodResult {
+    fun handleParenthesesOperator(args: List<List<TokenInfo>>, currentRange: Range): MethodResult {
+
         val flattenedArgs = args.flatten()
-        return methodArgument(flattenedArgs, 0, flattenedArgs.size, flattenedArgs)
+        return methodArgument(flattenedArgs, 0, flattenedArgs.size, flattenedArgs, currentRange)
     }
 
     fun separateArguments(
@@ -103,10 +109,10 @@ class MethodResultDeclarator : ArgumentDeclarator {
             return tokens[methodOperator] // NO. Call getOperatorMethod, with the inside values.
         }
         return when (tokens[methodOperator - 1].token.type) {
-            TokenInfo.TokenType.IDENTIFIER -> {
-                tokens[methodOperator - 1]
+            TokenInfo.TokenType.OPERATOR -> {
+                tokens[methodOperator]
             }
-            else -> tokens[methodOperator] // Same. Call getOperatorMethod, with the inside values.
+            else -> tokens[methodOperator -1] // Same. Call getOperatorMethod, with the inside values.
         }
     }
 
@@ -122,7 +128,7 @@ class MethodResultDeclarator : ArgumentDeclarator {
                 hanldeCommaSeparatedArguments(arg, arguments, finalArguments) // it is a method with arguments
             } else if (arg.size != 1) {
                 // if the size of an arguments is more than 1 then it means there's
-                finalArguments.add(methodArgument(arg, 0, arg.size, arg))
+                finalArguments.add(methodArgument(arg, 0, arg.size, arg, commons.getRangeOfTokenList(arg)))
             } else {
                 addArgumentsToList(arg, arguments, finalArguments)
             }
@@ -164,5 +170,15 @@ class MethodResultDeclarator : ArgumentDeclarator {
         }
         newArgs.add(args.subList(start, args.size))
         return newArgs
+    }
+
+    fun emptyMethodArgument(range: Range, operator: TokenInfo): MethodResult{
+        println(range.start)
+        println(range.end)
+        println(operator.token.text)
+        return MethodResult(
+            range,
+            Call(range, operator.token.text, listOf())
+        )
     }
 }
