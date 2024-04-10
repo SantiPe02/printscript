@@ -20,7 +20,7 @@ import parser.MyParser
 import parser.Parser
 
 class InterpreterTest {
-    private val interpreter = Interpreter()
+    private val interpreter = InterpreterAbstractSyntaxTree()
     private val defaultInterpreter = DefaultInterpreter()
 
     @Test

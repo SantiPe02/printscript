@@ -27,7 +27,7 @@ enum class PrintScriptError(val msg: String) {
     OPERATION_NOT_ALLOWED("Operation can't be applied with this types."),
 }
 
-class Interpreter {
+class InterpreterAbstractSyntaxTree {
     private val outputs: MutableList<String> = mutableListOf()
     private val errors: MutableList<String> = mutableListOf()
     val variables: MutableMap<String, Literal> = mutableMapOf()
