@@ -171,8 +171,8 @@ class ParserCommons {
 
     fun getDataTypeFromString(word: String): String {
         return when {
-            word.all { it.isDigit() } -> "int"
-            word.matches(Regex("-?\\d+(\\.\\d+)?")) -> "float"
+            word.all { it.isDigit() } -> "number"
+            word.matches(Regex("-?\\d+(\\.\\d+)?")) -> "number"
             word.lowercase(Locale.getDefault()) == "true" || word.lowercase(Locale.getDefault()) == "false" -> "boolean"
             word.startsWith("\"") && word.endsWith("\"") -> "string"
             // Todo: when it is a method, the type is the return value of that method.

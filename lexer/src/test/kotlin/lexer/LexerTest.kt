@@ -315,16 +315,16 @@ class LexerTest {
     }
 
     @Test
-    fun lexerFloatNumberTest() {
-        val input = "let a: float = 3.14;"
+    fun lexerNumberNumberTest() {
+        val input = "let a: number = 3.14;"
         val lexer = LexerImpl()
         val token1 = TokenInfo(Token(TokenType.KEYWORD, "let"), Position(0, 2))
         val token2 = TokenInfo(Token(TokenType.IDENTIFIER, "a"), Position(4, 4))
         val token3 = TokenInfo(Token(TokenType.SPECIAL_SYMBOL, ":"), Position(5, 5))
-        val token4 = TokenInfo(Token(TokenType.KEYWORD, "float"), Position(7, 11))
-        val token5 = TokenInfo(Token(TokenType.OPERATOR, "="), Position(13, 13))
-        val token6 = TokenInfo(Token(TokenType.LITERAL, "3.14"), Position(15, 18))
-        val token7 = TokenInfo(Token(TokenType.SPECIAL_SYMBOL, ";"), Position(19, 19))
+        val token4 = TokenInfo(Token(TokenType.KEYWORD, "number"), Position(7, 12))
+        val token5 = TokenInfo(Token(TokenType.OPERATOR, "="), Position(14, 14))
+        val token6 = TokenInfo(Token(TokenType.LITERAL, "3.14"), Position(16, 19))
+        val token7 = TokenInfo(Token(TokenType.SPECIAL_SYMBOL, ";"), Position(20, 20))
         val expected = listOf(token1, token2, token3, token4, token5, token6, token7)
         assertEquals(expected, lexer.tokenize(input))
     }

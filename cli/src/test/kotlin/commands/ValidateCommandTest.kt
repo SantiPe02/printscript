@@ -26,7 +26,7 @@ class ValidateCommandTest {
     @Test
     fun test03_WhenValidateCommandWithNiceSourceCodeThenSuccessMessage() {
         val sourceFile = File.createTempFile("source", ".ps")
-        sourceFile.writeText("let sum: int = ((3 + 5) * (2 + 4));")
+        sourceFile.writeText("let sum: number = ((3 + 5) * (2 + 4));")
 
         val command = Validate(LexerImpl(), MyParser())
         val result = command.test(sourceFile.path.replace("\\", "/"))
@@ -39,7 +39,7 @@ class ValidateCommandTest {
     @Test
     fun test04_WhenFileWithMissingSemicolonValidatedThenErrorMessage() {
         val sourceFile = File.createTempFile("source", ".ps")
-        sourceFile.writeText("let sum: int = ((3 + 5) * (2 + 4))")
+        sourceFile.writeText("let sum: number = ((3 + 5) * (2 + 4))")
 
         val command = Validate(LexerImpl(), MyParser())
         val result = command.test(sourceFile.path.replace("\\", "/"))
