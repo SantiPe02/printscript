@@ -81,7 +81,12 @@ class ParserTest {
                 "program",
                 Range(0, 22),
                 listOf(
-                    VariableDeclaration(Range(4, 4), "a", "string", LiteralArgument(Range(16, 21), "\"Juan\"", "string")),
+                    VariableDeclaration(
+                        Range(4, 4),
+                        "a",
+                        "string",
+                        LiteralArgument(Range(16, 21), "\"Juan\"", "string"),
+                    ),
                 ),
             )
 
@@ -100,9 +105,19 @@ class ParserTest {
                 "program",
                 Range(0, 61),
                 listOf(
-                    VariableDeclaration(Range(4, 4), "a", "string", LiteralArgument(Range(16, 21), "\"Juan\"", "string")),
+                    VariableDeclaration(
+                        Range(4, 4),
+                        "a",
+                        "string",
+                        LiteralArgument(Range(16, 21), "\"Juan\"", "string"),
+                    ),
                     VariableDeclaration(Range(28, 28), "b", "int", LiteralArgument(Range(37, 37), "5", "int")),
-                    VariableDeclaration(Range(44, 44), "c", "boolean", LiteralArgument(Range(57, 60), "true", "boolean")),
+                    VariableDeclaration(
+                        Range(44, 44),
+                        "c",
+                        "boolean",
+                        LiteralArgument(Range(57, 60), "true", "boolean"),
+                    ),
                 ),
             )
 
@@ -168,7 +183,10 @@ class ParserTest {
                             Call(
                                 (Range(15, 19)),
                                 "+",
-                                listOf(LiteralArgument(Range(15, 15), "3", "int"), LiteralArgument(Range(19, 19), "5", "int")),
+                                listOf(
+                                    LiteralArgument(Range(15, 15), "3", "int"),
+                                    LiteralArgument(Range(19, 19), "5", "int"),
+                                ),
                             ),
                         ),
                     ),
@@ -198,7 +216,10 @@ class ParserTest {
                             Call(
                                 (Range(15, 19)),
                                 "+",
-                                listOf(VariableArgument(Range(15, 15), "a"), LiteralArgument(Range(19, 19), "5", "int")),
+                                listOf(
+                                    VariableArgument(Range(15, 15), "a"),
+                                    LiteralArgument(Range(19, 19), "5", "int"),
+                                ),
                             ),
                         ),
                     ),
@@ -847,7 +868,12 @@ class ParserTest {
             Scope(
                 "program",
                 Range(0, 11),
-                listOf(MethodResult(Range(0, 6), Call(Range(8, 9), "println", listOf(LiteralArgument(Range(8, 9), "34", "int"))))),
+                listOf(
+                    MethodResult(
+                        Range(0, 6),
+                        Call(Range(8, 9), "println", listOf(LiteralArgument(Range(8, 9), "34", "int"))),
+                    ),
+                ),
             )
         assertEquals(expected, ast)
     }
@@ -874,7 +900,10 @@ class ParserTest {
                                     Call(
                                         Range(8, 13),
                                         "+",
-                                        listOf(LiteralArgument(Range(8, 9), "34", "int"), LiteralArgument(Range(13, 13), "4", "int")),
+                                        listOf(
+                                            LiteralArgument(Range(8, 9), "34", "int"),
+                                            LiteralArgument(Range(13, 13), "4", "int"),
+                                        ),
                                     ),
                                 ),
                             ),
@@ -892,7 +921,8 @@ class ParserTest {
         val parser: Parser = MyParser()
         val ast = parser.parseTokens(tokens)
 
-        val expected = Scope("program", Range(0, 8), listOf(MethodResult(Range(0, 7), Call(Range(0, 7), "object", listOf()))))
+        val expected =
+            Scope("program", Range(0, 8), listOf(MethodResult(Range(0, 7), Call(Range(0, 7), "object", listOf()))))
         assertEquals(expected, ast)
     }
 
@@ -907,7 +937,12 @@ class ParserTest {
                 "program",
                 Range(0, 24),
                 listOf(
-                    VariableDeclaration(Range(4, 4), "a", "String", MethodResult(Range(16, 23), Call(Range(16, 23), "object", listOf()))),
+                    VariableDeclaration(
+                        Range(4, 4),
+                        "a",
+                        "String",
+                        MethodResult(Range(16, 23), Call(Range(16, 23), "object", listOf())),
+                    ),
                 ),
             )
         assertEquals(ast, expected)
@@ -924,9 +959,90 @@ class ParserTest {
                 "program",
                 Range(0, 24),
                 listOf(
-                    VariableDeclaration(Range(4, 4), "a", "object", MethodResult(Range(16, 23), Call(Range(16, 23), "object", listOf()))),
+                    VariableDeclaration(
+                        Range(4, 4),
+                        "a",
+                        "object",
+                        MethodResult(Range(16, 23), Call(Range(16, 23), "object", listOf())),
+                    ),
                 ),
             )
+        assertEquals(ast, expected)
+    }
+
+    @Test
+    fun test033_testPrintlnWithSumOfStringAndInt() {
+        val code = "println(\"Hello\" + 4);"
+        val tokens = LexerImpl().tokenize(code)
+        val parser: Parser = MyParser()
+        val ast = parser.parseTokens(tokens)
+
+        val expected =
+            Scope(
+                "program",
+                Range(0, 20),
+                listOf(
+                    MethodResult(
+                        Range(0, 6),
+                        Call(
+                            Range(8, 18),
+                            "println",
+                            listOf(
+                                MethodResult(
+                                    Range(16, 16),
+                                    Call(
+                                        Range(8, 18),
+                                        "+",
+                                        listOf(
+                                            LiteralArgument(Range(8, 14), "\"Hello\"", "string"),
+                                            LiteralArgument(Range(18, 18), "4", "int"),
+                                        ),
+                                    ),
+                                ),
+                            ),
+                        ),
+                    ),
+                ),
+            )
+
+        assertEquals(ast, expected)
+    }
+
+    @Test
+    fun test034_testWithStringsOFTripleQuote() {
+        val code = """println("Hello" + 4);"""
+        val tokens = LexerImpl().tokenize(code)
+        val parser: Parser = MyParser()
+        val ast = parser.parseTokens(tokens)
+
+        val expected =
+            Scope(
+                "program",
+                Range(0, 20),
+                listOf(
+                    MethodResult(
+                        Range(0, 6),
+                        Call(
+                            Range(8, 18),
+                            "println",
+                            listOf(
+                                MethodResult(
+                                    Range(16, 16),
+                                    Call(
+                                        Range(8, 18),
+                                        "+",
+                                        listOf(
+                                            LiteralArgument(Range(8, 14), "\"Hello\"", "string"),
+                                            LiteralArgument(Range(18, 18), "4", "int"),
+                                        ),
+                                    ),
+                                ),
+                            ),
+                        ),
+                    ),
+                ),
+            )
+
         assertEquals(ast, expected)
     }
 }
