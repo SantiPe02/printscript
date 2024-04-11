@@ -34,23 +34,24 @@ object JsonConfigurationReader : IConfigurationReader {
                 var printlnWithoutExpression = true
                 var undeclaredVariableStatement = true
 
-                val jsonFieldSpaceBeforeColon = jsonObject.get("camelCase")
-                if (jsonFieldSpaceBeforeColon != null) {
+                val jsonFieldCamelCase = jsonObject.get("camelCase")
+                if (jsonFieldCamelCase != null) {
                     try {
-                        camelCase = jsonFieldSpaceBeforeColon.asBoolean
+                        camelCase = jsonFieldCamelCase.asBoolean
                     } catch (e: Exception) {
                         println("WARNING: the field of Camel Case was not a boolean type")
                     }
                 }
 
-                val jsonFieldSpaceAfterColon = jsonObject.get("printlnWithoutExpression")
-                if (jsonFieldSpaceAfterColon != null) {
+                val jsonFieldPrintlnWithoutExpression = jsonObject.get("printlnWithoutExpression")
+                if (jsonFieldPrintlnWithoutExpression != null) {
                     try {
-                        printlnWithoutExpression = jsonFieldSpaceAfterColon.asBoolean
+                        printlnWithoutExpression = jsonFieldPrintlnWithoutExpression.asBoolean
                     } catch (e: Exception) {
                         println("WARNING: the field of println Without Expression was not a boolean type")
                     }
                 }
+
                 val jsonUndeclaredVariableStatement = jsonObject.get("undeclaredVariableStatement")
                 if (jsonUndeclaredVariableStatement != null) {
                     try {
