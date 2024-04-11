@@ -16,7 +16,7 @@ import result.validation.WarningResult
 class LinterTest {
     @Test
     fun test001_testIsCamelCase() {
-        val code = "let myVariable: int = 1;"
+        val code = "let myVariable: number = 1;"
         val camelCaseRule = CamelCaseRule()
         val tokens = LexerImpl().tokenize(code)
         val parser: Parser = MyParser()
@@ -26,7 +26,7 @@ class LinterTest {
 
     @Test
     fun test002_testIsNotCamelCase() {
-        val code = "let my_variable: int = 1;" // ¡Es un scope! El primer elemento del body es el variableDeclaration
+        val code = "let my_variable: number = 1;" // ¡Es un scope! El primer elemento del body es el variableDeclaration
         val camelCaseRule = CamelCaseRule()
         val tokens = LexerImpl().tokenize(code)
         val parser: Parser = MyParser()
@@ -36,7 +36,7 @@ class LinterTest {
     }
 
     @Test
-    fun test003_testPrintlnWithoutExpression_notUsingExpression() {
+    fun test003_testprintlnWithoutExpression_notUsingExpression() {
         val code = "println(\"Hello, World!\");" // actually, creo que el parser todavía no soporta esto
         val tokens = LexerImpl().tokenize(code)
         val parser: Parser = MyParser()
@@ -47,7 +47,7 @@ class LinterTest {
     }
 
     @Test
-    fun test004_testPrintlnWithoutExpression_usingExpression() {
+    fun test004_testprintlnWithoutExpression_usingExpression() {
         val code = "println(\"Hello, World!\" + 1);"
         val tokens = LexerImpl().tokenize(code)
         val parser: Parser = MyParser()
@@ -58,33 +58,33 @@ class LinterTest {
     }
 
     @Test
-    fun test005_testLinterWithCamelCaseRule() {
-        val code = "let myVariable: int = 1; let my_variable: int = 1;"
+    fun test005_testlinterWithCamelCaseRule() {
+        val code = "let myVariable: number = 1; let my_variable: number = 1;"
         val tokens = LexerImpl().tokenize(code)
         val parser: Parser = MyParser()
         val ast = parser.parseTokens(tokens)
         val linter = MyLinter()
         val rules = listOf(CamelCaseRule())
         val wrongVar = ast.body.elementAtOrNull(1) as VariableDeclaration
-        val expectedResult = listOf(WarningResult(Range(29, 39), "${wrongVar.variableName} is not in Camel Case"))
+        val expectedResult = listOf(WarningResult(Range(32, 42), "${wrongVar.variableName} is not in Camel Case"))
         assertEquals(linter.lintScope(ast, rules), expectedResult)
     }
 
     @Test
-    fun test006_testLinterWithCamelCaseAndPrintlnRule() {
-        val code = "let myVariable: int = 1; println(\"Hello, World!\" + 1);"
+    fun test006_testlinterWithCamelCaseAndPrintlnRule() {
+        val code = "let myVariable: number = 1; println(\"Hello, World!\" + 1);"
         val tokens = LexerImpl().tokenize(code)
         val parser: Parser = MyParser()
         val ast = parser.parseTokens(tokens)
         val linter = MyLinter()
         val rules = listOf(CamelCaseRule(), PrintlnWithoutExpressionRule())
-        val expectedResult = listOf(WarningResult(Range(33, 51), "println should not have an expression inside it."))
+        val expectedResult = listOf(WarningResult(Range(36, 54), "println should not have an expression inside it."))
         assertEquals(linter.lintScope(ast, rules), expectedResult)
     }
 
     @Test
     fun test007_UndeclaredVariableStatementRule_itIsNeverDeclared() {
-        val code = "let myVariable: int;"
+        val code = "let myVariable: number;"
         val tokens = LexerImpl().tokenize(code)
         val parser: Parser = MyParser()
         val ast = parser.parseTokens(tokens)
@@ -96,7 +96,7 @@ class LinterTest {
 
     @Test
     fun test008_UndeclaredVariableStatementRule_itIsDeclared() {
-        val code = "let myVariable: int; myVariable = 1;"
+        val code = "let myVariable: number; myVariable = 1;"
         val tokens = LexerImpl().tokenize(code)
         val parser: Parser = MyParser()
         val ast = parser.parseTokens(tokens)

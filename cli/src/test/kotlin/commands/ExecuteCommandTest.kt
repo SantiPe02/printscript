@@ -28,7 +28,7 @@ class ExecuteCommandTest {
     @Test
     fun test03_WhenExecuteCommandWithNiceSourceCodeThenReturnExecutionOutput() {
         val sourceFile = File.createTempFile("source", ".ps")
-        sourceFile.writeText("let sum: int = ((3 + 5) * (2 + 4));")
+        sourceFile.writeText("let sum: number = ((3 + 5) * (2 + 4));")
 
         val command = Execute(LexerImpl(), MyParser(), Interpreter())
         val result = command.test(sourceFile.path.replace("\\", "/"))
