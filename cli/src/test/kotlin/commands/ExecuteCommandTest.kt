@@ -1,7 +1,7 @@
 package commands
 
 import com.github.ajalt.clikt.testing.test
-import interpreter.DefaultInterpreter
+import interpreter.Interpreter
 import lexer.LexerImpl
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertTrue
@@ -12,14 +12,14 @@ import java.io.File
 class ExecuteCommandTest {
     @Test
     fun test01_WhenExecuteCommandWithoutArgThenFailWithMessage() {
-        val result = Execute(LexerImpl(), MyParser(), DefaultInterpreter()).test("")
+        val result = Execute(LexerImpl(), MyParser(), Interpreter()).test("")
         assertTrue(result.statusCode != 0)
         assertTrue(result.output.contains("Usage"))
     }
 
     @Test
     fun test02_WhenExecuteCommandWithoutExistingSourceFileThenFailWithMessage() {
-        val result = Execute(LexerImpl(), MyParser(), DefaultInterpreter()).test("source.ps")
+        val result = Execute(LexerImpl(), MyParser(), Interpreter()).test("source.ps")
         assertTrue(result.statusCode != 0)
         assertEquals("The file to run was not found at source.ps\n", result.output)
     }
@@ -30,7 +30,7 @@ class ExecuteCommandTest {
         val sourceFile = File.createTempFile("source", ".ps")
         sourceFile.writeText("let sum: int = ((3 + 5) * (2 + 4));")
 
-        val command = Execute(LexerImpl(), MyParser(), DefaultInterpreter())
+        val command = Execute(LexerImpl(), MyParser(), Interpreter())
         val result = command.test(sourceFile.path.replace("\\", "/"))
 
         assertEquals(0, result.statusCode)
