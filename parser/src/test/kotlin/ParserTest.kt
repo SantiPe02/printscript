@@ -60,7 +60,7 @@ class ParserTest {
         val expected =
             Scope(
                 "program",
-                Range(0, 18),
+                Range(0, 19),
                 listOf(
                     VariableDeclaration(Range(4, 4), "a", "number", LiteralArgument(Range(16, 18), "3.5", "number")),
                 ),
@@ -135,7 +135,7 @@ class ParserTest {
                 "program",
                 Range(0, 17), // Adjusted range
                 listOf(
-                    VariableDeclaration(Range(4, 4), "a", "number", VariableArgument(Range(16, 1), "b")),
+                    VariableDeclaration(Range(4, 4), "a", "number", VariableArgument(Range(16, 16), "b")),
                 ),
             )
 
@@ -153,7 +153,7 @@ class ParserTest {
         val expected =
             Scope(
                 "program",
-                Range(0, 33),
+                Range(0, 36),
                 listOf(
                     VariableDeclaration(Range(4, 4), "a", "number", LiteralArgument(Range(16, 16), "5", "number")),
                     VariableDeclaration(Range(23, 23), "b", "string", VariableArgument(Range(35, 35), "a")),
@@ -599,8 +599,8 @@ class ParserTest {
                                             Range(26, 30),
                                             "+",
                                             listOf(
-                                                LiteralArgument(Range(23, 23), "5", "number"),
-                                                LiteralArgument(Range(27, 27), "2", "number"),
+                                                LiteralArgument(Range(26, 26), "5", "number"),
+                                                LiteralArgument(Range(30, 30), "2", "number"),
                                             ),
                                         ),
                                     ),
@@ -623,27 +623,27 @@ class ParserTest {
         val expected =
             Scope(
                 "program",
-                Range(0, 33),
+                Range(0, 36),
                 listOf(
                     VariableDeclaration(
                         Range(4, 7),
                         "test",
                         "number",
                         MethodResult(
-                            Range(16, 18),
+                            Range(19, 21),
                             Call(
-                                Range(20, 31),
+                                Range(23, 34),
                                 "sum",
                                 listOf(
-                                    LiteralArgument(Range(20, 20), "3", "number"),
+                                    LiteralArgument(Range(23, 23), "3", "number"),
                                     MethodResult(
-                                        Range(23, 25),
+                                        Range(26, 28),
                                         Call(
-                                            Range(27, 30),
+                                            Range(30, 33),
                                             "sum",
                                             listOf(
-                                                LiteralArgument(Range(27, 27), "5", "number"),
-                                                LiteralArgument(Range(30, 30), "2", "number"),
+                                                LiteralArgument(Range(30, 30), "5", "number"),
+                                                LiteralArgument(Range(33, 33), "2", "number"),
                                             ),
                                         ),
                                     ),
@@ -680,7 +680,7 @@ class ParserTest {
     }
 
     @Test
-    fun test022_testComplexEcuationWithParenthesesButParenthesesAreNotIncludednumberheAST() {
+    fun test022_testComplexEcuationWithParenthesesButParenthesesAreNotIncludedNumberheAST() {
         val code = "let test: number = 3 + (5 * 2) + 4;"
         val tokens = LexerImpl().tokenize(code)
         val parser: Parser = MyParser()
@@ -688,37 +688,37 @@ class ParserTest {
         val expected =
             Scope(
                 "program",
-                Range(0, 31),
+                Range(0, 34),
                 listOf(
                     VariableDeclaration(
                         Range(4, 7),
                         "test",
                         "number",
                         MethodResult(
-                            Range(18, 18),
+                            Range(21, 21),
                             Call(
-                                Range(16, 30),
+                                Range(19, 33),
                                 "+",
                                 listOf(
-                                    LiteralArgument(Range(16, 16), "3", "number"),
+                                    LiteralArgument(Range(19, 19), "3", "number"),
                                     MethodResult(
-                                        Range(28, 28),
+                                        Range(31, 31),
                                         Call(
-                                            Range(20, 30),
+                                            Range(23, 33),
                                             "+",
                                             listOf(
                                                 MethodResult(
-                                                    Range(23, 23),
+                                                    Range(26, 26),
                                                     Call(
-                                                        Range(21, 25),
+                                                        Range(24, 28),
                                                         "*",
                                                         listOf(
-                                                            LiteralArgument(Range(21, 21), "5", "number"),
-                                                            LiteralArgument(Range(25, 25), "2", "number"),
+                                                            LiteralArgument(Range(24, 24), "5", "number"),
+                                                            LiteralArgument(Range(28, 28), "2", "number"),
                                                         ),
                                                     ),
                                                 ),
-                                                LiteralArgument(Range(30, 30), "4", "number"),
+                                                LiteralArgument(Range(33, 33), "4", "number"),
                                             ),
                                         ),
                                     ),
@@ -741,7 +741,7 @@ class ParserTest {
         val expected =
             Scope(
                 "program",
-                Range(0, 10),
+                Range(0, 13),
                 listOf(DeclarationStatement(Range(4, 4), "a", "number")),
             )
         assertEquals(ast, expected)
@@ -756,10 +756,10 @@ class ParserTest {
         val expected =
             Scope(
                 "program",
-                Range(0, 18),
+                Range(0, 21),
                 listOf(
                     DeclarationStatement(Range(4, 4), "a", "number"),
-                    AssignmentStatement(Range(12, 12), "a", LiteralArgument(Range(16, 17), "54", "number")),
+                    AssignmentStatement(Range(15, 15), "a", LiteralArgument(Range(19, 20), "54", "number")),
                 ),
             )
 
@@ -803,20 +803,20 @@ class ParserTest {
         val expected =
             Scope(
                 "program",
-                Range(0, 20),
+                Range(0, 23),
                 listOf(
                     VariableDeclaration(
                         Range(4, 6),
                         "sum",
                         "number",
                         MethodResult(
-                            Range(17, 17),
+                            Range(20, 20),
                             Call(
-                                (Range(15, 19)),
+                                (Range(18, 22)),
                                 "+",
                                 listOf(
-                                    VariableArgument(Range(15, 15), "a"),
-                                    VariableArgument(Range(19, 19), "b"),
+                                    VariableArgument(Range(18, 18), "a"),
+                                    VariableArgument(Range(22, 22), "b"),
                                 ),
                             ),
                         ),
@@ -835,20 +835,20 @@ class ParserTest {
         val expected =
             Scope(
                 "program",
-                Range(0, 18),
+                Range(0, 21),
                 listOf(
                     VariableDeclaration(
                         Range(4, 4),
                         "a",
                         "number",
                         MethodResult(
-                            Range(15, 15),
+                            Range(18, 18),
                             Call(
-                                (Range(13, 17)),
+                                (Range(16, 20)),
                                 "+",
                                 listOf(
-                                    VariableArgument(Range(13, 13), "a"),
-                                    VariableArgument(Range(17, 17), "b"),
+                                    VariableArgument(Range(16, 16), "a"),
+                                    VariableArgument(Range(20, 20), "b"),
                                 ),
                             ),
                         ),
@@ -949,7 +949,7 @@ class ParserTest {
     }
 
     @Test
-    fun test032_testVariableDeclarationWithAnObjectThatAnumberStringNorNumberNorBool() {
+    fun test032_testVariableDeclarationWithAnObjectThatANumberStringNorNumberNorBool() {
         val code = "let a: object = object();"
         val tokens = LexerImpl().tokenize(code)
         val parser: Parser = MyParser()
@@ -971,7 +971,7 @@ class ParserTest {
     }
 
     @Test
-    fun test033_testprintlnWithSumOfStringAndnumber() {
+    fun test033_testprintlnWithSumOfStringAndNumber() {
         val code = "println(\"Hello\" + 4);"
         val tokens = LexerImpl().tokenize(code)
         val parser: Parser = MyParser()
