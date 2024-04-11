@@ -85,7 +85,7 @@ class ParserTest {
                         Range(4, 4),
                         "a",
                         "string",
-                        LiteralArgument(Range(16, 21), "\"Juan\"", "string")
+                        LiteralArgument(Range(16, 21), "\"Juan\"", "string"),
                     ),
                 ),
             )
@@ -109,14 +109,14 @@ class ParserTest {
                         Range(4, 4),
                         "a",
                         "string",
-                        LiteralArgument(Range(16, 21), "\"Juan\"", "string")
+                        LiteralArgument(Range(16, 21), "\"Juan\"", "string"),
                     ),
                     VariableDeclaration(Range(28, 28), "b", "int", LiteralArgument(Range(37, 37), "5", "int")),
                     VariableDeclaration(
                         Range(44, 44),
                         "c",
                         "boolean",
-                        LiteralArgument(Range(57, 60), "true", "boolean")
+                        LiteralArgument(Range(57, 60), "true", "boolean"),
                     ),
                 ),
             )
@@ -185,7 +185,7 @@ class ParserTest {
                                 "+",
                                 listOf(
                                     LiteralArgument(Range(15, 15), "3", "int"),
-                                    LiteralArgument(Range(19, 19), "5", "int")
+                                    LiteralArgument(Range(19, 19), "5", "int"),
                                 ),
                             ),
                         ),
@@ -218,7 +218,7 @@ class ParserTest {
                                 "+",
                                 listOf(
                                     VariableArgument(Range(15, 15), "a"),
-                                    LiteralArgument(Range(19, 19), "5", "int")
+                                    LiteralArgument(Range(19, 19), "5", "int"),
                                 ),
                             ),
                         ),
@@ -871,8 +871,8 @@ class ParserTest {
                 listOf(
                     MethodResult(
                         Range(0, 6),
-                        Call(Range(8, 9), "println", listOf(LiteralArgument(Range(8, 9), "34", "int")))
-                    )
+                        Call(Range(8, 9), "println", listOf(LiteralArgument(Range(8, 9), "34", "int"))),
+                    ),
                 ),
             )
         assertEquals(expected, ast)
@@ -902,7 +902,7 @@ class ParserTest {
                                         "+",
                                         listOf(
                                             LiteralArgument(Range(8, 9), "34", "int"),
-                                            LiteralArgument(Range(13, 13), "4", "int")
+                                            LiteralArgument(Range(13, 13), "4", "int"),
                                         ),
                                     ),
                                 ),
@@ -941,7 +941,7 @@ class ParserTest {
                         Range(4, 4),
                         "a",
                         "String",
-                        MethodResult(Range(16, 23), Call(Range(16, 23), "object", listOf()))
+                        MethodResult(Range(16, 23), Call(Range(16, 23), "object", listOf())),
                     ),
                 ),
             )
@@ -963,7 +963,7 @@ class ParserTest {
                         Range(4, 4),
                         "a",
                         "object",
-                        MethodResult(Range(16, 23), Call(Range(16, 23), "object", listOf()))
+                        MethodResult(Range(16, 23), Call(Range(16, 23), "object", listOf())),
                     ),
                 ),
             )
@@ -977,32 +977,33 @@ class ParserTest {
         val parser: Parser = MyParser()
         val ast = parser.parseTokens(tokens)
 
-        val expected = Scope(
-            "program",
-            Range(0, 20),
-            listOf(
-                MethodResult(
-                    Range(0, 6),
-                    Call(
-                        Range(8, 18),
-                        "println",
-                        listOf(
-                            MethodResult(
-                                Range(16, 16),
-                                Call(
-                                    Range(8, 18),
-                                    "+",
-                                    listOf(
-                                        LiteralArgument(Range(8, 14), "\"Hello\"", "string"),
-                                        LiteralArgument(Range(18, 18), "4", "int"),
+        val expected =
+            Scope(
+                "program",
+                Range(0, 20),
+                listOf(
+                    MethodResult(
+                        Range(0, 6),
+                        Call(
+                            Range(8, 18),
+                            "println",
+                            listOf(
+                                MethodResult(
+                                    Range(16, 16),
+                                    Call(
+                                        Range(8, 18),
+                                        "+",
+                                        listOf(
+                                            LiteralArgument(Range(8, 14), "\"Hello\"", "string"),
+                                            LiteralArgument(Range(18, 18), "4", "int"),
+                                        ),
                                     ),
                                 ),
                             ),
                         ),
                     ),
                 ),
-            ),
-        )
+            )
 
         assertEquals(ast, expected)
     }
@@ -1014,34 +1015,34 @@ class ParserTest {
         val parser: Parser = MyParser()
         val ast = parser.parseTokens(tokens)
 
-        val expected = Scope(
-            "program",
-            Range(0, 20),
-            listOf(
-                MethodResult(
-                    Range(0, 6),
-                    Call(
-                        Range(8, 18),
-                        "println",
-                        listOf(
-                            MethodResult(
-                                Range(16, 16),
-                                Call(
-                                    Range(8, 18),
-                                    "+",
-                                    listOf(
-                                        LiteralArgument(Range(8, 14), "\"Hello\"", "string"),
-                                        LiteralArgument(Range(18, 18), "4", "int"),
+        val expected =
+            Scope(
+                "program",
+                Range(0, 20),
+                listOf(
+                    MethodResult(
+                        Range(0, 6),
+                        Call(
+                            Range(8, 18),
+                            "println",
+                            listOf(
+                                MethodResult(
+                                    Range(16, 16),
+                                    Call(
+                                        Range(8, 18),
+                                        "+",
+                                        listOf(
+                                            LiteralArgument(Range(8, 14), "\"Hello\"", "string"),
+                                            LiteralArgument(Range(18, 18), "4", "int"),
+                                        ),
                                     ),
                                 ),
                             ),
                         ),
                     ),
                 ),
-            ),
-        )
+            )
 
         assertEquals(ast, expected)
     }
-
 }
