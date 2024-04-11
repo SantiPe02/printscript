@@ -224,7 +224,7 @@ class InterpreterTest {
 
     @Test
     fun testPipeline() {
-        val code = "let sum: int = ((3 + 5) * (2 + 4));"
+        val code = "let sum: number = ((3 + 5) * (2 + 4));"
         val tokens = LexerImpl().tokenize(code)
         val parser: Parser = MyParser()
         val ast = parser.parseTokens(tokens)
@@ -232,7 +232,7 @@ class InterpreterTest {
         val target = defaultInterpreter.variables["sum"]
 
         assertNotNull(target)
-        assertEquals("int", target?.type)
+        assertEquals("number", target?.type)
         assertEquals("48.0", target?.value)
         assertEquals(1, defaultInterpreter.variables.size)
         assertTrue(report.outputs.isEmpty())
