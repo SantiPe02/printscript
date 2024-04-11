@@ -6,7 +6,10 @@ plugins {
     // Apply the org.jetbrains.kotlin.jvm Plugin to add support for Kotlin.
     id 'org.jetbrains.kotlin.jvm'
     id 'jacoco'
+    id 'maven-publish'
 }
+
+version = "1.0.0-SNAPSHOT"
 
 repositories {
     // Use Maven Central for resolving dependencies.
@@ -78,4 +81,22 @@ tasks.register("installGitHooks", Copy) {
 
 tasks.named("build") {
     dependsOn("installGitHooks")
+}
+
+publishing {
+    repositories {
+        maven {
+            name = "GitHubPackages"
+            url = uri("https://maven.pkg.github.com/SantiPe02/printscript")
+            credentials {
+                username = project.findProperty("GITHUB_ACTOR") as String ?: System.getenv("GITHUB_ACTOR")
+                password = project.findProperty("GITHUB_TOKEN") as String ?: System.getenv("GITHUB_TOKEN")
+            }
+        }
+    }
+    publications {
+        gpr(MavenPublication) {
+            from(components.java)
+        }
+    }
 }
