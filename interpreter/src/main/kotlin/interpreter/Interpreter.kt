@@ -1,7 +1,9 @@
 package interpreter
 
 import ast.Argument
+import ast.AssignmentStatement
 import ast.Call
+import ast.DeclarationStatement
 import ast.LiteralArgument
 import ast.MethodResult
 import ast.Scope
@@ -10,7 +12,7 @@ import ast.VariableDeclaration
 
 data class Variable(val type: String, val value: String?)
 
-class DefaultInterpreter {
+class Interpreter {
     private val outputs: MutableList<String> = mutableListOf()
     private val errors: MutableList<String> = mutableListOf()
     val variables: MutableMap<String, Variable> = mutableMapOf()
@@ -20,16 +22,75 @@ class DefaultInterpreter {
             if (errors.isNotEmpty()) break
             when (sentence) {
                 is LiteralArgument -> TODO()
-                is MethodResult -> TODO()
+                is MethodResult -> interpret(sentence.methodCall)
                 is VariableArgument -> TODO()
                 is Call -> interpret(sentence)
                 is VariableDeclaration -> interpret(sentence)
                 is Scope -> TODO()
-                else -> {}
+                is AssignmentStatement -> interpret(sentence)
+                is DeclarationStatement -> interpret(sentence)
             }
         }
 
         return Report(outputs, errors)
+    }
+
+    private fun interpret(sentence: AssignmentStatement) {
+        val variable: Variable? = variables.get(sentence.variableName)
+        if (variable == null) {
+            errors.add("variable ${sentence.variableName} not declared in this scope. ${sentence.range.start}")
+            return
+        }
+        interpret(sentence.value).onFailure {
+            errors.add("variable ${sentence.variableName} not declared in this scope. ${sentence.range.start}")
+            return
+        }.onSuccess {
+            if (variable.type != it.type) {
+                errors.add(
+                    "miss mach type on runtime on ${sentence.range.start}." +
+                        " was expecting ${variable.type} and got ${it.type}",
+                )
+                return
+            }
+            variables.replace(sentence.variableName, it)
+        }
+    }
+
+    private fun interpret(sentence: DeclarationStatement) {
+        if (variables.containsKey(sentence.variableName)) {
+            errors.add("variable ${sentence.variableName} already declared in this scope. ${sentence.range.start}")
+            return
+        }
+        variables.put(
+            sentence.variableName,
+            Variable(
+                sentence.variableType,
+                getDefaultValueForType(sentence.variableType),
+            ),
+        )
+    }
+
+    private fun getDefaultValueForType(type: String): String {
+        return when (type) {
+            "number" -> "0"
+            "string" -> ""
+            else -> "null"
+        }
+    }
+
+    private fun interpret(sentence: Argument): Result<Variable> {
+        return when (sentence) {
+            is LiteralArgument -> Result.success(Variable(sentence.type, sentence.value))
+            is MethodResult -> interpret(interpretArgument(sentence))
+            is VariableArgument -> {
+                val variable: Variable? = variables.get(sentence.name)
+                if (variable == null) {
+                    Result.failure(Error("variable ${sentence.name} not declared in this scope. ${sentence.range.start}"))
+                } else {
+                    Result.success(variable)
+                }
+            }
+        }
     }
 
     private fun interpret(sentence: Call) {
@@ -47,10 +108,10 @@ class DefaultInterpreter {
 
     private fun interpret(sentence: VariableDeclaration) {
         val value: LiteralArgument =
-            when (sentence.value) {
-                is MethodResult -> interpretArgument(sentence.value as MethodResult)
-                is LiteralArgument -> sentence as LiteralArgument
-                is VariableArgument -> interpretArgument(sentence.value as VariableArgument)
+            when (val value = sentence.value) {
+                is MethodResult -> interpretArgument(value)
+                is LiteralArgument -> value
+                is VariableArgument -> interpretArgument(value)
             }
 
         variables[sentence.variableName] = Variable(sentence.variableType, value.value)
@@ -131,7 +192,7 @@ class DefaultInterpreter {
         otherLiteral: LiteralArgument,
         warnings: Boolean = true,
     ): Boolean {
-        if (aLiteral.type === otherLiteral.type) {
+        if (aLiteral.type == otherLiteral.type) {
             return true
         } else if (warnings) {
             errors.add(PrintScriptError.TYPE_MISMATCH.msg)
