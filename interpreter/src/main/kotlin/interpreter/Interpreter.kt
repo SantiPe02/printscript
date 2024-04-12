@@ -12,6 +12,17 @@ import ast.VariableDeclaration
 
 data class Variable(val type: String, val value: String?)
 
+data class Report(val outputs: List<String>, val errors: List<String>)
+
+// TODO: use this, but add the range to the report of the error.
+enum class PrintScriptError(val msg: String) {
+    VARIABLE_ALREADY_DECLARED("Can't declare an existing variable."),
+    VARIABLE_NOT_DECLARED("Variable not declared."),
+    VARIABLE_NOT_ASSIGNED("Variable has not assigned value."),
+    TYPE_MISMATCH("Variable and assigned value types mismatch."),
+    OPERATION_NOT_ALLOWED("Operation can't be applied with this types."),
+}
+
 class Interpreter {
     private val outputs: MutableList<String> = mutableListOf()
     private val errors: MutableList<String> = mutableListOf()
