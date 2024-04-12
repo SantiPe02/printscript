@@ -85,7 +85,7 @@ class ParserTest {
                         Range(4, 4),
                         "a",
                         "string",
-                        LiteralArgument(Range(16, 21), "\"Juan\"", "string"),
+                        LiteralArgument(Range(16, 21), "Juan", "string"),
                     ),
                 ),
             )
@@ -109,7 +109,7 @@ class ParserTest {
                         Range(4, 4),
                         "a",
                         "string",
-                        LiteralArgument(Range(16, 21), "\"Juan\"", "string"),
+                        LiteralArgument(Range(16, 21), "Juan", "string"),
                     ),
                     VariableDeclaration(Range(28, 28), "b", "number", LiteralArgument(Range(40, 40), "5", "number")),
                     VariableDeclaration(
@@ -994,7 +994,7 @@ class ParserTest {
                                         Range(8, 18),
                                         "+",
                                         listOf(
-                                            LiteralArgument(Range(8, 14), "\"Hello\"", "string"),
+                                            LiteralArgument(Range(8, 14), "Hello", "string"),
                                             LiteralArgument(Range(18, 18), "4", "number"),
                                         ),
                                     ),
@@ -1032,7 +1032,7 @@ class ParserTest {
                                         Range(8, 18),
                                         "+",
                                         listOf(
-                                            LiteralArgument(Range(8, 14), "\"Hello\"", "string"),
+                                            LiteralArgument(Range(8, 14), "Hello", "string"),
                                             LiteralArgument(Range(18, 18), "4", "number"),
                                         ),
                                     ),

@@ -1,24 +1,20 @@
 package interpreter
 
-import ast.AbstractSyntaxTree
-import ast.AdditionNode
-import ast.AssignNode
-import ast.DeclareAndAssignNode
-import ast.DeclareNode
-import ast.DivisionNode
-import ast.ExpressionNode
-import ast.IdentifierNode
-import ast.LiteralNode
-import ast.MultiplicationNode
-import ast.PrintNode
-import ast.PrintScriptType
-import ast.SimpleBinaryOperation
-import ast.SubtractionNode
+import ast.Argument
+import ast.AssignmentStatement
+import ast.Call
+import ast.DeclarationStatement
+import ast.LiteralArgument
+import ast.MethodResult
+import ast.Scope
+import ast.VariableArgument
+import ast.VariableDeclaration
+
+data class Variable(val type: String, val value: String?)
 
 data class Report(val outputs: List<String>, val errors: List<String>)
 
-data class Literal(val type: PrintScriptType, val value: String?)
-
+// TODO: use this, but add the range to the report of the error.
 enum class PrintScriptError(val msg: String) {
     VARIABLE_ALREADY_DECLARED("Can't declare an existing variable."),
     VARIABLE_NOT_DECLARED("Variable not declared."),
@@ -30,145 +26,188 @@ enum class PrintScriptError(val msg: String) {
 class Interpreter {
     private val outputs: MutableList<String> = mutableListOf()
     private val errors: MutableList<String> = mutableListOf()
-    val variables: MutableMap<String, Literal> = mutableMapOf()
+    val variables: MutableMap<String, Variable> = mutableMapOf()
 
-    fun interpret(ast: AbstractSyntaxTree): Report {
-        resetScope()
-
-        for (sentence in ast.nodes) {
+    fun interpret(ast: Scope): Report {
+        for (sentence in ast.body) {
             if (errors.isNotEmpty()) break
             when (sentence) {
-                is DeclareNode -> interpret(sentence)
-                is AssignNode -> interpret(sentence)
-                is DeclareAndAssignNode -> interpret(sentence)
-                is PrintNode -> interpret(sentence)
+                is LiteralArgument -> TODO()
+                is MethodResult -> interpret(sentence.methodCall)
+                is VariableArgument -> TODO()
+                is Call -> interpret(sentence)
+                is VariableDeclaration -> interpret(sentence)
+                is Scope -> TODO()
+                is AssignmentStatement -> interpret(sentence)
+                is DeclarationStatement -> interpret(sentence)
             }
         }
 
         return Report(outputs, errors)
     }
 
-    private fun resetScope() {
-        outputs.clear()
-        errors.clear()
-        variables.clear()
-    }
-
-    private fun interpret(declaration: DeclareNode) {
-        val literal: Literal? = variables[declaration.identifier]
-        if (literal === null) {
-            variables[declaration.identifier] = Literal(declaration.type, null)
-        } else {
-            errors.add(PrintScriptError.VARIABLE_ALREADY_DECLARED.msg)
+    private fun interpret(sentence: AssignmentStatement) {
+        val variable: Variable? = variables.get(sentence.variableName)
+        if (variable == null) {
+            errors.add("variable ${sentence.variableName} not declared in this scope. ${sentence.range.start}")
+            return
         }
-    }
-
-    private fun interpret(assignation: AssignNode) {
-        val literal: Literal? = variables[assignation.identifier]
-        val result: Literal? = interpretExpression(assignation.value)
-        if (literal !== null) {
-            if (result !== null) {
-                if (matchTypes(literal, result)) {
-                    variables[assignation.identifier] = Literal(literal.type, result.value)
-                } else {
-                    errors.add(PrintScriptError.VARIABLE_NOT_DECLARED.msg)
-                }
-            }
-        }
-    }
-
-    private fun interpret(declareAndAssign: DeclareAndAssignNode) {
-        interpret(declareAndAssign.declare)
-        interpret(AssignNode(declareAndAssign.declare.identifier, declareAndAssign.value))
-    }
-
-    private fun interpret(printNode: PrintNode) {
-        val result: Literal? = interpretExpression(printNode.argument)
-        if (result !== null) outputs.add(result.value.toString())
-    }
-
-    private fun interpretExpression(expression: ExpressionNode): Literal? {
-        return when (expression) {
-            is LiteralNode -> Literal(expression.type, expression.value)
-            is IdentifierNode -> solve(expression)
-            is AdditionNode -> solve(expression)
-            is SimpleBinaryOperation -> solve(expression)
-            else -> null
-        }
-    }
-
-    private fun solve(identifierNode: IdentifierNode): Literal? {
-        val literal: Literal? = variables[identifierNode.identifier]
-        if (literal !== null) {
-            if (literal.value !== null) {
-                return literal
-            } else {
-                errors.add(PrintScriptError.VARIABLE_NOT_ASSIGNED.msg)
-            }
-        }
-        errors.add(PrintScriptError.VARIABLE_NOT_DECLARED.msg)
-        return null
-    }
-
-    private fun solve(addition: AdditionNode): Literal? {
-        val left = interpretExpression(addition.left)
-        val right = interpretExpression(addition.right)
-
-        if (left !== null && right !== null) {
-            return if (matchTypes(left, right, warnings = false)) {
-                when (left.type) {
-                    PrintScriptType.STRING -> Literal(left.type, left.value + right.value)
-                    PrintScriptType.NUMBER -> Literal(left.type, binaryOperation(left, right) { a, b -> a + b })
-                }
-            } else {
-                Literal(PrintScriptType.STRING, left.value + right.value)
-            }
-        }
-        return null
-    }
-
-    private fun solve(expression: SimpleBinaryOperation): Literal? {
-        val left = interpretExpression(expression.left)
-        val right = interpretExpression(expression.right)
-
-        if (left !== null && right !== null) {
-            if (left.type === PrintScriptType.NUMBER && right.type === PrintScriptType.NUMBER) {
-                return Literal(
-                    PrintScriptType.NUMBER,
-                    when (expression) {
-                        is SubtractionNode -> binaryOperation(left, right) { a, b -> a - b }
-                        is MultiplicationNode -> binaryOperation(left, right) { a, b -> a * b }
-                        is DivisionNode -> binaryOperation(left, right) { a, b -> a / b }
-                        else -> null
-                    },
+        interpret(sentence.value).onFailure {
+            errors.add("variable ${sentence.variableName} not declared in this scope. ${sentence.range.start}")
+            return
+        }.onSuccess {
+            if (variable.type != it.type) {
+                errors.add(
+                    "miss mach type on runtime on ${sentence.range.start}." +
+                        " was expecting ${variable.type} and got ${it.type}",
                 )
-            } else {
-                errors.add(PrintScriptError.OPERATION_NOT_ALLOWED.msg)
+                return
+            }
+            variables.replace(sentence.variableName, it)
+        }
+    }
+
+    private fun interpret(sentence: DeclarationStatement) {
+        if (variables.containsKey(sentence.variableName)) {
+            errors.add("variable ${sentence.variableName} already declared in this scope. ${sentence.range.start}")
+            return
+        }
+        variables.put(
+            sentence.variableName,
+            Variable(
+                sentence.variableType,
+                getDefaultValueForType(sentence.variableType),
+            ),
+        )
+    }
+
+    private fun getDefaultValueForType(type: String): String {
+        return when (type) {
+            "number" -> "0"
+            "string" -> ""
+            else -> "null"
+        }
+    }
+
+    private fun interpret(sentence: Argument): Result<Variable> {
+        return when (sentence) {
+            is LiteralArgument -> Result.success(Variable(sentence.type, sentence.value))
+            is MethodResult -> interpret(interpretArgument(sentence))
+            is VariableArgument -> {
+                val variable: Variable? = variables.get(sentence.name)
+                if (variable == null) {
+                    Result.failure(Error("variable ${sentence.name} not declared in this scope. ${sentence.range.start}"))
+                } else {
+                    Result.success(variable)
+                }
             }
         }
-        return null
+    }
+
+    private fun interpret(sentence: Call) {
+        val value =
+            when (val argument: Argument = sentence.arguments.first()) {
+                is MethodResult -> interpretArgument(argument)
+                is LiteralArgument -> argument
+                is VariableArgument -> interpretArgument(argument)
+            }
+
+        when (sentence.name) {
+            "println" -> outputs.add(value.value)
+        }
+    }
+
+    private fun interpret(sentence: VariableDeclaration) {
+        val value: LiteralArgument =
+            when (val value = sentence.value) {
+                is MethodResult -> interpretArgument(value)
+                is LiteralArgument -> value
+                is VariableArgument -> interpretArgument(value)
+            }
+
+        variables[sentence.variableName] = Variable(sentence.variableType, value.value)
+    }
+
+    private fun interpretArgument(expression: VariableArgument): LiteralArgument {
+        val value: Variable = variables[expression.name]!!
+
+        return LiteralArgument(
+            expression.range,
+            value.value!!,
+            value.type,
+        )
+    }
+
+    private fun interpretArgument(expression: MethodResult): LiteralArgument {
+        val literals = mutableListOf<LiteralArgument>()
+
+        for (argument in expression.methodCall.arguments) {
+            literals.add(
+                when (argument) {
+                    is MethodResult -> interpretArgument(argument)
+                    is LiteralArgument -> argument
+                    is VariableArgument -> interpretArgument(argument)
+                },
+            )
+        }
+
+        if (matchTypes(literals[0], literals[1], false)) {
+            return when (expression.methodCall.name) {
+                "*" ->
+                    LiteralArgument(
+                        expression.range,
+                        binaryOperation(literals[0], literals[1]) { a, b -> a * b },
+                        literals[0].type,
+                    )
+
+                "+" ->
+                    LiteralArgument(
+                        expression.range,
+                        binaryOperation(literals[0], literals[1]) { a, b -> a + b },
+                        literals[0].type,
+                    )
+
+                "-" ->
+                    LiteralArgument(
+                        expression.range,
+                        binaryOperation(literals[0], literals[1]) { a, b -> a - b },
+                        literals[0].type,
+                    )
+
+                "/" ->
+                    LiteralArgument(
+                        expression.range,
+                        binaryOperation(literals[0], literals[1]) { a, b -> a / b },
+                        literals[0].type,
+                    )
+
+                else -> LiteralArgument(expression.range, literals[0].type, literals[0].value)
+            }
+        } else {
+            return LiteralArgument(literals[0].range, literals[0].value + literals[1].value, "string")
+        }
+    }
+
+    private fun binaryOperation(
+        n: LiteralArgument,
+        m: LiteralArgument,
+        operation: (Double, Double) -> Double,
+    ): String {
+        val nValue = n.value.toDoubleOrNull()!!
+        val mValue = m.value.toDoubleOrNull()!!
+        return operation(nValue, mValue).toString()
     }
 
     private fun matchTypes(
-        aLiteral: Literal,
-        otherLiteral: Literal,
+        aLiteral: LiteralArgument,
+        otherLiteral: LiteralArgument,
         warnings: Boolean = true,
     ): Boolean {
-        if (aLiteral.type === otherLiteral.type) {
+        if (aLiteral.type == otherLiteral.type) {
             return true
         } else if (warnings) {
             errors.add(PrintScriptError.TYPE_MISMATCH.msg)
         }
         return false
-    }
-
-    private fun binaryOperation(
-        n: Literal,
-        m: Literal,
-        operation: (Double, Double) -> Double,
-    ): String {
-        val nValue = n.value?.toDoubleOrNull()!!
-        val mValue = m.value?.toDoubleOrNull()!!
-        return operation(nValue, mValue).toString()
     }
 }

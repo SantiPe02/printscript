@@ -3,13 +3,13 @@ package commands
 import com.github.ajalt.clikt.core.CliktCommand
 import com.github.ajalt.clikt.core.CliktError
 import com.github.ajalt.clikt.parameters.arguments.argument
-import interpreter.DefaultInterpreter
+import interpreter.Interpreter
 import interpreter.Report
 import lexer.Lexer
 import parser.Parser
 import java.io.File
 
-class Execute(val lexer: Lexer, val parser: Parser, val interpreter: DefaultInterpreter) : CliktCommand() {
+class Execute(val lexer: Lexer, val parser: Parser, val interpreter: Interpreter) : CliktCommand() {
     val fileDir: String by argument()
 
     override fun run() {

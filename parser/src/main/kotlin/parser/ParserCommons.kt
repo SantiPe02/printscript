@@ -174,10 +174,10 @@ class ParserCommons {
             word.all { it.isDigit() } -> "number"
             word.matches(Regex("-?\\d+(\\.\\d+)?")) -> "number"
             word.lowercase(Locale.getDefault()) == "true" || word.lowercase(Locale.getDefault()) == "false" -> "boolean"
-            word.startsWith("\"") && word.endsWith("\"") -> "string"
-            // Todo: when it is a method, the type is the return value of that method.
+            else -> "string"
+            // Todo: when it is a method, the type is the return value of that method.S
             //  Lists are methods, for example: list(1,2,3)... unless they ask otherwise
-            else -> throw Exception("Todo: data type not handled yet")
+            // else -> throw Exception("Todo: data type not handled yet")
         }
     }
 

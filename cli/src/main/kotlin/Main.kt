@@ -4,7 +4,7 @@ import commands.Execute
 import commands.Formatting
 import commands.Printscript
 import commands.Validate
-import interpreter.DefaultInterpreter
+import interpreter.Interpreter
 import lexer.LexerImpl
 import parser.MyParser
 
@@ -13,5 +13,5 @@ fun main(args: Array<String>): Unit =
         Validate(LexerImpl(), MyParser()),
         Formatting(),
         Analyzing(LexerImpl(), MyParser(), MyLinter()),
-        Execute(LexerImpl(), MyParser(), DefaultInterpreter()),
+        Execute(LexerImpl(), MyParser(), Interpreter()),
     ).main(args)
