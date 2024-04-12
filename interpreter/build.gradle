@@ -3,9 +3,8 @@ plugins {
 }
 
 dependencies {
-    implementation project(':token')
-    implementation project(':util')
-    implementation project(':ast')
-    implementation project(':parser')
-    implementation project(':lexer')
+    implementation(project(":ast"))
+
+    testImplementation(project(":lexer"))
+    testImplementation(project(":parser"))
 }
