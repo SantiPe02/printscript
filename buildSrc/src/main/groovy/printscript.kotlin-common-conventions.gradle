@@ -9,6 +9,7 @@ plugins {
     id 'maven-publish'
 }
 
+group = "com.github.SantiPe02"
 version = "1.0.0-SNAPSHOT"
 
 repositories {
