@@ -10,6 +10,7 @@ import ast.MethodResult
 import ast.Scope
 import ast.VariableArgument
 import ast.VariableDeclaration
+import interpreter.specializedInterpreter.ScopeInterpreter
 
 data class Variable(val type: String, val value: String?)
 
@@ -35,19 +36,10 @@ class Interpreter(
             is VariableArgument -> TODO()
             is Call -> interpret(sentence)
             is VariableDeclaration -> interpret(sentence)
-            is Scope -> interpret(sentence)
+            is Scope -> ScopeInterpreter.interpret(this, sentence)
             is AssignmentStatement -> interpret(sentence)
             is DeclarationStatement -> interpret(sentence)
         }
-
-    private fun interpret(scope: Scope): Interpreter {
-        var interpreter = this
-        for (sentence in scope.body) {
-            if (interpreter.report.errors.isNotEmpty()) return interpreter
-            interpreter = interpreter.interpret(sentence)
-        }
-        return interpreter
-    }
 
     private fun interpret(sentence: AssignmentStatement): Interpreter {
         val variable: Variable? = variables.get(sentence.variableName)
