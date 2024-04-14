@@ -11,7 +11,7 @@ class InterpreterTest {
     private val interpreter = Interpreter()
 
     @Test
-    fun test01_completeTestOfVersion1OfPrintscriptWhenValidCodeWithExitExpectedOfValue3() {
+    fun test01_completeTestOfVersion1OfPrintscriptWhenValidCodeWithExitExpectedOfValue6() {
         val code = """
      let a: number = 12;
      let b: number = 4;
@@ -24,9 +24,9 @@ class InterpreterTest {
         val tokens = LexerImpl().tokenize(code)
         val parser: Parser = MyParser()
         val ast = parser.parseTokens(tokens)
-        val report = interpreter.interpret(ast)
+        val newInterpreter = interpreter.interpret(ast)
 
-        assertEquals("Result: 6.0", report.outputs[0])
-        assertTrue(report.errors.isEmpty())
+        assertEquals("Result: 6.0", newInterpreter.report.outputs[0])
+        assertTrue(newInterpreter.report.errors.isEmpty())
     }
 }

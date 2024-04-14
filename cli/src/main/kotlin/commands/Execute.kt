@@ -4,7 +4,6 @@ import com.github.ajalt.clikt.core.CliktCommand
 import com.github.ajalt.clikt.core.CliktError
 import com.github.ajalt.clikt.parameters.arguments.argument
 import interpreter.Interpreter
-import interpreter.Report
 import lexer.Lexer
 import parser.Parser
 import java.io.File
@@ -17,7 +16,7 @@ class Execute(val lexer: Lexer, val parser: Parser, val interpreter: Interpreter
         if (!file.exists()) throw CliktError("The file to run was not found at $fileDir")
 
         interpreter.interpret(parser.parseTokens(lexer.tokenize(file.readText())))
-        val report = Report(listOf(), listOf())
+        val report = interpreter.report
         report.outputs.forEach { out -> echo(out) }
 
         if (report.errors.isNotEmpty()) {
