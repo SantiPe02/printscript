@@ -10,7 +10,7 @@ object YamlConfigurationReader : IConfigurationReader {
 
     override fun readFileAndBuildRules(configFile: File): Result<LinterConfiguration> {
         if (configFile.extension != getFileExtension()) {
-            return Result.failure(Exception("The method was expecting a json file but got a ${configFile.extension}"))
+            return Result.failure(Exception("The method was expecting a yaml file but got a ${configFile.extension}"))
         }
 
         val yaml = Yaml()
