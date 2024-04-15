@@ -22,13 +22,13 @@ class ParserTest {
         val parser: Parser = MyParser()
         val ast = parser.parseTokens(tokens)
         val expected =
-            Scope(
+            Result.success(Scope(
                 "program",
                 Range(0, 17),
                 listOf(
                     VariableDeclaration(Range(4, 4), "a", "number", LiteralArgument(Range(16, 16), "5", "number")),
                 ),
-            )
+            ))
 
         assertEquals(expected, ast)
     }
@@ -40,13 +40,13 @@ class ParserTest {
         val parser: Parser = MyParser()
         val ast = parser.parseTokens(tokens)
         val expected =
-            Scope(
+            Result.success(Scope(
                 "program",
                 Range(0, 21),
                 listOf(
                     VariableDeclaration(Range(4, 4), "a", "boolean", LiteralArgument(Range(17, 20), "true", "boolean")),
                 ),
-            )
+            ))
 
         assertEquals(expected, ast)
     }
@@ -58,13 +58,13 @@ class ParserTest {
         val parser: Parser = MyParser()
         val ast = parser.parseTokens(tokens)
         val expected =
-            Scope(
+            Result.success(Scope(
                 "program",
                 Range(0, 19),
                 listOf(
                     VariableDeclaration(Range(4, 4), "a", "number", LiteralArgument(Range(16, 18), "3.5", "number")),
                 ),
-            )
+            ))
 
         assertEquals(expected, ast)
     }
@@ -77,7 +77,7 @@ class ParserTest {
         val parser: Parser = MyParser()
         val ast = parser.parseTokens(tokens)
         val expected =
-            Scope(
+            Result.success(Scope(
                 "program",
                 Range(0, 22),
                 listOf(
@@ -88,7 +88,7 @@ class ParserTest {
                         LiteralArgument(Range(16, 21), "Juan", "string"),
                     ),
                 ),
-            )
+            ))
 
         assertEquals(expected, ast)
     }
@@ -101,7 +101,7 @@ class ParserTest {
         val parser: Parser = MyParser()
         val ast = parser.parseTokens(tokens)
         val expected =
-            Scope(
+            Result.success(Scope(
                 "program",
                 Range(0, 64),
                 listOf(
@@ -119,7 +119,7 @@ class ParserTest {
                         LiteralArgument(Range(60, 63), "true", "boolean"),
                     ),
                 ),
-            )
+            ))
 
         assertEquals(expected, ast)
     }
@@ -131,13 +131,13 @@ class ParserTest {
         val parser: Parser = MyParser()
         val ast = parser.parseTokens(tokens)
         val expected =
-            Scope(
+            Result.success(Scope(
                 "program",
                 Range(0, 17), // Adjusted range
                 listOf(
                     VariableDeclaration(Range(4, 4), "a", "number", VariableArgument(Range(16, 16), "b")),
                 ),
-            )
+            ))
 
         assertEquals(expected, ast)
     }
@@ -151,14 +151,14 @@ class ParserTest {
         val parser: Parser = MyParser()
         val ast = parser.parseTokens(tokens)
         val expected =
-            Scope(
+            Result.success(Scope(
                 "program",
                 Range(0, 36),
                 listOf(
                     VariableDeclaration(Range(4, 4), "a", "number", LiteralArgument(Range(16, 16), "5", "number")),
                     VariableDeclaration(Range(23, 23), "b", "string", VariableArgument(Range(35, 35), "a")),
                 ),
-            )
+            ))
 
         assertEquals(expected, ast)
     }
@@ -170,7 +170,7 @@ class ParserTest {
         val parser: Parser = MyParser()
         val ast = parser.parseTokens(tokens)
         val expected =
-            Scope(
+            Result.success(Scope(
                 "program",
                 Range(0, 23),
                 listOf(
@@ -191,7 +191,7 @@ class ParserTest {
                         ),
                     ),
                 ),
-            )
+            ))
 
         assertEquals(expected, ast)
     }
@@ -203,7 +203,7 @@ class ParserTest {
         val parser: Parser = MyParser()
         val ast = parser.parseTokens(tokens)
         val expected =
-            Scope(
+            Result.success(Scope(
                 "program",
                 Range(0, 23),
                 listOf(
@@ -224,7 +224,7 @@ class ParserTest {
                         ),
                     ),
                 ),
-            )
+            ))
 
         assertEquals(expected, ast)
     }
@@ -236,7 +236,7 @@ class ParserTest {
         val parser: Parser = MyParser()
         val ast = parser.parseTokens(tokens)
         val expected =
-            Scope(
+            Result.success(Scope(
                 "program",
                 Range(0, 27),
                 listOf(
@@ -267,7 +267,7 @@ class ParserTest {
                         ),
                     ),
                 ),
-            )
+            ))
 
         assertEquals(expected, ast)
     }
@@ -279,7 +279,7 @@ class ParserTest {
         val parser: Parser = MyParser()
         val ast = parser.parseTokens(tokens)
         val expected =
-            Scope(
+            Result.success(Scope(
                 "program",
                 Range(0, 27),
                 listOf(
@@ -310,7 +310,7 @@ class ParserTest {
                         ),
                     ),
                 ),
-            )
+            ))
         assertEquals(expected, ast)
     }
 
@@ -321,7 +321,7 @@ class ParserTest {
         val parser: Parser = MyParser()
         val ast = parser.parseTokens(tokens)
         val expected =
-            Scope(
+            Result.success(Scope(
                 "program",
                 Range(0, 35),
                 listOf(
@@ -372,7 +372,7 @@ class ParserTest {
                         ),
                     ),
                 ),
-            )
+            ))
         assertEquals(expected, ast)
     }
 
@@ -382,7 +382,7 @@ class ParserTest {
         val tokens = LexerImpl().tokenize(code)
         val commons = ParserCommons()
         val gotChar = commons.searchForClosingCharacter(tokens, "(", 0)
-        val expected = 5
+        val expected = Result.success(5)
         assertEquals(expected, gotChar)
     }
 
@@ -393,7 +393,7 @@ class ParserTest {
         val parser: Parser = MyParser()
         val ast = parser.parseTokens(tokens)
         val expected =
-            Scope(
+            Result.success(Scope(
                 "program",
                 Range(0, 29),
                 listOf(
@@ -424,7 +424,7 @@ class ParserTest {
                         ),
                     ),
                 ),
-            )
+            ))
 
         assertEquals(expected, ast)
     }
@@ -436,7 +436,7 @@ class ParserTest {
         val parser: Parser = MyParser()
         val ast = parser.parseTokens(tokens)
         val expected =
-            Scope(
+            Result.success(Scope(
                 "program",
                 Range(0, 35),
                 listOf(
@@ -477,7 +477,7 @@ class ParserTest {
                         ),
                     ),
                 ),
-            )
+            ))
 
         assertEquals(expected, ast)
     }
@@ -490,7 +490,7 @@ class ParserTest {
         val parser: Parser = MyParser()
         val ast = parser.parseTokens(tokens)
         val expected =
-            Scope(
+            Result.success(Scope(
                 "program",
                 Range(0, 37),
                 listOf(
@@ -531,7 +531,7 @@ class ParserTest {
                         ),
                     ),
                 ),
-            )
+            ))
 
         assertEquals(expected, ast)
     }
@@ -545,7 +545,7 @@ class ParserTest {
         val parser: Parser = MyParser()
         val ast = parser.parseTokens(tokens)
         val expected =
-            Scope(
+            Result.success(Scope(
                 "program",
                 Range(0, 28),
                 listOf(
@@ -566,7 +566,7 @@ class ParserTest {
                         ),
                     ),
                 ),
-            )
+            ))
 
         assertEquals(expected, ast)
     }
@@ -578,7 +578,7 @@ class ParserTest {
         val parser: Parser = MyParser()
         val ast = parser.parseTokens(tokens)
         val expected =
-            Scope(
+            Result.success(Scope(
                 "program",
                 Range(0, 32),
                 listOf(
@@ -609,7 +609,7 @@ class ParserTest {
                         ),
                     ),
                 ),
-            )
+            ))
 
         assertEquals(expected, ast)
     }
@@ -621,7 +621,7 @@ class ParserTest {
         val parser: Parser = MyParser()
         val ast = parser.parseTokens(tokens)
         val expected =
-            Scope(
+            Result.success(Scope(
                 "program",
                 Range(0, 36),
                 listOf(
@@ -652,7 +652,7 @@ class ParserTest {
                         ),
                     ),
                 ),
-            )
+            ))
 
         assertEquals(expected, ast)
     }
@@ -664,7 +664,7 @@ class ParserTest {
         val tokens = LexerImpl().tokenize(code)
         val commons = ParserCommons()
         val gotChar = commons.searchForClosingCharacter(tokens, "(", 6)
-        val expected = 15
+        val expected = Result.success(15)
         assertEquals(expected, gotChar)
     }
 
@@ -675,7 +675,7 @@ class ParserTest {
         val tokens = LexerImpl().tokenize(code)
         val commons = ParserCommons()
         val gotChar = commons.searchForClosingCharacter(tokens, "(", 10)
-        val expected = 14
+        val expected = Result.success(14)
         assertEquals(expected, gotChar)
     }
 
@@ -686,7 +686,7 @@ class ParserTest {
         val parser: Parser = MyParser()
         val ast = parser.parseTokens(tokens)
         val expected =
-            Scope(
+            Result.success(Scope(
                 "program",
                 Range(0, 34),
                 listOf(
@@ -727,7 +727,7 @@ class ParserTest {
                         ),
                     ),
                 ),
-            )
+            ))
 
         assertEquals(expected, ast)
     }
@@ -739,11 +739,11 @@ class ParserTest {
         val parser: Parser = MyParser()
         val ast = parser.parseTokens(tokens)
         val expected =
-            Scope(
+            Result.success(Scope(
                 "program",
                 Range(0, 13),
                 listOf(DeclarationStatement(Range(4, 4), "a", "number")),
-            )
+            ))
         assertEquals(ast, expected)
     }
 
@@ -754,14 +754,14 @@ class ParserTest {
         val parser: Parser = MyParser()
         val ast = parser.parseTokens(tokens)
         val expected =
-            Scope(
+            Result.success(Scope(
                 "program",
                 Range(0, 21),
                 listOf(
                     DeclarationStatement(Range(4, 4), "a", "number"),
                     AssignmentStatement(Range(15, 15), "a", LiteralArgument(Range(19, 20), "54", "number")),
                 ),
-            )
+            ))
 
         assertEquals(ast, expected)
     }
@@ -773,11 +773,11 @@ class ParserTest {
         val parser: Parser = MyParser()
         val ast = parser.parseTokens(tokens)
         val expected =
-            Scope(
+            Result.success(Scope(
                 "program",
                 Range(0, 6),
                 listOf(AssignmentStatement(Range(0, 0), "a", LiteralArgument(Range(4, 5), "54", "number"))),
-            )
+            ))
 
         assertEquals(ast, expected)
     }
@@ -788,9 +788,12 @@ class ParserTest {
         val tokens = LexerImpl().tokenize(code)
         val parser: Parser = MyParser()
         val ast = parser.parseTokens(tokens)
-        val first = ast.body.first()
-        if (first is AssignmentStatement) {
-            assertEquals(first.value, LiteralArgument(Range(4, 5), "54", "number"))
+        ast.onSuccess {
+            it as Scope
+            val first = it.body.first()
+            if (first is AssignmentStatement) {
+                assertEquals(first.value, LiteralArgument(Range(4, 5), "54", "number"))
+            }
         }
     }
 
@@ -801,7 +804,7 @@ class ParserTest {
         val parser: Parser = MyParser()
         val ast = parser.parseTokens(tokens)
         val expected =
-            Scope(
+            Result.success(Scope(
                 "program",
                 Range(0, 23),
                 listOf(
@@ -822,7 +825,7 @@ class ParserTest {
                         ),
                     ),
                 ),
-            )
+            ))
         assertEquals(expected, ast)
     }
 
@@ -833,7 +836,7 @@ class ParserTest {
         val parser: Parser = MyParser()
         val ast = parser.parseTokens(tokens)
         val expected =
-            Scope(
+            Result.success(Scope(
                 "program",
                 Range(0, 21),
                 listOf(
@@ -854,7 +857,7 @@ class ParserTest {
                         ),
                     ),
                 ),
-            )
+            ))
         assertEquals(expected, ast)
     }
 
@@ -865,7 +868,7 @@ class ParserTest {
         val parser: Parser = MyParser()
         val ast = parser.parseTokens(tokens)
         val expected =
-            Scope(
+            Result.success(Scope(
                 "program",
                 Range(0, 11),
                 listOf(
@@ -874,7 +877,7 @@ class ParserTest {
                         Call(Range(8, 9), "println", listOf(LiteralArgument(Range(8, 9), "34", "number"))),
                     ),
                 ),
-            )
+            ))
         assertEquals(expected, ast)
     }
 
@@ -885,7 +888,7 @@ class ParserTest {
         val parser: Parser = MyParser()
         val ast = parser.parseTokens(tokens)
         val expected =
-            Scope(
+            Result.success(Scope(
                 "program",
                 Range(0, 15),
                 listOf(
@@ -910,7 +913,7 @@ class ParserTest {
                         ),
                     ),
                 ),
-            )
+            ))
         assertEquals(expected, ast)
     }
 
@@ -922,7 +925,7 @@ class ParserTest {
         val ast = parser.parseTokens(tokens)
 
         val expected =
-            Scope("program", Range(0, 8), listOf(MethodResult(Range(0, 7), Call(Range(0, 7), "object", listOf()))))
+            Result.success(Scope("program", Range(0, 8), listOf(MethodResult(Range(0, 7), Call(Range(0, 7), "object", listOf())))))
         assertEquals(expected, ast)
     }
 
@@ -933,7 +936,7 @@ class ParserTest {
         val parser: Parser = MyParser()
         val ast = parser.parseTokens(tokens)
         val expected =
-            Scope(
+            Result.success(Scope(
                 "program",
                 Range(0, 24),
                 listOf(
@@ -944,7 +947,7 @@ class ParserTest {
                         MethodResult(Range(16, 23), Call(Range(16, 23), "object", listOf())),
                     ),
                 ),
-            )
+            ))
         assertEquals(ast, expected)
     }
 
@@ -955,7 +958,7 @@ class ParserTest {
         val parser: Parser = MyParser()
         val ast = parser.parseTokens(tokens)
         val expected =
-            Scope(
+            Result.success(Scope(
                 "program",
                 Range(0, 24),
                 listOf(
@@ -966,7 +969,7 @@ class ParserTest {
                         MethodResult(Range(16, 23), Call(Range(16, 23), "object", listOf())),
                     ),
                 ),
-            )
+            ))
         assertEquals(ast, expected)
     }
 
@@ -978,7 +981,7 @@ class ParserTest {
         val ast = parser.parseTokens(tokens)
 
         val expected =
-            Scope(
+            Result.success(Scope(
                 "program",
                 Range(0, 20),
                 listOf(
@@ -1003,7 +1006,7 @@ class ParserTest {
                         ),
                     ),
                 ),
-            )
+            ))
 
         assertEquals(ast, expected)
     }
@@ -1016,7 +1019,7 @@ class ParserTest {
         val ast = parser.parseTokens(tokens)
 
         val expected =
-            Scope(
+            Result.success(Scope(
                 "program",
                 Range(0, 20),
                 listOf(
@@ -1041,7 +1044,7 @@ class ParserTest {
                         ),
                     ),
                 ),
-            )
+            ))
 
         assertEquals(ast, expected)
     }

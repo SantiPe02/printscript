@@ -10,30 +10,33 @@ import token.TokenInfo.Token
 import token.TokenInfo.TokenType
 
 sealed interface Parser {
-    fun parseTokens(tokenList: List<TokenInfo>): Scope
+    fun parseTokens(tokenList: List<TokenInfo>): Result<AST>
 }
 
 class MyParser : Parser {
     private val commons = ParserCommons()
 
-    override fun parseTokens(tokenList: List<TokenInfo>): Scope {
+    override fun parseTokens(tokenList: List<TokenInfo>): Result<AST> {
         val astNodes = mutableListOf<AST>()
         var i = 0
         while (i < tokenList.size) {
             val tokenInfo = tokenList[i]
             val token = tokenInfo.token
             val astNode = parseByTokenType(tokenList, tokenInfo, i)
-            astNodes.add(astNode)
-            i += lenghtOfDeclaration(tokenList, token, i)
+            astNode.onFailure {return astNode}
+            astNode.onSuccess {astNodes.add(it)}
+            val length = lengthOfDeclaration(tokenList, token, i)
+            length.onSuccess {i += it}
+            length.onFailure {return Result.failure(it)}
         }
-        return Scope("program", commons.getRangeOfTokenList(tokenList), astNodes)
+        return Result.success(Scope("program", commons.getRangeOfTokenList(tokenList), astNodes))
     }
 
     private fun parseByTokenType(
         tokens: List<TokenInfo>,
         tokenInfo: TokenInfo,
         i: Int,
-    ): AST {
+    ): Result<AST> {
         val token = tokenInfo.token
         return when (token.type) {
             TokenType.KEYWORD -> parseKeyword(tokens, tokenInfo, i)
@@ -49,7 +52,7 @@ class MyParser : Parser {
         tokens: List<TokenInfo>,
         tokenInfo: TokenInfo,
         i: Int,
-    ): AST {
+    ): Result<AST> {
         val token = tokenInfo.token
         return when (token.text) {
             // if it is not 'let', treat it like an identifier. e.g: object(); --> object works an identifier, cause it' an instance.
@@ -61,7 +64,7 @@ class MyParser : Parser {
     private fun declareVariable(
         tokens: List<TokenInfo>,
         i: Int,
-    ): Declaration {
+    ): Result<Declaration> {
         val variableDec = VariableDeclarator()
         return variableDec.declare(tokens, i)
     }
@@ -70,23 +73,24 @@ class MyParser : Parser {
      * Length refers to the amount of tokens of a specific declaration.
      * e.g: let name:String = "Carlos Salvador"; --> Length = 7
      * */
-    private fun lenghtOfDeclaration(
+    private fun lengthOfDeclaration(
         tokens: List<TokenInfo>,
         token: Token,
         i: Int,
-    ): Int {
+    ): Result<Int> {
         return when (token.type) {
             TokenType.KEYWORD -> lengthOfKeywordDeclaration(tokens, token, i)
             TokenType.IDENTIFIER -> commons.lengthTillFirstAppearanceOfToken(tokens, TokenType.SPECIAL_SYMBOL, ";", i)
-            else -> 1 // As for now...
+            else -> Result.success(1) // As for now...
         }
     }
+
 
     private fun lengthOfKeywordDeclaration(
         tokens: List<TokenInfo>,
         token: Token,
         i: Int,
-    ): Int {
+    ): Result<Int> {
         return when (token.text) {
             "let" -> commons.lengthTillFirstAppearanceOfToken(tokens, TokenType.SPECIAL_SYMBOL, ";", i)
             // acctually, should always return this, unless expected differenty, like classes
@@ -94,8 +98,8 @@ class MyParser : Parser {
         }
     }
 
-    private fun parseLiteral(token: Token): AST {
-        return LiteralArgument(Range(0, 0), token.text, "String")
+    private fun parseLiteral(token: Token): Result<AST> {
+        return Result.success(LiteralArgument(Range(0, 0), token.text, "String"))
     }
 
     // two cases, as for now
@@ -105,7 +109,7 @@ class MyParser : Parser {
         tokens: List<TokenInfo>,
         tokenInfo: TokenInfo,
         i: Int,
-    ): AST {
+    ): Result<AST> {
         // if it is a method call.
         if (tokens[i + 1].token.text == "(") {
             return handleMethodCall(tokens, tokenInfo, i)
@@ -114,26 +118,23 @@ class MyParser : Parser {
         return declareVariable(tokens, i - 1)
     }
 
-    // ESTO ESTÁ MAL, PORQUE Lo tengo q llamar para cada caso
-    // tanto para let... method()
-    // como para method() así sin más.
     fun handleMethodCall(
         tokens: List<TokenInfo>,
         tokenInfo: TokenInfo,
         i: Int,
-    ): AST {
+    ): Result<AST> {
         val methodDec = MethodResultDeclarator()
-
         val closingParenthesisIndex = commons.searchForClosingCharacter(tokens, "(", i + 1)
-        return methodDec.declareArgument(tokens, tokens.subList(i, closingParenthesisIndex + 1), i)
+        closingParenthesisIndex.onSuccess {return methodDec.declareArgument(tokens, tokens.subList(i, it + 1), i)}
+        return Result.failure(Exception("Error while parsing method call: Parenthesis not closed."))
     }
 
-    // I don't think you can start with operators If you cant, this method should throw always error.
-    private fun parseOperator(token: Token): AST {
-        return VariableArgument(Range(0, 0), token.text)
+    // I don't think you can start with operators If you can't, this method should throw always error.
+    private fun parseOperator(token: Token): Result<AST> {
+        return Result.success(VariableArgument(Range(0, 0), token.text))
     }
 
-    private fun parseSpecial(token: Token): AST {
-        return VariableArgument(Range(0, 0), token.text)
+    private fun parseSpecial(token: Token): Result<AST> {
+        return Result.success(VariableArgument(Range(0, 0), token.text))
     }
 }

@@ -7,5 +7,7 @@ sealed interface DeclarationValidator {
     fun declare(
         tokens: List<TokenInfo>,
         i: Int,
-    ): Declaration
+    ): Result<Declaration>
+
+
 }

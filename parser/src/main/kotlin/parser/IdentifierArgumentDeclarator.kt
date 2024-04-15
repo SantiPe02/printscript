@@ -12,7 +12,7 @@ class IdentifierArgumentDeclarator : ArgumentDeclarator {
         tokens: List<TokenInfo>,
         arguments: List<TokenInfo>,
         i: Int,
-    ): Argument {
-        return VariableArgument(commons.getRangeOfTokenList(arguments), arguments[0].token.text)
+    ): Result<Argument> {
+        return Result.success(VariableArgument(commons.getRangeOfTokenList(arguments), arguments[0].token.text))
     }
 }
