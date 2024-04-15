@@ -4,8 +4,10 @@ import Linter
 import com.github.ajalt.clikt.core.CliktCommand
 import com.github.ajalt.clikt.core.CliktError
 import com.github.ajalt.clikt.parameters.arguments.argument
+import configurationReader.ConfigurationReaderProvider
 import lexer.Lexer
 import parser.Parser
+import translateFormatterConfigurationToRules
 import java.io.File
 
 class Analyzing(val lexer: Lexer, val parser: Parser, val linter: Linter) : CliktCommand() {
@@ -19,8 +21,16 @@ class Analyzing(val lexer: Lexer, val parser: Parser, val linter: Linter) : Clik
         val configFile = File(configFile)
         if (!configFile.exists()) throw CliktError("The configuration file could not be found in $configFile")
 
-        // TODO("Get rules")
-        val warnings = linter.lintScope(parser.parseTokens(lexer.tokenize(fileInstance.readText())), listOf())
+        val reader =
+            ConfigurationReaderProvider().getReader(configFile.extension).getOrElse {
+                throw CliktError(it.message)
+            }
+        val config =
+            reader.readFileAndBuildRules(configFile).getOrElse {
+                throw CliktError(it.message)
+            }
+        val rules = translateFormatterConfigurationToRules(config)
+        val warnings = linter.lintScope(parser.parseTokens(lexer.tokenize(fileInstance.readText())), rules)
         echo("Analyze finished with ${warnings.size} warnings")
         warnings.forEach { warning -> echo("${warning.message} in range ${warning.range.start}:${warning.range.end}") }
     }

@@ -53,6 +53,7 @@ class AnalyzingCommandTest {
         val sourceFile = File.createTempFile("source", ".ps")
         sourceFile.writeText("let a : number = 1;")
         val configFile = File.createTempFile("config", ".json")
+        configFile.writeText("{\"one\":\"two\"}")
         val command = Analyzing(LexerImpl(), MyParser(), MockLinter(listOf()))
 
         val result = command.test("${sourceFile.path.replace("\\", "/")} ${configFile.path.replace("\\", "/")}")
@@ -68,6 +69,7 @@ class AnalyzingCommandTest {
         val sourceFile = File.createTempFile("source", ".ps")
         sourceFile.writeText("let a : number = 1;")
         val configFile = File.createTempFile("config", ".json")
+        configFile.writeText("{\"one\":\"two\"}")
         val command =
             Analyzing(
                 LexerImpl(),
