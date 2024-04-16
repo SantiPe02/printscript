@@ -1,6 +1,9 @@
 package parser
 
-import ast.*
+import ast.Argument
+import ast.Call
+import ast.MethodResult
+import ast.Range
 import token.TokenInfo
 
 class MethodResultDeclarator : ArgumentDeclarator {
@@ -39,11 +42,9 @@ class MethodResultDeclarator : ArgumentDeclarator {
         }
 
         return Result.failure(Exception("Method operator not found"))
-
     }
 
-
-    //TODO: terminar
+    // TODO: terminar
     fun handleArgAndOperatorResults(
         tokens: List<TokenInfo>,
         i: Int,
@@ -59,8 +60,13 @@ class MethodResultDeclarator : ArgumentDeclarator {
             val operatorValue: TokenInfo = it
             args.onSuccess {
                 return createSuccsessfulMethodArgument(
-                    tokens, i, methodOperator, operatorValue,
-                    it, arguments, currentRange
+                    tokens,
+                    i,
+                    methodOperator,
+                    operatorValue,
+                    it,
+                    arguments,
+                    currentRange,
                 )
             }
         }
@@ -87,15 +93,21 @@ class MethodResultDeclarator : ArgumentDeclarator {
         val finalArguments = getFinalArgumentsOfMethodResult(args, arguments)
         finalArguments.onSuccess {
             val finalArgumentsList = it
-            return Result.success(MethodResult(
-                commons.getRangeOfTokenList(listOf(operator)),
-                Call(commons.getRangeOfTokenList(orderedArgs), operator.token.text, finalArgumentsList),
-            ))
+            return Result.success(
+                MethodResult(
+                    commons.getRangeOfTokenList(listOf(operator)),
+                    Call(commons.getRangeOfTokenList(orderedArgs), operator.token.text, finalArgumentsList),
+                ),
+            )
         }
         return Result.failure(Exception("Final arguments not found"))
     }
 
-    fun hasEmptyArguments(tokens: List<TokenInfo>, i: Int, methodOperator: Int): Boolean {
+    fun hasEmptyArguments(
+        tokens: List<TokenInfo>,
+        i: Int,
+        methodOperator: Int,
+    ): Boolean {
         return (tokens[i + methodOperator].token.text == "(" && tokens[i + methodOperator + 1].token.text == ")")
     }
 
@@ -173,8 +185,6 @@ class MethodResultDeclarator : ArgumentDeclarator {
         }
     }
 
-
-
     // MODULARIZAR ESTE MÉTODO.
     // The important part about this method is that I assure myself that there ain't no Results inside it.
     // either all fails, or all succedes.
@@ -191,18 +201,23 @@ class MethodResultDeclarator : ArgumentDeclarator {
                 return hanldeCommaSeparatedArguments(arg, arguments, finalArguments) // it is a method with arguments
             } else if (arg.size != 1) {
                 val methodArg = methodArgument(arg, 0, arg.size, arg, commons.getRangeOfTokenList(arg))
-                methodArg.onFailure { return Result.failure(Exception("Method argument failed"))}
+                methodArg.onFailure { return Result.failure(Exception("Method argument failed")) }
                 methodArg.onSuccess { finalArguments.add(it) }
             } else {
-                if(canAddArgumentsToList(arg, arguments))
+                if (canAddArgumentsToList(arg, arguments)) {
                     addArgumentsToList(arg, arguments, finalArguments)
-                else return Result.failure(Exception("Invalid sintax: there are no arguments on list"))
+                } else {
+                    return Result.failure(Exception("Invalid sintax: there are no arguments on list"))
+                }
             }
         }
         return Result.success(finalArguments)
     }
 
-    fun canAddArgumentsToList(arg: List<TokenInfo>, arguments: List<TokenInfo>): Boolean {
+    fun canAddArgumentsToList(
+        arg: List<TokenInfo>,
+        arguments: List<TokenInfo>,
+    ): Boolean {
         val dec = VariableArgumentDeclarator().declareArgument(arguments, arg, 0)
         return dec.isSuccess
     }
@@ -229,11 +244,11 @@ class MethodResultDeclarator : ArgumentDeclarator {
     ): Result<List<Argument>> {
         val canHandleCommas = canHandleCommaSeparation(args, arguments)
         canHandleCommas.onSuccess {
-            if(it){
+            if (it) {
                 val newArgs = separateArgumentsByCommas(args)
                 newArgs.onSuccess {
-                    val finalArgs = getFinalArgumentsOfMethodResult(it, arguments);
-                    finalArgs.onSuccess { it2->
+                    val finalArgs = getFinalArgumentsOfMethodResult(it, arguments)
+                    finalArgs.onSuccess { it2 ->
                         finalArguments.addAll(it2)
                         return Result.success(finalArguments)
                     }
@@ -249,7 +264,7 @@ class MethodResultDeclarator : ArgumentDeclarator {
     ): Result<Boolean> {
         val newArgs = separateArgumentsByCommas(args)
         newArgs.onSuccess {
-            val finalArgs = getFinalArgumentsOfMethodResult(it, arguments);
+            val finalArgs = getFinalArgumentsOfMethodResult(it, arguments)
             return Result.success(finalArgs.isSuccess)
         }
 
@@ -259,7 +274,8 @@ class MethodResultDeclarator : ArgumentDeclarator {
     fun separateArgumentsByCommas(args: List<TokenInfo>): Result<List<List<TokenInfo>>> {
         val newArgs: MutableList<List<TokenInfo>> = mutableListOf()
         val firstTerms: Result<List<Pair<TokenInfo, Int>>> = commons.separateByFirstTerms(args, 0, args.size)
-        firstTerms.onSuccess { var start = 0
+        firstTerms.onSuccess {
+            var start = 0
             for (arg in it) {
                 if (arg.first.token.text == ",") {
                     newArgs.add(args.subList(start, arg.second))
@@ -276,11 +292,11 @@ class MethodResultDeclarator : ArgumentDeclarator {
         range: Range,
         operator: TokenInfo,
     ): Result<MethodResult> {
-        return Result.success(MethodResult(
-            range,
-            Call(range, operator.token.text, listOf()),
-        ))
+        return Result.success(
+            MethodResult(
+                range,
+                Call(range, operator.token.text, listOf()),
+            ),
+        )
     }
-
-
 }

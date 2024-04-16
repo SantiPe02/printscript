@@ -23,7 +23,7 @@ public class ParserFailureTest {
     }
 
     @Test
-    fun `test003 failure on no type declaration`(){
+    fun `test003 failure on no type declaration`() {
         val code = "var a = \"Hello\";"
         val tokens = LexerImpl().tokenize(code)
         val parser: Parser = MyParser()
@@ -32,7 +32,7 @@ public class ParserFailureTest {
     }
 
     @Test
-    fun `test004 failure on incorrect method declaration`(){
+    fun `test004 failure on incorrect method declaration`() {
         val code = "let a = object(a, b,);"
         val tokens = LexerImpl().tokenize(code)
         val parser: Parser = MyParser()

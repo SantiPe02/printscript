@@ -45,7 +45,7 @@ class ValidateCommandTest {
         val result = command.test(sourceFile.path.replace("\\", "/"))
 
         assertTrue(result.statusCode != 0)
-        assertTrue(result.output.contains("error found in validation:\n"))
+        assertTrue(result.output.contains("error found in validation"))
         sourceFile.deleteOnExit()
     }
 }

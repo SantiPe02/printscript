@@ -18,7 +18,6 @@ class VariableDeclarator : DeclarationValidator {
 
     // RECORDÁ, TIENE UN ARGUMENT: ESE ARGUMENT NO ES RESULT. A MENOS Q SEA ERROR, EN CUYO CASO SE ELEVA.
 
-
     // 3 casos:
     // 1. let name:String = "Carlos Salvador";
     // 2. let name:String;
@@ -37,7 +36,11 @@ class VariableDeclarator : DeclarationValidator {
         return Result.failure(Exception("Invalid variable declaration, 1"))
     }
 
-    private fun handleVariableNameSuccess(tokens: List<TokenInfo>, i: Int, variableName:TokenInfo.Token) : Result<Declaration> {
+    private fun handleVariableNameSuccess(
+        tokens: List<TokenInfo>,
+        i: Int,
+        variableName: TokenInfo.Token,
+    ): Result<Declaration> {
         var j = i
         val variable = tokens[j]
         ++j
@@ -52,7 +55,7 @@ class VariableDeclarator : DeclarationValidator {
                         commons.getRangeOfTokenList(listOf(variable)),
                         variableName.text,
                         it,
-                    )
+                    ),
                 )
             }
             args.onFailure { return Result.failure(it) }
@@ -76,16 +79,16 @@ class VariableDeclarator : DeclarationValidator {
             if (commons.isOfTextAndType(tokens[j].token, "=", TokenInfo.TokenType.OPERATOR)) {
                 return fullVariableDeclaration(tokens, j, variable, variableName, variableType)
             } else if (commons.isEndOfVarChar(tokens, j)) {
-                val declaration = DeclarationStatement(
-                    commons.getRangeOfTokenList(listOf(variable)),
-                    variableName.text,
-                    variableType.text
-                )
+                val declaration =
+                    DeclarationStatement(
+                        commons.getRangeOfTokenList(listOf(variable)),
+                        variableName.text,
+                        variableType.text,
+                    )
                 return Result.success(declaration)
             }
         }
         return Result.failure(Exception("Invalid variable declaration, 2"))
-
     }
 
     private fun fullVariableDeclaration(
@@ -97,7 +100,11 @@ class VariableDeclarator : DeclarationValidator {
     ): Result<Declaration> {
         var j = i
         val variableArgument: Result<Argument> = getVariableArgument(tokens, ++j)
-        variableArgument.onSuccess { return Result.success(VariableDeclaration(commons.getRangeOfTokenList(listOf(variable)), variableName.text, variableType.text, it)) }
+        variableArgument.onSuccess {
+            return Result.success(
+                VariableDeclaration(commons.getRangeOfTokenList(listOf(variable)), variableName.text, variableType.text, it),
+            )
+        }
 
         return Result.failure(Exception("Invalid variable declaration, 3"))
     }

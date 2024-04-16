@@ -8,6 +8,4 @@ sealed interface DeclarationValidator {
         tokens: List<TokenInfo>,
         i: Int,
     ): Result<Declaration>
-
-
 }

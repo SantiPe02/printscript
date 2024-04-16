@@ -1,5 +1,6 @@
 package commands
 
+import ast.Scope
 import com.github.ajalt.clikt.core.CliktCommand
 import com.github.ajalt.clikt.core.CliktError
 import com.github.ajalt.clikt.parameters.arguments.argument
@@ -15,7 +16,11 @@ class Execute(val lexer: Lexer, val parser: Parser, val interpreter: Interpreter
         val file = File(fileDir)
         if (!file.exists()) throw CliktError("The file to run was not found at $fileDir")
 
-        interpreter.interpret(parser.parseTokens(lexer.tokenize(file.readText())))
+        val ast: Scope =
+            parser.parseTokens(lexer.tokenize(file.readText())).getOrElse {
+                throw CliktError(it.message)
+            }
+        interpreter.interpret(ast)
         val report = interpreter.report
         report.outputs.forEach { out -> echo(out) }
 

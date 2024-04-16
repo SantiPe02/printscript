@@ -1,6 +1,7 @@
 package commands
 
 import Linter
+import ast.Scope
 import com.github.ajalt.clikt.core.CliktCommand
 import com.github.ajalt.clikt.core.CliktError
 import com.github.ajalt.clikt.parameters.arguments.argument
@@ -29,8 +30,12 @@ class Analyzing(val lexer: Lexer, val parser: Parser, val linter: Linter) : Clik
             reader.readFileAndBuildRules(configFile).getOrElse {
                 throw CliktError(it.message)
             }
+        val ast: Scope =
+            parser.parseTokens(lexer.tokenize(fileInstance.readText())).getOrElse {
+                throw CliktError(it.message)
+            }
         val rules = translateFormatterConfigurationToRules(config)
-        val warnings = linter.lintScope(parser.parseTokens(lexer.tokenize(fileInstance.readText())), rules)
+        val warnings = linter.lintScope(ast, rules)
         echo("Analyze finished with ${warnings.size} warnings")
         warnings.forEach { warning -> echo("${warning.message} in range ${warning.range.start}:${warning.range.end}") }
     }

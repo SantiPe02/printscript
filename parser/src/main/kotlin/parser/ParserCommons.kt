@@ -108,7 +108,7 @@ class ParserCommons {
     }
 
     /**In 4 * 5 + 5/8 - 3 the highest level method is the "+", the second is the "-" the third the "*" and fourth "/"
-        This method could eventualy be extensible for lists, like [].
+     This method could eventualy be extensible for lists, like [].
      */
 
     fun getHighestLevelMethod(
@@ -127,13 +127,13 @@ class ParserCommons {
                 firstParenthesis = i + token.second
             }
         }
-        if (firstMultOrDiv != -1)
+        if (firstMultOrDiv != -1) {
             return Result.success(firstMultOrDiv)
-        else if (firstParenthesis != -1)
+        } else if (firstParenthesis != -1) {
             return Result.success(firstParenthesis)
+        }
 
         return Result.failure(Exception("There is no operation left in the argument"))
-
     }
 
     // in (Brujita(Chapu(Gata))) The closing char of the first "(" is the last ")".
