@@ -2,12 +2,12 @@ import lexer.Context
 import lexer.Lexer
 import token.TokenInfo
 
-class PartialStringReading(
+class PartialStringReadingLexer(
     val lexer: Lexer,
     val notProcessed: String = "",
     val context: Context = Context(0),
 ) {
-    fun tokenizeString(text: String): Pair<PartialStringReading, List<TokenInfo>> {
+    fun tokenizeString(text: String): Pair<PartialStringReadingLexer, List<TokenInfo>> {
         var notProcessedAux = ""
         var toProcessText = notProcessed + text
         val auxContext: Context
@@ -26,7 +26,7 @@ class PartialStringReading(
         }
 
         return Pair(
-            PartialStringReading(
+            PartialStringReadingLexer(
                 lexer,
                 notProcessedAux,
                 auxContext,
