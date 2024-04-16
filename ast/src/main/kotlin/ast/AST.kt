@@ -160,7 +160,9 @@ class VariableArgument(override val range: Range, val name: String) : Argument {
     }
 }
 
-// Range: range of the operator, in 5 + 3 range is Range(2,2)
+/**
+ *  @param range:  range of the operator, in 5 + 3 range is Range(2,2)
+ *  */
 class MethodResult(override val range: Range, val methodCall: Call) : Argument {
     override fun equals(other: Any?): Boolean {
         if (this === other) return true

@@ -13,7 +13,7 @@ class MethodResultDeclarator : ArgumentDeclarator {
         tokens: List<TokenInfo>,
         arguments: List<TokenInfo>,
         i: Int,
-    ): MethodResult {
+    ): Result<MethodResult> {
         val endIndex = commons.getEndOfVarIndex(tokens, i)
         val currentRange = commons.getRangeOfTokenList(arguments)
         val argument = methodArgument(tokens, i, endIndex, arguments, currentRange)
@@ -27,23 +27,88 @@ class MethodResultDeclarator : ArgumentDeclarator {
         endIndex: Int,
         arguments: List<TokenInfo>,
         currentRange: Range,
-    ): MethodResult {
-        val methodOperator: Int = commons.searchForFirstOperator(arguments, 0, arguments.size)
-        val operator: TokenInfo = getOperatorMethod(tokens, i + methodOperator)
-        val args: List<List<TokenInfo>> = createMethodByOperator(tokens, i, endIndex, i + methodOperator)
+    ): Result<MethodResult> {
+        val operator: Result<TokenInfo>
+        val finalMethodOp: Int
+
+        val methodOperator: Result<Int> = commons.searchForFirstOperator(arguments, 0, arguments.size)
+
+        methodOperator.onSuccess {
+            finalMethodOp = it
+            operator = getOperatorMethod(tokens, i + finalMethodOp)
+
+            val args: Result<List<List<TokenInfo>>> = createMethodByOperator(tokens, i, endIndex, i + finalMethodOp)
+            return handleArgAndOperatorResults(tokens, i, finalMethodOp, operator, args, arguments, currentRange)
+        }
+
+        return Result.failure(Exception("Method operator not found"))
+    }
+
+    // TODO: terminar
+    fun handleArgAndOperatorResults(
+        tokens: List<TokenInfo>,
+        i: Int,
+        methodOperator: Int,
+        operator: Result<TokenInfo>,
+        args: Result<List<List<TokenInfo>>>,
+        arguments: List<TokenInfo>,
+        currentRange: Range,
+    ): Result<MethodResult> {
+        args.onFailure { return Result.failure(it) }
+
+        operator.onSuccess {
+            val operatorValue: TokenInfo = it
+            args.onSuccess {
+                return createSuccsessfulMethodArgument(
+                    tokens,
+                    i,
+                    methodOperator,
+                    operatorValue,
+                    it,
+                    arguments,
+                    currentRange,
+                )
+            }
+        }
+
+        return Result.failure(Exception("Operator not found"))
+    }
+
+    fun createSuccsessfulMethodArgument(
+        tokens: List<TokenInfo>,
+        i: Int,
+        methodOperator: Int,
+        operator: TokenInfo,
+        args: List<List<TokenInfo>>,
+        arguments: List<TokenInfo>,
+        currentRange: Range,
+    ): Result<MethodResult> {
         if (operator.token.text == "(") {
             return handleParenthesesOperator(args, currentRange)
         }
-        if (tokens[i + methodOperator].token.text == "(" && tokens[i + methodOperator + 1].token.text == ")") {
+        if (hasEmptyArguments(tokens, i, methodOperator)) {
             return emptyMethodArgument(currentRange, operator)
         }
-
         val orderedArgs = sortTokenInfoListByPosition(args.flatten())
         val finalArguments = getFinalArgumentsOfMethodResult(args, arguments)
-        return MethodResult(
-            commons.getRangeOfTokenList(listOf(operator)),
-            Call(commons.getRangeOfTokenList(orderedArgs), operator.token.text, finalArguments),
-        )
+        finalArguments.onSuccess {
+            val finalArgumentsList = it
+            return Result.success(
+                MethodResult(
+                    commons.getRangeOfTokenList(listOf(operator)),
+                    Call(commons.getRangeOfTokenList(orderedArgs), operator.token.text, finalArgumentsList),
+                ),
+            )
+        }
+        return Result.failure(Exception("Final arguments not found"))
+    }
+
+    fun hasEmptyArguments(
+        tokens: List<TokenInfo>,
+        i: Int,
+        methodOperator: Int,
+    ): Boolean {
+        return (tokens[i + methodOperator].token.text == "(" && tokens[i + methodOperator + 1].token.text == ")")
     }
 
     fun sortTokenInfoListByPosition(tokens: List<TokenInfo>): List<TokenInfo> {
@@ -55,18 +120,18 @@ class MethodResultDeclarator : ArgumentDeclarator {
         i: Int,
         endIndex: Int,
         methodOperator: Int,
-    ): List<List<TokenInfo>> {
+    ): Result<List<List<TokenInfo>>> {
         return when (tokens[methodOperator].token.text) {
-            "+", "-", "*", "/" -> separateArguments(tokens, i, endIndex, methodOperator)
+            "+", "-", "*", "/" -> Result.success(separateArguments(tokens, i, endIndex, methodOperator))
             "(" -> getParenthesesArguments(tokens, methodOperator)
-            else -> throw Exception("Invalid operator")
+            else -> Result.failure(Exception("Invalid operator"))
         }
     }
 
     fun handleParenthesesOperator(
         args: List<List<TokenInfo>>,
         currentRange: Range,
-    ): MethodResult {
+    ): Result<MethodResult> {
         val flattenedArgs = args.flatten()
         return methodArgument(flattenedArgs, 0, flattenedArgs.size, flattenedArgs, currentRange)
     }
@@ -86,20 +151,21 @@ class MethodResultDeclarator : ArgumentDeclarator {
     fun getParenthesesArguments(
         tokens: List<TokenInfo>,
         methodOperator: Int,
-    ): List<List<TokenInfo>> {
+    ): Result<List<List<TokenInfo>>> {
         // Actually, search for first operator, and work with that. If there is a single argument, return that element.
         val closingParentheses = commons.searchForClosingCharacter(tokens, "(", methodOperator)
-        return listOf(tokens.subList(methodOperator + 1, closingParentheses))
+        closingParentheses.onSuccess { return Result.success(listOf(tokens.subList(methodOperator + 1, it))) }
+        return Result.failure(Exception("Closing parentheses not found"))
     }
 
     fun getOperatorMethod(
         tokens: List<TokenInfo>,
         methodOperator: Int,
-    ): TokenInfo {
+    ): Result<TokenInfo> {
         return when (tokens[methodOperator].token.text) {
-            "+", "-", "*", "/" -> tokens[methodOperator]
-            "(" -> getOperatorWhenParentheses(tokens, methodOperator)
-            else -> throw Exception("Todo")
+            "+", "-", "*", "/" -> Result.success(tokens[methodOperator])
+            "(" -> Result.success(getOperatorWhenParentheses(tokens, methodOperator))
+            else -> Result.failure(Exception("Todo"))
         }
     }
 
@@ -119,24 +185,41 @@ class MethodResultDeclarator : ArgumentDeclarator {
         }
     }
 
+    // MODULARIZAR ESTE MÉTODO.
+    // The important part about this method is that I assure myself that there ain't no Results inside it.
+    // either all fails, or all succedes.
+
     fun getFinalArgumentsOfMethodResult(
         args: List<List<TokenInfo>>,
         arguments: List<TokenInfo>,
-    ): List<Argument> {
+    ): Result<List<Argument>> {
         val finalArguments: MutableList<Argument> = mutableListOf()
         for (arg in args) {
             if (arg.isEmpty()) {
-                throw Exception("Invalid sintax: there are no arguments on list")
+                return Result.failure(Exception("Invalid sintax: there are no arguments on list"))
             } else if (hasCommasAsFirstTerm(arg)) {
-                hanldeCommaSeparatedArguments(arg, arguments, finalArguments) // it is a method with arguments
+                return hanldeCommaSeparatedArguments(arg, arguments, finalArguments) // it is a method with arguments
             } else if (arg.size != 1) {
-                // if the size of an arguments is more than 1 then it means there's
-                finalArguments.add(methodArgument(arg, 0, arg.size, arg, commons.getRangeOfTokenList(arg)))
+                val methodArg = methodArgument(arg, 0, arg.size, arg, commons.getRangeOfTokenList(arg))
+                methodArg.onFailure { return Result.failure(Exception("Method argument failed")) }
+                methodArg.onSuccess { finalArguments.add(it) }
             } else {
-                addArgumentsToList(arg, arguments, finalArguments)
+                if (canAddArgumentsToList(arg, arguments)) {
+                    addArgumentsToList(arg, arguments, finalArguments)
+                } else {
+                    return Result.failure(Exception("Invalid sintax: there are no arguments on list"))
+                }
             }
         }
-        return finalArguments
+        return Result.success(finalArguments)
+    }
+
+    fun canAddArgumentsToList(
+        arg: List<TokenInfo>,
+        arguments: List<TokenInfo>,
+    ): Boolean {
+        val dec = VariableArgumentDeclarator().declareArgument(arguments, arg, 0)
+        return dec.isSuccess
     }
 
     fun addArgumentsToList(
@@ -144,47 +227,76 @@ class MethodResultDeclarator : ArgumentDeclarator {
         arguments: List<TokenInfo>,
         finalArguments: MutableList<Argument>,
     ) {
-        finalArguments.add(VariableArgumentDeclarator().declareArgument(arguments, arg, 0))
+        val declaration = VariableArgumentDeclarator().declareArgument(arguments, arg, 0)
+        declaration.onSuccess { finalArguments.add(it) }
     }
 
     fun hasCommasAsFirstTerm(args: List<TokenInfo>): Boolean {
         val firstTerms = commons.separateByFirstTerms(args, 0, args.size)
-        return firstTerms.any { it.first.token.text == "," }
+        firstTerms.onSuccess { return it.any { it.first.token.text == "," } }
+        return false
     }
 
     fun hanldeCommaSeparatedArguments(
         args: List<TokenInfo>,
         arguments: List<TokenInfo>,
         finalArguments: MutableList<Argument>,
-    ) {
-        val newArgs = separateArgumentsByCommas(args)
-        finalArguments.addAll(getFinalArgumentsOfMethodResult(newArgs, arguments))
-    }
-
-    fun separateArgumentsByCommas(args: List<TokenInfo>): List<List<TokenInfo>> {
-        val newArgs: MutableList<List<TokenInfo>> = mutableListOf()
-        val firstTerms: List<Pair<TokenInfo, Int>> = commons.separateByFirstTerms(args, 0, args.size)
-        var start = 0
-        for (arg in firstTerms) {
-            if (arg.first.token.text == ",") {
-                newArgs.add(args.subList(start, arg.second))
-                start = arg.second + 1
+    ): Result<List<Argument>> {
+        val canHandleCommas = canHandleCommaSeparation(args, arguments)
+        canHandleCommas.onSuccess {
+            if (it) {
+                val newArgs = separateArgumentsByCommas(args)
+                newArgs.onSuccess {
+                    val finalArgs = getFinalArgumentsOfMethodResult(it, arguments)
+                    finalArgs.onSuccess { it2 ->
+                        finalArguments.addAll(it2)
+                        return Result.success(finalArguments)
+                    }
+                }
             }
         }
-        newArgs.add(args.subList(start, args.size))
-        return newArgs
+        return Result.failure(Exception("Invalid syntax: cannot handle coma separated arguments"))
+    }
+
+    fun canHandleCommaSeparation(
+        args: List<TokenInfo>,
+        arguments: List<TokenInfo>,
+    ): Result<Boolean> {
+        val newArgs = separateArgumentsByCommas(args)
+        newArgs.onSuccess {
+            val finalArgs = getFinalArgumentsOfMethodResult(it, arguments)
+            return Result.success(finalArgs.isSuccess)
+        }
+
+        return Result.failure(Exception("Invalid sintax: cannot handle coma separated arguments"))
+    }
+
+    fun separateArgumentsByCommas(args: List<TokenInfo>): Result<List<List<TokenInfo>>> {
+        val newArgs: MutableList<List<TokenInfo>> = mutableListOf()
+        val firstTerms: Result<List<Pair<TokenInfo, Int>>> = commons.separateByFirstTerms(args, 0, args.size)
+        firstTerms.onSuccess {
+            var start = 0
+            for (arg in it) {
+                if (arg.first.token.text == ",") {
+                    newArgs.add(args.subList(start, arg.second))
+                    start = arg.second + 1
+                }
+            }
+            newArgs.add(args.subList(start, args.size))
+            return Result.success(newArgs)
+        }
+        return Result.failure(Exception("Invalid syntax: cannot separate arguments by commas"))
     }
 
     fun emptyMethodArgument(
         range: Range,
         operator: TokenInfo,
-    ): MethodResult {
-        println(range.start)
-        println(range.end)
-        println(operator.token.text)
-        return MethodResult(
-            range,
-            Call(range, operator.token.text, listOf()),
+    ): Result<MethodResult> {
+        return Result.success(
+            MethodResult(
+                range,
+                Call(range, operator.token.text, listOf()),
+            ),
         )
     }
 }

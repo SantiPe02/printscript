@@ -24,9 +24,11 @@ class InterpreterTest {
         val tokens = LexerImpl().tokenize(code)
         val parser: Parser = MyParser()
         val ast = parser.parseTokens(tokens)
-        val newInterpreter = interpreter.interpret(ast)
+        ast.onSuccess {
+            val newInterpreter = interpreter.interpret(it)
 
-        assertEquals("Result: 6.0", newInterpreter.report.outputs[0])
-        assertTrue(newInterpreter.report.errors.isEmpty())
+            assertEquals("Result: 6.0", newInterpreter.report.outputs[0])
+            assertTrue(newInterpreter.report.errors.isEmpty())
+        }
     }
 }

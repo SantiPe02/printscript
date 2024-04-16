@@ -11,11 +11,13 @@ class LiteralArgumentDeclarator : ArgumentDeclarator {
         tokens: List<TokenInfo>,
         arguments: List<TokenInfo>,
         i: Int,
-    ): LiteralArgument {
-        return LiteralArgument(
-            commons.getRangeOfTokenList(arguments),
-            arguments[0].token.text,
-            commons.getDataTypeFromString(arguments[0].token.text),
+    ): Result<LiteralArgument> {
+        return Result.success(
+            LiteralArgument(
+                commons.getRangeOfTokenList(arguments),
+                arguments[0].token.text,
+                commons.getDataTypeFromString(arguments[0].token.text),
+            ),
         )
     }
 }

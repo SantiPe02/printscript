@@ -8,5 +8,5 @@ sealed interface ArgumentDeclarator {
         tokens: List<TokenInfo>,
         arguments: List<TokenInfo>,
         i: Int,
-    ): Argument
+    ): Result<Argument>
 }
