@@ -1,8 +1,12 @@
 package interpreter
 import ast.AST
 import ast.AssignmentStatement
+import ast.BooleanCondition
 import ast.Call
 import ast.DeclarationStatement
+import ast.ElseStatement
+import ast.IfAndElseStatement
+import ast.IfStatement
 import ast.LiteralArgument
 import ast.MethodResult
 import ast.Scope
@@ -11,6 +15,7 @@ import ast.VariableDeclaration
 import interpreter.specializedInterpreter.AssignmentInterpreter
 import interpreter.specializedInterpreter.CallInterpreter
 import interpreter.specializedInterpreter.DeclarationInterpreter
+import interpreter.specializedInterpreter.IfStatementInterpreter
 import interpreter.specializedInterpreter.ScopeInterpreter
 import interpreter.specializedInterpreter.VariableDeclarationInterpreter
 
@@ -41,7 +46,10 @@ class Interpreter(
             is Scope -> ScopeInterpreter.interpret(this, sentence)
             is AssignmentStatement -> AssignmentInterpreter.interpret(this, sentence)
             is DeclarationStatement -> DeclarationInterpreter.interpret(this, sentence)
-            else -> TODO()
+            is BooleanCondition -> TODO()
+            is ElseStatement -> TODO()
+            is IfAndElseStatement -> TODO()
+            is IfStatement -> IfStatementInterpreter.interpret(this, sentence)
         }
 
     fun reportError(error: String) = Interpreter(Report(report.outputs, report.errors + error), variables)
