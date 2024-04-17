@@ -1,5 +1,4 @@
 package interpreter
-
 import ast.AST
 import ast.AssignmentStatement
 import ast.Call
@@ -42,6 +41,7 @@ class Interpreter(
             is Scope -> ScopeInterpreter.interpret(this, sentence)
             is AssignmentStatement -> AssignmentInterpreter.interpret(this, sentence)
             is DeclarationStatement -> DeclarationInterpreter.interpret(this, sentence)
+            else -> TODO()
         }
 
     fun reportError(error: String) = Interpreter(Report(report.outputs, report.errors + error), variables)

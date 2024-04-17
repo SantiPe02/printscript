@@ -33,7 +33,16 @@ public class ParserFailureTest {
 
     @Test
     fun `test004 failure on incorrect method declaration`() {
-        val code = "let a = object(a, b,);"
+        val code = "let a:int = object(a, b,);"
+        val tokens = LexerImpl().tokenize(code)
+        val parser: Parser = MyParser()
+        val ast = parser.parseTokens(tokens)
+        assert(ast.isFailure)
+    }
+
+    @Test
+    fun `test005 failure on no closing parenthesis`() {
+        val code = "let a: int = object(a, b, c; b = messi);"
         val tokens = LexerImpl().tokenize(code)
         val parser: Parser = MyParser()
         val ast = parser.parseTokens(tokens)
