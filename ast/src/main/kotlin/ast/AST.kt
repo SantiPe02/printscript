@@ -230,9 +230,9 @@ class BooleanCondition(override val range: Range, val argument: Argument) : Cond
 
 sealed interface Conditional : AST
 
-class IfStatement(override val range: Range, val conditions: Collection<Condition>, val body: Collection<AST>) : Conditional
+class IfStatement(override val range: Range, val conditions: Collection<Condition>, val scope: Scope) : Conditional
 
-class ElseStatement(override val range: Range, val body: Collection<AST>) : Conditional
+class ElseStatement(override val range: Range, val scope: Scope) : Conditional
 
 class IfAndElseStatement(override val range: Range, val ifStatement: IfStatement, val elseStatement: ElseStatement) : Conditional
 
