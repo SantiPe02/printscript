@@ -220,3 +220,53 @@ class AssignmentStatement(override val range: Range, val variableName: String, v
         return result
     }
 }
+
+sealed interface Condition : AST
+
+/**
+ * A simple condition only takes one boolean argument, e.g.: if(a)
+ * */
+class BooleanCondition(override val range: Range, val argument: Argument) : Condition
+
+sealed interface Conditional : AST
+
+class IfStatement(override val range: Range, val conditions: Collection<Condition>, val body: Collection<AST>) : Conditional
+
+class ElseStatement(override val range: Range, val body: Collection<AST>) : Conditional
+
+class IfAndElseStatement(override val range: Range, val ifStatement: IfStatement, val elseStatement: ElseStatement) : Conditional
+
+/*/**
+ * Comparison of two arguments, e.g.: if(a > 5)
+ * */
+class BinaryCondition(override val range: Range, val left: Argument, val operator: String, val right: Argument) : Condition{}
+
+/**Conditional example:
+ * if((i > 5) and (f)):
+ *  --> IfStatement(
+ *          range,
+ *          BinaryCondition(
+ *              BinaryCondition(
+ *                  variableArgument(i), BIGGER, LiteralArgument(5)),
+ *                  AND,
+ *                  BooleanCondition(VariableArgument(f)
+ *                  )
+ *              )
+ *       )
+ */
+
+
+sealed interface Conditional : AST
+
+
+// puede ser null o result.
+class IfStatement(override val range: Range, val conditions: Collection<Condition>, val body: Collection<AST>, val next: LinkedConditional?) : Conditional
+
+
+
+sealed interface LinkedConditional : Conditional
+
+// this is very repeated.
+class IfElseStatement(override val range: Range, val conditions: Collection<Condition>, val body: Collection<AST>, val next: LinkedConditional?) : LinkedConditional {}
+
+class ElseStatement(override val range: Range, val body: Collection<AST>) : LinkedConditional {}*/
