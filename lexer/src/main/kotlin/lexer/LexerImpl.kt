@@ -10,13 +10,10 @@ import util.OPERATOR_PATTERN
 import util.SPECIAL_SYMBOL_PATTERN
 import util.STRING_SEPARATOR_PATTERN
 
-class LexerImpl() : Lexer {
+class LexerImpl : Lexer {
     private val regex = Regex(STRING_SEPARATOR_PATTERN)
 
-    override fun tokenize(
-        input: String,
-        context: Context,
-    ): List<TokenInfo> {
+    override fun tokenize(input: String): List<TokenInfo> {
         val tokens = mutableListOf<TokenInfo>()
         regex.findAll(input).forEach {
             var token = it.value.trim()
@@ -34,12 +31,7 @@ class LexerImpl() : Lexer {
                         token.matches(Regex(SPECIAL_SYMBOL_PATTERN, RegexOption.IGNORE_CASE)) -> TokenType.SPECIAL_SYMBOL
                         else -> TokenType.IDENTIFIER
                     }
-                tokens.add(
-                    TokenInfo(
-                        Token(type, token),
-                        Position(context.startingLength + it.range.first, context.startingLength + it.range.last),
-                    ),
-                )
+                tokens.add(TokenInfo(Token(type, token), Position(it.range.first, it.range.last)))
             }
         }
         return tokens
