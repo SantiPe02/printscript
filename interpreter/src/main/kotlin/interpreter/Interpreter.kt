@@ -4,7 +4,6 @@ import ast.AssignmentStatement
 import ast.BooleanCondition
 import ast.Call
 import ast.DeclarationStatement
-import ast.ElseStatement
 import ast.IfAndElseStatement
 import ast.IfStatement
 import ast.LiteralArgument
@@ -47,7 +46,6 @@ class Interpreter(
             is AssignmentStatement -> AssignmentInterpreter.interpret(this, sentence)
             is DeclarationStatement -> DeclarationInterpreter.interpret(this, sentence)
             is BooleanCondition -> TODO()
-            is ElseStatement -> TODO()
             is IfAndElseStatement -> TODO()
             is IfStatement -> IfStatementInterpreter.interpret(this, sentence)
         }
