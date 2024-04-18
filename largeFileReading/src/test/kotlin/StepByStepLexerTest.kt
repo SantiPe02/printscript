@@ -5,7 +5,7 @@ import org.junit.jupiter.api.Test
 class StepByStepLexerTest {
     @Test
     fun test001_ifSplitInSpaceAllGood() {
-        var reader = PartialStringReadingLexer(LexerImpl())
+        var reader = PartialStringReading(LexerImpl())
         val text = "let a : number = 10;"
 
         val result = reader.tokenizeString(text.substring(0, 15))
@@ -18,7 +18,7 @@ class StepByStepLexerTest {
 
     @Test
     fun test002_SplittingNumber() {
-        var reader = PartialStringReadingLexer(LexerImpl())
+        var reader = PartialStringReading(LexerImpl())
         val text = "let a : number = 10;"
 
         val split = 10
