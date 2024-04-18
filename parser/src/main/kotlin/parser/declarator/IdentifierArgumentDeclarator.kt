@@ -1,7 +1,8 @@
-package parser
+package parser.declarator
 
 import ast.Argument
 import ast.VariableArgument
+import parser.ParserCommons
 import token.TokenInfo
 
 class IdentifierArgumentDeclarator : ArgumentDeclarator {

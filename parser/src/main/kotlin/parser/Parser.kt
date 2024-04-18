@@ -1,10 +1,8 @@
 package parser
-import ast.AST
-import ast.Declaration
-import ast.LiteralArgument
-import ast.Range
-import ast.Scope
-import ast.VariableArgument
+import ast.*
+import parser.declarator.ConditionalDeclarator
+import parser.declarator.MethodResultDeclarator
+import parser.declarator.VariableDeclarator
 import token.TokenInfo
 import token.TokenInfo.Token
 import token.TokenInfo.TokenType
@@ -57,8 +55,16 @@ class MyParser : Parser {
         return when (token.text) {
             // if it is not 'let', treat it like an identifier. e.g: object(); --> object works an identifier, cause it' an instance.
             "let" -> declareVariable(tokens, i)
+            "if" -> declareConditional(tokens, i)
             else -> parseIdentifier(tokens, i)
         }
+    }
+
+    private fun declareConditional(
+        tokens: List<TokenInfo>,
+        i: Int,
+    ): Result<Conditional> {
+        return ConditionalDeclarator().declareIf(tokens, i)
     }
 
     private fun declareVariable(
@@ -92,6 +98,7 @@ class MyParser : Parser {
     ): Result<Int> {
         return when (token.text) {
             "let" -> commons.lengthTillFirstAppearanceOfToken(tokens, TokenType.SPECIAL_SYMBOL, ";", i)
+            "if" -> commons.lengthTillFirstAppearanceOfToken(tokens, TokenType.SPECIAL_SYMBOL, "{", i) //TODO: this is wrong
             // acctually, should always return this, unless expected differenty, like classes
             else -> commons.lengthTillFirstAppearanceOfToken(tokens, TokenType.SPECIAL_SYMBOL, ";", i)
         }
@@ -125,6 +132,8 @@ class MyParser : Parser {
         closingParenthesisIndex.onSuccess { return methodDec.declareArgument(tokens, tokens.subList(i, it + 1), i) }
         return Result.failure(Exception("Error while parsing method call: Parenthesis not closed."))
     }
+
+
 
     // I don't think you can start with operators If you can't, this method should throw always error.
     private fun parseOperator(token: Token): Result<AST> {
