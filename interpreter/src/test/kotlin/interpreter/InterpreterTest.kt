@@ -1,5 +1,12 @@
 package interpreter
 
+import ast.BooleanCondition
+import ast.Call
+import ast.IfAndElseStatement
+import ast.IfStatement
+import ast.LiteralArgument
+import ast.Range
+import ast.Scope
 import lexer.LexerImpl
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertTrue
@@ -30,5 +37,103 @@ class InterpreterTest {
             assertEquals("Result: 6.0", newInterpreter.report.outputs[0])
             assertTrue(newInterpreter.report.errors.isEmpty())
         }
+    }
+
+    @Test
+    fun test002_testIfStatementIfTrue() {
+        val ast =
+            Scope(
+                "file",
+                Range(0, 0),
+                listOf(
+                    IfStatement(
+                        Range(0, 0),
+                        listOf(BooleanCondition(Range(0, 0), LiteralArgument(Range(0, 0), "true", "boolean"))),
+                        Scope(
+                            "ifScope",
+                            Range(0, 0),
+                            listOf(Call(Range(0, 0), "println", listOf(LiteralArgument(Range(0, 0), "success", "string")))),
+                        ),
+                    ),
+                ),
+            )
+        val newInterpreter = interpreter.interpret(ast)
+        assertEquals("success", newInterpreter.report.outputs.first())
+    }
+
+    @Test
+    fun test003_testIfStatementIfFalse() {
+        val ast =
+            Scope(
+                "file",
+                Range(0, 0),
+                listOf(
+                    IfStatement(
+                        Range(0, 0),
+                        listOf(BooleanCondition(Range(0, 0), LiteralArgument(Range(0, 0), "false", "boolean"))),
+                        Scope(
+                            "ifScope",
+                            Range(0, 0),
+                            listOf(Call(Range(0, 0), "println", listOf(LiteralArgument(Range(0, 0), "success", "string")))),
+                        ),
+                    ),
+                ),
+            )
+        val newInterpreter = interpreter.interpret(ast)
+        assertTrue(newInterpreter.report.outputs.isEmpty())
+    }
+
+    @Test
+    fun test004_testIfAndElseStatementIfTrue() {
+        val ast =
+            Scope(
+                "file",
+                Range(0, 0),
+                listOf(
+                    IfAndElseStatement(
+                        Range(0, 0),
+                        listOf(BooleanCondition(Range(0, 0), LiteralArgument(Range(0, 0), "true", "boolean"))),
+                        Scope(
+                            "ifScope",
+                            Range(0, 0),
+                            listOf(Call(Range(0, 0), "println", listOf(LiteralArgument(Range(0, 0), "success", "string")))),
+                        ),
+                        Scope(
+                            "elseScope",
+                            Range(0, 0),
+                            listOf(Call(Range(0, 0), "println", listOf(LiteralArgument(Range(0, 0), "failure", "string")))),
+                        ),
+                    ),
+                ),
+            )
+        val newInterpreter = interpreter.interpret(ast)
+        assertEquals("success", newInterpreter.report.outputs.first())
+    }
+
+    @Test
+    fun test005_testIfAndElseStatementIfFalse() {
+        val ast =
+            Scope(
+                "file",
+                Range(0, 0),
+                listOf(
+                    IfAndElseStatement(
+                        Range(0, 0),
+                        listOf(BooleanCondition(Range(0, 0), LiteralArgument(Range(0, 0), "false", "boolean"))),
+                        Scope(
+                            "ifScope",
+                            Range(0, 0),
+                            listOf(Call(Range(0, 0), "println", listOf(LiteralArgument(Range(0, 0), "success", "string")))),
+                        ),
+                        Scope(
+                            "elseScope",
+                            Range(0, 0),
+                            listOf(Call(Range(0, 0), "println", listOf(LiteralArgument(Range(0, 0), "failure", "string")))),
+                        ),
+                    ),
+                ),
+            )
+        val newInterpreter = interpreter.interpret(ast)
+        assertEquals("failure", newInterpreter.report.outputs.first())
     }
 }
