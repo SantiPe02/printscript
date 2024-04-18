@@ -3,9 +3,8 @@ import ast.AST
 import ast.AssignmentStatement
 import ast.BooleanCondition
 import ast.Call
+import ast.Conditional
 import ast.DeclarationStatement
-import ast.IfAndElseStatement
-import ast.IfStatement
 import ast.LiteralArgument
 import ast.MethodResult
 import ast.Scope
@@ -13,8 +12,8 @@ import ast.VariableArgument
 import ast.VariableDeclaration
 import interpreter.specializedInterpreter.AssignmentInterpreter
 import interpreter.specializedInterpreter.CallInterpreter
+import interpreter.specializedInterpreter.ConditionalInterpreter
 import interpreter.specializedInterpreter.DeclarationInterpreter
-import interpreter.specializedInterpreter.IfStatementInterpreter
 import interpreter.specializedInterpreter.ScopeInterpreter
 import interpreter.specializedInterpreter.VariableDeclarationInterpreter
 
@@ -38,16 +37,15 @@ class Interpreter(
     fun interpret(sentence: AST): Interpreter =
         when (sentence) {
             is LiteralArgument -> TODO()
-            is MethodResult -> interpret(sentence.methodCall)
             is VariableArgument -> TODO()
+            is BooleanCondition -> TODO()
+            is MethodResult -> interpret(sentence.methodCall)
             is Call -> CallInterpreter.interpret(this, sentence)
             is VariableDeclaration -> VariableDeclarationInterpreter.interpret(this, sentence)
             is Scope -> ScopeInterpreter.interpret(this, sentence)
             is AssignmentStatement -> AssignmentInterpreter.interpret(this, sentence)
             is DeclarationStatement -> DeclarationInterpreter.interpret(this, sentence)
-            is BooleanCondition -> TODO()
-            is IfAndElseStatement -> TODO()
-            is IfStatement -> IfStatementInterpreter.interpret(this, sentence)
+            is Conditional -> ConditionalInterpreter.interpret(this, sentence)
         }
 
     fun reportError(error: String) = Interpreter(Report(report.outputs, report.errors + error), variables)
