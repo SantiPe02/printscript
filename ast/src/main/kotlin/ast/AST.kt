@@ -232,9 +232,12 @@ sealed interface Conditional : AST
 
 class IfStatement(override val range: Range, val conditions: Collection<Condition>, val scope: Scope) : Conditional
 
-class ElseStatement(override val range: Range, val scope: Scope) : Conditional
-
-class IfAndElseStatement(override val range: Range, val ifStatement: IfStatement, val elseStatement: ElseStatement) : Conditional
+class IfAndElseStatement(
+    override val range: Range,
+    val conditions: Collection<Condition>,
+    val ifScope: Scope,
+    val elseScope: Scope,
+) : Conditional
 
 /*/**
  * Comparison of two arguments, e.g.: if(a > 5)
