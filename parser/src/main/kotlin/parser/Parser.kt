@@ -14,6 +14,8 @@ sealed interface Parser {
 class MyParser : Parser {
     private val commons = ParserCommons()
 
+
+    // Actually, should take, both a token list and a name (in here by default the name is "program")
     override fun parseTokens(tokenList: List<TokenInfo>): Result<Scope> {
         val astNodes = mutableListOf<AST>()
         var i = 0
@@ -98,7 +100,7 @@ class MyParser : Parser {
     ): Result<Int> {
         return when (token.text) {
             "let" -> commons.lengthTillFirstAppearanceOfToken(tokens, TokenType.SPECIAL_SYMBOL, ";", i)
-            "if" -> commons.lengthTillFirstAppearanceOfToken(tokens, TokenType.SPECIAL_SYMBOL, "{", i) //TODO: this is wrong
+            "if" -> commons.lengthTillFirstAppearanceOfToken(tokens, TokenType.SPECIAL_SYMBOL, "{", i) //TODO: this is wrong, what if there is an else??
             // acctually, should always return this, unless expected differenty, like classes
             else -> commons.lengthTillFirstAppearanceOfToken(tokens, TokenType.SPECIAL_SYMBOL, ";", i)
         }

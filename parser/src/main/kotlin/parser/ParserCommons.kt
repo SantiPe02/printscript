@@ -210,6 +210,12 @@ class ParserCommons {
         return Range(startPos, endPos)
     }
 
+    fun getRangeofToken(token: TokenInfo): Range{
+        val startPos = token.position.startIndex
+        val endPos = token.position.endIndex
+        return Range(startPos, endPos)
+    }
+
     fun isOfTextAndType(
         token: TokenInfo.Token,
         s: String,
