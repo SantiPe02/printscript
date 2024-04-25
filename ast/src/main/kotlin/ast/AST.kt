@@ -10,6 +10,10 @@ sealed interface AST {
 }
 
 class Range(val start: Int, val end: Int) {
+    override fun toString(): String {
+        return "Range(start=$start, end=$end)"
+    }
+
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (other !is Range) return false
@@ -29,6 +33,10 @@ class Range(val start: Int, val end: Int) {
  * @param body: the things that the scope is composed of.
  */
 class Scope(val type: String, override val range: Range, val body: Collection<AST>) : AST {
+    override fun toString(): String {
+        return "Scope(type='$type', range=$range, body=$body)"
+    }
+
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (other !is Scope) return false
@@ -62,6 +70,10 @@ class Scope(val type: String, override val range: Range, val body: Collection<AS
  * @param arguments: the values that the method is going to get.
  */
 class Call(override val range: Range, val name: String, val arguments: Collection<Argument>) : AST {
+    override fun toString(): String {
+        return "Call(range=$range, name='$name', arguments=$arguments)"
+    }
+
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (other !is Call) return false
@@ -99,6 +111,10 @@ class VariableDeclaration(
     val variableType: String,
     val value: Argument,
 ) : Declaration {
+    override fun toString(): String {
+        return "VariableDeclaration(range=$range, variableName='$variableName', variableType='$variableType', value=$value)"
+    }
+
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (other !is VariableDeclaration) return false
@@ -123,6 +139,9 @@ class VariableDeclaration(
 sealed interface Argument : AST
 
 class LiteralArgument(override val range: Range, val value: String, val type: String) : Argument {
+    override fun toString(): String {
+        return "LiteralArgument(range=$range, value='$value', type='$type')"
+    }
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (other !is LiteralArgument) return false
@@ -143,6 +162,10 @@ class LiteralArgument(override val range: Range, val value: String, val type: St
 }
 
 class VariableArgument(override val range: Range, val name: String) : Argument {
+    override fun toString(): String {
+        return "VariableArgument(range=$range, name='$name')"
+    }
+
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (other !is VariableArgument) return false
@@ -164,6 +187,10 @@ class VariableArgument(override val range: Range, val name: String) : Argument {
  *  @param range:  range of the operator, in 5 + 3 range is Range(2,2)
  *  */
 class MethodResult(override val range: Range, val methodCall: Call) : Argument {
+    override fun toString(): String {
+        return "MethodResult(range=$range, methodCall=$methodCall)"
+    }
+
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (other !is MethodResult) return false
@@ -182,6 +209,10 @@ class MethodResult(override val range: Range, val methodCall: Call) : Argument {
 }
 
 class DeclarationStatement(override val range: Range, val variableName: String, val variableType: String) : Declaration {
+    override fun toString(): String {
+        return "DeclarationStatement(range=$range, variableName='$variableName', variableType='$variableType')"
+    }
+
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (other !is DeclarationStatement) return false
@@ -202,6 +233,10 @@ class DeclarationStatement(override val range: Range, val variableName: String, 
 }
 
 class AssignmentStatement(override val range: Range, val variableName: String, val value: Argument) : Declaration {
+    override fun toString(): String {
+        return "AssignmentStatement(range=$range, variableName='$variableName', value=$value)"
+    }
+
     override fun equals(other: Any?): Boolean {
         if (this === other) return false
         if (other !is AssignmentStatement) return false
@@ -226,18 +261,85 @@ sealed interface Condition : AST
 /**
  * A simple condition only takes one boolean argument, e.g.: if(a)
  * */
-class BooleanCondition(override val range: Range, val argument: Argument) : Condition
+class BooleanCondition(override val range: Range, val argument: Argument) : Condition {
+    override fun toString(): String {
+        return "BooleanCondition(range=$range, argument=$argument)"
+    }
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (other !is BooleanCondition) return false
+
+        if (range != other.range) return false
+        if (argument != other.argument) return false
+
+        return true
+    }
+
+    override fun hashCode(): Int {
+        var result = range.hashCode()
+        result = 31 * result + argument.hashCode()
+        return result
+    }
+}
+
 
 sealed interface Conditional : AST
 
-class IfStatement(override val range: Range, val conditions: Collection<Condition>, val scope: Scope) : Conditional
+class IfStatement(override val range: Range, val conditions: Collection<Condition>, val scope: Scope) : Conditional{
+    override fun toString(): String {
+        return "IfStatement(range=$range, conditions=$conditions, scope=$scope)"
+    }
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (other !is IfStatement) return false
+
+        if (range != other.range) return false
+        if (conditions != other.conditions) return false
+        if (scope != other.scope) return false
+
+        return true
+    }
+
+    override fun hashCode(): Int {
+        var result = range.hashCode()
+        result = 31 * result + conditions.hashCode()
+        result = 31 * result + scope.hashCode()
+        return result
+    }
+}
 
 class IfAndElseStatement(
     override val range: Range,
     val conditions: Collection<Condition>,
     val ifScope: Scope,
     val elseScope: Scope,
-) : Conditional
+) : Conditional{
+override fun toString(): String {
+        return "IfAndElseStatement(range=$range, conditions=$conditions, ifScope=$ifScope, elseScope=$elseScope)"
+    }
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (other !is IfAndElseStatement) return false
+
+        if (range != other.range) return false
+        if (conditions != other.conditions) return false
+        if (ifScope != other.ifScope) return false
+        if (elseScope != other.elseScope) return false
+
+        return true
+    }
+
+    override fun hashCode(): Int {
+        var result = range.hashCode()
+        result = 31 * result + conditions.hashCode()
+        result = 31 * result + ifScope.hashCode()
+        result = 31 * result + elseScope.hashCode()
+        return result
+    }
+}
 
 /*/**
  * Comparison of two arguments, e.g.: if(a > 5)
