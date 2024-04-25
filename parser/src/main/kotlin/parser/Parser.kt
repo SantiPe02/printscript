@@ -29,6 +29,7 @@ class MyParser : Parser {
             length.onSuccess { i += it }
             length.onFailure { return Result.failure(it) }
         }
+        println("scope: " + commons.getRangeOfTokenList(tokenList).start + " " + commons.getRangeOfTokenList(tokenList).end)
         return Result.success(Scope("program", commons.getRangeOfTokenList(tokenList), astNodes))
     }
 
@@ -88,7 +89,7 @@ class MyParser : Parser {
     ): Result<Int> {
         return when (token.type) {
             TokenType.KEYWORD -> lengthOfKeywordDeclaration(tokens, token, i)
-            TokenType.IDENTIFIER -> commons.lengthTillFirstAppearanceOfToken(tokens, TokenType.SPECIAL_SYMBOL, ";", i)
+            TokenType.IDENTIFIER -> commons.lengthTillFirstAppearanceNextOfToken(tokens, TokenType.SPECIAL_SYMBOL, ";", i)
             else -> Result.success(1) // As for now...
         }
     }
@@ -99,11 +100,24 @@ class MyParser : Parser {
         i: Int,
     ): Result<Int> {
         return when (token.text) {
-            "let" -> commons.lengthTillFirstAppearanceOfToken(tokens, TokenType.SPECIAL_SYMBOL, ";", i)
-            "if" -> commons.lengthTillFirstAppearanceOfToken(tokens, TokenType.SPECIAL_SYMBOL, "{", i) //TODO: this is wrong, what if there is an else??
-            // acctually, should always return this, unless expected differenty, like classes
-            else -> commons.lengthTillFirstAppearanceOfToken(tokens, TokenType.SPECIAL_SYMBOL, ";", i)
+            "let" -> commons.lengthTillFirstAppearanceNextOfToken(tokens, TokenType.SPECIAL_SYMBOL, ";", i)
+            // no es till first appearance, es till closing char. O no?
+            "if" -> closingBracketsIndex(tokens, i)
+            else -> commons.lengthTillFirstAppearanceNextOfToken(tokens, TokenType.SPECIAL_SYMBOL, ";", i)
         }
+    }
+
+    //TODO: this is incomplete, what if there is an else!!! Sigue vigenete esta pregunta
+    private fun closingBracketsIndex(
+        tokens: List<TokenInfo>,
+        i: Int,
+    ): Result<Int> {
+        val j = commons.lengthTillFirstAppearanceOfToken(tokens, TokenType.SPECIAL_SYMBOL, "{", i)
+
+        j.onSuccess { return commons.searchForNextOfClosingCharacter(tokens, "{", it) }
+            .onFailure { return Result.failure(it) }
+
+        return Result.failure(Exception("Unknown error " + commons.getRangeOfTokenAsString(tokens[i])))
     }
 
     private fun parseLiteral(token: Token): Result<AST> {

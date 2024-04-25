@@ -166,6 +166,16 @@ class ParserCommons {
         return Result.failure(Exception("Error: Missing closing bracket"))
     }
 
+    fun searchForNextOfClosingCharacter(
+        tokens: List<TokenInfo>,
+        tokenText: String,
+        i: Int,
+    ): Result<Int> {
+        searchForClosingCharacter(tokens, tokenText, i).onSuccess {
+            return Result.success(it + 1)
+        }
+        return Result.failure(Exception("Error: Missing closing bracket"))
+    }
     fun oppositeChar(char: String): Result<String> {
         return when (char) {
             "(" -> Result.success(")")
@@ -187,6 +197,7 @@ class ParserCommons {
         }
     }
 
+
     fun lengthTillFirstAppearanceOfToken(
         tokens: List<TokenInfo>,
         type: TokenInfo.TokenType,
@@ -197,10 +208,20 @@ class ParserCommons {
         while (j < tokens.size) {
             val token = tokens[j].token
             if (token.type == type && token.text == tokenText) {
-                return Result.success(j + 1 - i) // +1 because I want to include the last token, -i because I want to start from 0
+                return Result.success(j - i) // +1 because I want to include the last token, -i because I want to start from 0
             }
             j++
         }
+        return Result.failure(Exception("Error: Missing $tokenText"))
+    }
+    fun lengthTillFirstAppearanceNextOfToken(
+        tokens: List<TokenInfo>,
+        type: TokenInfo.TokenType,
+        tokenText: String,
+        i: Int,
+    ): Result<Int> {
+        lengthTillFirstAppearanceOfToken(tokens, type, tokenText, i).onSuccess { return Result.success(it+1) }
+
         return Result.failure(Exception("Error: Missing $tokenText"))
     }
 
@@ -210,7 +231,13 @@ class ParserCommons {
         return Range(startPos, endPos)
     }
 
-    fun getRangeofToken(token: TokenInfo): Range{
+    fun getRangeOfTokenAsString(token: TokenInfo): String{
+        val range = getRangeOfToken(token)
+        val str = "Range: ${range.start} - ${range.end}"
+        return str
+    }
+
+    fun getRangeOfToken(token: TokenInfo) : Range{
         val startPos = token.position.startIndex
         val endPos = token.position.endIndex
         return Range(startPos, endPos)
