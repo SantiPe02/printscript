@@ -1,4 +1,10 @@
-import ast.*
+import ast.Call
+import ast.LiteralArgument
+import ast.MethodResult
+import ast.Range
+import ast.Scope
+import ast.VariableArgument
+import ast.VariableDeclaration
 import lexer.LexerImpl
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
@@ -6,9 +12,8 @@ import parser.MyParser
 import parser.Parser
 
 class ParserMethodResultTest {
-
     @Test
-    fun test008_testSumMethodDeclaration() {
+    fun test001_testSumMethodDeclaration() {
         val code = "let sum: number = 3 + 5;"
         val tokens = LexerImpl().tokenize(code)
         val parser: Parser = MyParser()
@@ -43,7 +48,7 @@ class ParserMethodResultTest {
     }
 
     @Test
-    fun test009_testSumMethodDeclarationWithVariable() {
+    fun test002_testSumMethodDeclarationWithVariable() {
         val code = "let sum: number = a + 5;"
         val tokens = LexerImpl().tokenize(code)
         val parser: Parser = MyParser()
@@ -78,7 +83,7 @@ class ParserMethodResultTest {
     }
 
     @Test
-    fun test010_testSumAndMultiplicationMethodDeclaration() {
+    fun test003_testSumAndMultiplicationMethodDeclaration() {
         val code = "let sum: number = 3 + 5 * 2;"
         val tokens = LexerImpl().tokenize(code)
         val parser: Parser = MyParser()
@@ -123,7 +128,7 @@ class ParserMethodResultTest {
     }
 
     @Test
-    fun test011_testMultiplicationAndSumMethodDeclaration() {
+    fun test004_testMultiplicationAndSumMethodDeclaration() {
         val code = "let sum: number = 3 * 5 + 2;"
         val tokens = LexerImpl().tokenize(code)
         val parser: Parser = MyParser()
@@ -167,7 +172,7 @@ class ParserMethodResultTest {
     }
 
     @Test
-    fun test012_testVeryComplexMethodDeclarationWithOutParentheses() {
+    fun test005_testVeryComplexMethodDeclarationWithOutParentheses() {
         val code = "let sum: number = 3 * 5 + 2 - 4 / 2;"
         val tokens = LexerImpl().tokenize(code)
         val parser: Parser = MyParser()
@@ -230,9 +235,8 @@ class ParserMethodResultTest {
         Assertions.assertEquals(expected, ast)
     }
 
-
     @Test
-    fun test014_testMethodDeclarationWithParentheses() {
+    fun test006_testMethodDeclarationWithParentheses() {
         val code = "let sum: number = (3 + 5) * 2;"
         val tokens = LexerImpl().tokenize(code)
         val parser: Parser = MyParser()
@@ -277,7 +281,7 @@ class ParserMethodResultTest {
     }
 
     @Test
-    fun test015_testMethodDeclarationMultOfTwoParentheses() {
+    fun test007_testMethodDeclarationMultOfTwoParentheses() {
         val code = "let sum: number = (3 + 5) * (2 + 4);"
         val tokens = LexerImpl().tokenize(code)
         val parser: Parser = MyParser()
@@ -333,7 +337,7 @@ class ParserMethodResultTest {
 
     // solucionar el tema de que en realidad si usa parentesis non meterlos como method result. El parentesis no es un operator.
     @Test
-    fun test016_testParenthesesInsideParentheses() {
+    fun test008_testParenthesesInsideParentheses() {
         val code = "let sum: number = ((3 + 5) * (2 + 4));"
         val tokens = LexerImpl().tokenize(code)
         val parser: Parser = MyParser()
@@ -390,7 +394,7 @@ class ParserMethodResultTest {
     // falta resolver el tema de las comas. No son operadores, son SEPARADORES.
     // Quiza, en el getFinalArgumentsOfMethodResult fijarse en vez del tamaño, si hay operadores.
     @Test
-    fun test017_testMethodDeclarationOfAMethodCall() {
+    fun test009_testMethodDeclarationOfAMethodCall() {
         val code = "let test: number = sum(3, 5);"
         val tokens = LexerImpl().tokenize(code)
         val parser: Parser = MyParser()
@@ -425,7 +429,7 @@ class ParserMethodResultTest {
     }
 
     @Test
-    fun test018_testMethodDeclarationWithOperationInside() {
+    fun test010_testMethodDeclarationWithOperationInside() {
         val code = "let test: number = sum(3, 5 + 2);"
         val tokens = LexerImpl().tokenize(code)
         val parser: Parser = MyParser()
@@ -470,7 +474,7 @@ class ParserMethodResultTest {
     }
 
     @Test
-    fun test019_testMethodInsideMethod() {
+    fun test011_testMethodInsideMethod() {
         val code = "let test: number = sum(3, sum(5, 2));"
         val tokens = LexerImpl().tokenize(code)
         val parser: Parser = MyParser()
@@ -514,9 +518,8 @@ class ParserMethodResultTest {
         Assertions.assertEquals(expected, ast)
     }
 
-
     @Test
-    fun test022_testComplexEcuationWithParenthesesButParenthesesAreNotIncludedNumberheAST() {
+    fun test012_testComplexEcuationWithParenthesesButParenthesesAreNotIncludedNumberheAST() {
         val code = "let test: number = 3 + (5 * 2) + 4;"
         val tokens = LexerImpl().tokenize(code)
         val parser: Parser = MyParser()
@@ -570,9 +573,8 @@ class ParserMethodResultTest {
         Assertions.assertEquals(expected, ast)
     }
 
-
     @Test
-    fun test027_testSumOfTwoVariableArguments() {
+    fun test013_testSumOfTwoVariableArguments() {
         val code = "let sum: number = a + b;"
         val tokens = LexerImpl().tokenize(code)
         val parser: Parser = MyParser()
@@ -606,7 +608,7 @@ class ParserMethodResultTest {
     }
 
     @Test
-    fun test028_testSumOfTwoVariableArguments_withFirstVariableArgBeingAlsoTheIdentifier() {
+    fun test014_testSumOfTwoVariableArguments_withFirstVariableArgBeingAlsoTheIdentifier() {
         val code = "let a: number = a + b;"
         val tokens = LexerImpl().tokenize(code)
         val parser: Parser = MyParser()
@@ -640,7 +642,7 @@ class ParserMethodResultTest {
     }
 
     @Test
-    fun test029_testIsolatedMethodCall() {
+    fun test015_testIsolatedMethodCall() {
         val code = "println(34);"
         val tokens = LexerImpl().tokenize(code)
         val parser: Parser = MyParser()
@@ -662,7 +664,7 @@ class ParserMethodResultTest {
     }
 
     @Test
-    fun test030_testIsolatedMethodCallWithInsideMethod() {
+    fun test016_testIsolatedMethodCallWithInsideMethod() {
         val code = "println(34 + 4);"
         val tokens = LexerImpl().tokenize(code)
         val parser: Parser = MyParser()
@@ -700,7 +702,7 @@ class ParserMethodResultTest {
     }
 
     @Test
-    fun test031_testEmptyMethodCall() {
+    fun test017_testEmptyMethodCall() {
         val code = "object();"
         val tokens = LexerImpl().tokenize(code)
         val parser: Parser = MyParser()
@@ -712,7 +714,7 @@ class ParserMethodResultTest {
     }
 
     @Test
-    fun test032_testEmptyMethodCallWithVariableDeclaration() {
+    fun test018_testEmptyMethodCallWithVariableDeclaration() {
         val code = "let a: String = object();"
         val tokens = LexerImpl().tokenize(code)
         val parser: Parser = MyParser()
@@ -736,7 +738,7 @@ class ParserMethodResultTest {
     }
 
     @Test
-    fun test032_testVariableDeclarationWithAnObjectThatANumberStringNorNumberNorBool() {
+    fun test019_testVariableDeclarationWithAnObjectThatANumberStringNorNumberNorBool() {
         val code = "let a: object = object();"
         val tokens = LexerImpl().tokenize(code)
         val parser: Parser = MyParser()
@@ -760,7 +762,7 @@ class ParserMethodResultTest {
     }
 
     @Test
-    fun test033_testprintlnWithSumOfStringAndNumber() {
+    fun test020_testprintlnWithSumOfStringAndNumber() {
         val code = "println(\"Hello\" + 4);"
         val tokens = LexerImpl().tokenize(code)
         val parser: Parser = MyParser()
@@ -800,7 +802,7 @@ class ParserMethodResultTest {
     }
 
     @Test
-    fun test034_testWithStringsOFTripleQuote() {
+    fun test021_testWithStringsOFTripleQuote() {
         val code = """println("Hello" + 4);"""
         val tokens = LexerImpl().tokenize(code)
         val parser: Parser = MyParser()

@@ -142,6 +142,7 @@ class LiteralArgument(override val range: Range, val value: String, val type: St
     override fun toString(): String {
         return "LiteralArgument(range=$range, value='$value', type='$type')"
     }
+
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (other !is LiteralArgument) return false
@@ -283,10 +284,9 @@ class BooleanCondition(override val range: Range, val argument: Argument) : Cond
     }
 }
 
-
 sealed interface Conditional : AST
 
-class IfStatement(override val range: Range, val conditions: Collection<Condition>, val scope: Scope) : Conditional{
+class IfStatement(override val range: Range, val conditions: Collection<Condition>, val scope: Scope) : Conditional {
     override fun toString(): String {
         return "IfStatement(range=$range, conditions=$conditions, scope=$scope)"
     }
@@ -315,8 +315,8 @@ class IfAndElseStatement(
     val conditions: Collection<Condition>,
     val ifScope: Scope,
     val elseScope: Scope,
-) : Conditional{
-override fun toString(): String {
+) : Conditional {
+    override fun toString(): String {
         return "IfAndElseStatement(range=$range, conditions=$conditions, ifScope=$ifScope, elseScope=$elseScope)"
     }
 

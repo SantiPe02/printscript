@@ -1,4 +1,8 @@
-import ast.*
+import ast.LiteralArgument
+import ast.Range
+import ast.Scope
+import ast.VariableArgument
+import ast.VariableDeclaration
 import lexer.LexerImpl
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
