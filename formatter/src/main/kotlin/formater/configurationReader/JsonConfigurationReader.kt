@@ -36,7 +36,7 @@ object JsonConfigurationReader : IConfigurationReader {
                 var lineJumpsBeforePrintln = 1
                 var indentation = 4
 
-                val jsonFieldSpaceBeforeColon = jsonObject.get("SpaceBeforeColon")
+                val jsonFieldSpaceBeforeColon = jsonObject.get("spaceBeforeColon")
                 if (jsonFieldSpaceBeforeColon != null) {
                     try {
                         spaceBeforeColon = jsonFieldSpaceBeforeColon.asBoolean
@@ -63,7 +63,7 @@ object JsonConfigurationReader : IConfigurationReader {
                     }
                 }
 
-                val jsonFieldLineJumpPrintln = jsonObject.get("lineJumpsBeforePrintln")
+                val jsonFieldLineJumpPrintln = jsonObject.get("lineJumpBeforePrintln")
                 if (jsonFieldLineJumpPrintln != null) {
                     try {
                         val lineJumpBeforePrintLineAux = jsonFieldLineJumpPrintln.asInt

@@ -8,8 +8,8 @@ import java.io.File
 class FormatTest {
     @Test
     fun `test format`() {
-        val testFile = "src/test/resources/formatFileTest.txt"
-        val configFile = File("src/test/resources/config.json")
+        val testFile = "..\\formatter\\src\\test\\resources\\formatFileTest.ps"
+        val configFile = File("..\\formatter\\src\\test\\resources\\config.json")
 
         val result = format(testFile, configFile)
 

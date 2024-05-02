@@ -5,7 +5,7 @@ public fun translateFormatterConfigurationToRules(config: FormatterConfiguration
 
     rules = colonRule(config.spaceBeforeColon, config.spaceAfterColon, rules)
     rules +=
-        if (config.spaceBeforeAndAfterSpace) {
+        if (config.spaceBeforeAndAfterEqual) {
             RegexFormatter.Rule("\\s*=\\s*", " = ")
         } else {
             RegexFormatter.Rule("\\s*=\\s*", "=")
