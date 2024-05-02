@@ -9,7 +9,6 @@ import ast.Condition
 import ast.Conditional
 import ast.Declaration
 import ast.DeclarationStatement
-import ast.ElseStatement
 import ast.IfAndElseStatement
 import ast.IfStatement
 import ast.LiteralArgument
@@ -53,7 +52,7 @@ class ASTFormatter(private val lexer: Lexer, private val parser: Parser, private
                 }
             }
             is AssignmentStatement -> {
-                if (config.spaceBeforeAndAfterSpace) {
+                if (config.spaceBeforeAndAfterEqual) {
                     declaration.variableName + " = " + processAST(declaration.value) + ";"
                 } else {
                     declaration.variableName + "=" + processAST(declaration.value) + ";"
@@ -71,7 +70,7 @@ class ASTFormatter(private val lexer: Lexer, private val parser: Parser, private
                         ":"
                     }
                 val equals =
-                    if (config.spaceBeforeAndAfterSpace) {
+                    if (config.spaceBeforeAndAfterEqual) {
                         " = "
                     } else {
                         "="
@@ -125,14 +124,18 @@ class ASTFormatter(private val lexer: Lexer, private val parser: Parser, private
         return when (conditional) {
             is IfStatement -> "if (${conditional.conditions.joinToString(
                 " && ",
-            ) { processAST(it) }}) {\n${conditional.body.joinToString("\n") {
-                processAST(it).prependIndent(indentation(config.indentation))
-            }
-            }\n}"
-            is ElseStatement -> "else {\n${conditional.body.joinToString(
-                "\n",
-            ) { processAST(it).prependIndent(indentation(config.indentation)) }}\n}"
-            is IfAndElseStatement -> TODO()
+            ) { processAST(it) }}) {\n${processAST(conditional.scope).prependIndent(indentation(config.indentation))}\n}"
+            is IfAndElseStatement -> "if (${conditional.conditions.joinToString(
+                " && ",
+            ) {
+                processAST(
+                    it,
+                )
+            }}) {\n${processAST(
+                conditional.ifScope,
+            ).prependIndent(
+                indentation(config.indentation),
+            )}\n} else {\n${processAST(conditional.elseScope).prependIndent(indentation(config.indentation))}\n}"
         }
     }
 
