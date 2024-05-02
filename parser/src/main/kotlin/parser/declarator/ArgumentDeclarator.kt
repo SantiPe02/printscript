@@ -1,4 +1,4 @@
-package parser
+package parser.declarator
 
 import ast.Argument
 import token.TokenInfo

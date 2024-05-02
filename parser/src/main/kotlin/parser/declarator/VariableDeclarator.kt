@@ -1,10 +1,11 @@
-package parser
+package parser.declarator
 
 import ast.Argument
 import ast.AssignmentStatement
 import ast.Declaration
 import ast.DeclarationStatement
 import ast.VariableDeclaration
+import parser.ParserCommons
 import token.TokenInfo
 
 class VariableDeclarator : DeclarationValidator {
