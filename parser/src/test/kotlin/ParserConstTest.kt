@@ -45,4 +45,13 @@ class ParserConstTest {
         val ast = parser.parseTokens(tokens)
         assert(ast.isFailure)
     }
+
+    @Test
+    fun `test003 const declaration failure when const has equals but no argument`() {
+        val code = "const a: string = ;"
+        val tokens = LexerImpl().tokenize(code)
+        val parser: Parser = MyParser()
+        val ast = parser.parseTokens(tokens)
+        assert(ast.isFailure)
+    }
 }
