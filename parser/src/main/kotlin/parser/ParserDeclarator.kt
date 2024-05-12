@@ -37,6 +37,7 @@ class ParserDeclarator {
         val token = tokenInfo.token
         return when (token.text) {
             "let" -> declareVariable(tokens, i)
+            "const" -> declareVariable(tokens, i)
             "if" -> declareConditional(tokens, i)
             else -> parseIdentifier(tokens, i)
         }
@@ -73,7 +74,7 @@ class ParserDeclarator {
             return handleMethodCall(tokens, i)
         }
 
-        return declareVariable(tokens, i - 1)
+        return declareVariable(tokens, i)
     }
 
     fun handleMethodCall(
