@@ -18,8 +18,9 @@ object YamlConfigurationReader : IConfigurationReader {
 
         val spaceBeforeColon = configMap["spaceBeforeColon"] as? Boolean ?: true
         val spaceAfterColon = configMap["spaceAfterColon"] as? Boolean ?: true
-        val spaceBeforeAndAfterSpace = configMap["spaceBeforeAndAfterSpace"] as? Boolean ?: true
+        val spaceBeforeAndAfterSpace = configMap["spaceBeforeAndAfterEqual"] as? Boolean ?: true
         val lineJumpBeforePrintln = (configMap["lineJumpBeforePrintln"] as? Int)?.takeIf { it in 0..3 } ?: 1
+        val indentation = (configMap["indentation"] as? Int)?.takeIf { it in 0..8 } ?: 4
 
         return Result.success(
             FormatterConfiguration(
@@ -27,6 +28,7 @@ object YamlConfigurationReader : IConfigurationReader {
                 spaceAfterColon,
                 spaceBeforeAndAfterSpace,
                 lineJumpBeforePrintln,
+                indentation,
             ),
         )
     }
