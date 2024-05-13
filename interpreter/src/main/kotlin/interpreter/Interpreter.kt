@@ -4,6 +4,7 @@ import ast.AssignmentStatement
 import ast.BooleanCondition
 import ast.Call
 import ast.Conditional
+import ast.ConstantDeclaration
 import ast.DeclarationStatement
 import ast.LiteralArgument
 import ast.MethodResult
@@ -46,6 +47,7 @@ class Interpreter(
             is AssignmentStatement -> AssignmentInterpreter.interpret(this, sentence)
             is DeclarationStatement -> DeclarationInterpreter.interpret(this, sentence)
             is Conditional -> ConditionalInterpreter.interpret(this, sentence)
+            is ConstantDeclaration -> TODO()
         }
 
     fun reportError(error: String) = Interpreter(Report(report.outputs, report.errors + error), variables)
