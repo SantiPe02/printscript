@@ -18,7 +18,7 @@ import interpreter.specializedInterpreter.DeclarationInterpreter
 import interpreter.specializedInterpreter.ScopeInterpreter
 import interpreter.specializedInterpreter.VariableDeclarationInterpreter
 
-data class Variable(val type: String, val value: String?)
+data class Variable(val type: String, val value: String?, val constant: Boolean = false)
 
 data class Report(val outputs: List<String>, val errors: List<String>)
 
