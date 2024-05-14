@@ -136,6 +136,37 @@ class VariableDeclaration(
     }
 }
 
+class ConstantDeclaration(
+    override val range: Range,
+    val variableName: String,
+    val variableType: String,
+    val value: Argument,
+) : Declaration {
+    override fun toString(): String {
+        return "ConstantDeclaration(range=$range, variableName='$variableName', variableType='$variableType', value=$value)"
+    }
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (other !is ConstantDeclaration) return false
+
+        if (range != other.range) return false
+        if (variableName != other.variableName) return false
+        if (variableType != other.variableType) return false
+        if (value != other.value) return false
+
+        return true
+    }
+
+    override fun hashCode(): Int {
+        var result = range.hashCode()
+        result = 31 * result + variableName.hashCode()
+        result = 31 * result + variableType.hashCode()
+        result = 31 * result + value.hashCode()
+        return result
+    }
+}
+
 sealed interface Argument : AST
 
 class LiteralArgument(override val range: Range, val value: String, val type: String) : Argument {

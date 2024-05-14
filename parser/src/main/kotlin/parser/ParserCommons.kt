@@ -6,7 +6,7 @@ import java.util.Locale
 
 /**The name is not convenient, ParserCommons is a class that handles working with tokens.*/
 class ParserCommons {
-    fun getTokenByType(
+    fun getTokenIfIsOfType(
         token: TokenInfo.Token,
         type: TokenInfo.TokenType,
     ): Result<TokenInfo.Token> {
@@ -32,7 +32,7 @@ class ParserCommons {
         type: TokenInfo.TokenType,
     ): TokenInfo.Token {
         // if by getting token by type and name and no error is thrown --> then it is valid
-        getTokenByType(token, type)
+        getTokenIfIsOfType(token, type)
         getTokenByText(token, text)
         return token
     }

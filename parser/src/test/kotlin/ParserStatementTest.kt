@@ -28,7 +28,7 @@ class ParserStatementTest {
     }
 
     @Test
-    fun test002_variableDeclarationNumberwoDifferentParts() {
+    fun test002_variableDeclarationNumberInTwoDifferentParts() {
         val code = "let a: number; a = 54;"
         val tokens = LexerImpl().tokenize(code)
         val parser: Parser = MyParser()

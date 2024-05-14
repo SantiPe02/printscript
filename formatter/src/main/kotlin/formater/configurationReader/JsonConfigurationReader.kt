@@ -34,8 +34,9 @@ object JsonConfigurationReader : IConfigurationReader {
                 var spaceAfterColon = true
                 var spaceBeforeAndAfterEqual = true
                 var lineJumpsBeforePrintln = 1
+                var indentation = 4
 
-                val jsonFieldSpaceBeforeColon = jsonObject.get("SpaceBeforeColon")
+                val jsonFieldSpaceBeforeColon = jsonObject.get("spaceBeforeColon")
                 if (jsonFieldSpaceBeforeColon != null) {
                     try {
                         spaceBeforeColon = jsonFieldSpaceBeforeColon.asBoolean
@@ -62,7 +63,7 @@ object JsonConfigurationReader : IConfigurationReader {
                     }
                 }
 
-                val jsonFieldLineJumpPrintln = jsonObject.get("lineJumpsBeforePrintln")
+                val jsonFieldLineJumpPrintln = jsonObject.get("lineJumpBeforePrintln")
                 if (jsonFieldLineJumpPrintln != null) {
                     try {
                         val lineJumpBeforePrintLineAux = jsonFieldLineJumpPrintln.asInt
@@ -76,7 +77,21 @@ object JsonConfigurationReader : IConfigurationReader {
                     }
                 }
 
-                FormatterConfiguration(spaceBeforeColon, spaceAfterColon, spaceBeforeAndAfterEqual, lineJumpsBeforePrintln)
+                val jsonFieldIndentation = jsonObject.get("indentation")
+                if (jsonFieldIndentation != null) {
+                    try {
+                        val indentationAux = jsonFieldIndentation.asInt
+                        if (indentationAux < 0) {
+                            println("WARNING: indentation was not a positive value")
+                        } else {
+                            indentation = indentationAux
+                        }
+                    } catch (e: Exception) {
+                        println("WARNING: the field of indentation was not a int type")
+                    }
+                }
+
+                FormatterConfiguration(spaceBeforeColon, spaceAfterColon, spaceBeforeAndAfterEqual, lineJumpsBeforePrintln, indentation)
             },
         )
         return gsonBuilder.create()

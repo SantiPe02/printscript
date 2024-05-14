@@ -171,4 +171,14 @@ class ParserVariableDeclarationTest {
 
         Assertions.assertEquals(expected, ast)
     }
+
+    @Test
+    fun `test008 test declaration with equals but no argument`() {
+        val code = "let a: number = ;"
+        val tokens = LexerImpl().tokenize(code)
+        val parser: Parser = MyParser()
+        val ast = parser.parseTokens(tokens)
+
+        assert(ast.isFailure)
+    }
 }

@@ -25,7 +25,8 @@ class FileFormatter(val textFormatter: IFormatter) {
             }
         }
 
-        temptFile.renameTo(file)
+        temptFile.copyTo(file, overwrite = true)
+        temptFile.delete()
     }
 
     /**
