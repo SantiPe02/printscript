@@ -1,9 +1,10 @@
-package parser
+package parser.declarator
 
 import ast.Argument
 import ast.Call
 import ast.MethodResult
 import ast.Range
+import parser.ParserCommons
 import token.TokenInfo
 
 class MethodResultDeclarator : ArgumentDeclarator {

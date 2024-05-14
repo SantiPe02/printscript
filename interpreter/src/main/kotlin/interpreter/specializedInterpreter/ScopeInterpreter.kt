@@ -9,11 +9,11 @@ object ScopeInterpreter : SpecializedInterpreter<Scope> {
         interpreter: Interpreter,
         sentence: Scope,
     ): Interpreter {
-        var interpreter = interpreter
+        var interpreterCopy = interpreter
         for (bodySentence in sentence.body) {
-            if (interpreter.report.errors.isNotEmpty()) return interpreter
-            interpreter = interpreter.interpret(bodySentence)
+            if (interpreterCopy.report.errors.isNotEmpty()) return interpreterCopy
+            interpreterCopy = interpreterCopy.interpret(bodySentence)
         }
-        return interpreter
+        return interpreterCopy
     }
 }
