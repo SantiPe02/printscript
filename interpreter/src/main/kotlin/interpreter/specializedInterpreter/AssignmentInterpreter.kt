@@ -16,6 +16,10 @@ object AssignmentInterpreter : SpecializedInterpreter<AssignmentStatement> {
             val error = "variable ${sentence.variableName} not declared in this scope. ${sentence.range.start}"
             return interpreter.reportError(error)
         }
+        if (variable.constant) {
+            val error = "variable ${sentence.variableName} is a constant and the value can't be changed. ${sentence.range.start}"
+            return interpreter.reportError(error)
+        }
         ArgumentInterpreter.interpret(interpreter, sentence.value).onFailure {
             val error = "variable ${sentence.variableName} not declared in this scope. ${sentence.range.start}"
             return interpreter.reportError(error)

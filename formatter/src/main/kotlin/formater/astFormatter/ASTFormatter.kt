@@ -7,6 +7,7 @@ import ast.BooleanCondition
 import ast.Call
 import ast.Condition
 import ast.Conditional
+import ast.ConstantDeclaration
 import ast.Declaration
 import ast.DeclarationStatement
 import ast.IfAndElseStatement
@@ -77,6 +78,8 @@ class ASTFormatter(private val lexer: Lexer, private val parser: Parser, private
                     }
                 "let ${declaration.variableName}$colon${declaration.variableType}$equals${processAST(declaration.value)};"
             }
+
+            is ConstantDeclaration -> TODO()
         }
     }
 

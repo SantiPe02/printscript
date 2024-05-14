@@ -14,6 +14,7 @@ import ast.VariableDeclaration
 import interpreter.specializedInterpreter.AssignmentInterpreter
 import interpreter.specializedInterpreter.CallInterpreter
 import interpreter.specializedInterpreter.ConditionalInterpreter
+import interpreter.specializedInterpreter.ConstantDeclarationInterpreter
 import interpreter.specializedInterpreter.DeclarationInterpreter
 import interpreter.specializedInterpreter.ScopeInterpreter
 import interpreter.specializedInterpreter.VariableDeclarationInterpreter
@@ -47,7 +48,7 @@ class Interpreter(
             is AssignmentStatement -> AssignmentInterpreter.interpret(this, sentence)
             is DeclarationStatement -> DeclarationInterpreter.interpret(this, sentence)
             is Conditional -> ConditionalInterpreter.interpret(this, sentence)
-            is ConstantDeclaration -> TODO()
+            is ConstantDeclaration -> ConstantDeclarationInterpreter.interpret(this, sentence)
         }
 
     fun reportError(error: String) = Interpreter(Report(report.outputs, report.errors + error), variables)
