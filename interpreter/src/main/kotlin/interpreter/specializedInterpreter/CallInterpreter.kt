@@ -5,14 +5,15 @@ import ast.Call
 import ast.LiteralArgument
 import ast.MethodResult
 import ast.VariableArgument
+import interpreter.InputReader
 import interpreter.Interpreter
 import interpreter.Report
-import interpreter.SpecializedInterpreter
 
-object CallInterpreter : SpecializedInterpreter<Call> {
-    override fun interpret(
+object CallInterpreter {
+    fun interpret(
         interpreter: Interpreter,
         sentence: Call,
+        reader: InputReader,
     ): Interpreter {
         val value =
             when (val argument: Argument = sentence.arguments.first()) {
@@ -23,6 +24,10 @@ object CallInterpreter : SpecializedInterpreter<Call> {
 
         return when (sentence.name) {
             "println" -> Interpreter(Report(interpreter.report.outputs + value.value, interpreter.report.errors), interpreter.variables)
+            "readInput" -> {
+                val result = reader.readInput()
+                Interpreter(Report(interpreter.report.outputs, interpreter.report.errors), interpreter.variables, result.reader)
+            }
             else -> interpreter.reportError("The interpreter only manages println calls")
         }
     }

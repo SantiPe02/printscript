@@ -11,6 +11,7 @@ import ast.MethodResult
 import ast.Scope
 import ast.VariableArgument
 import ast.VariableDeclaration
+import interpreter.inputReaderImp.CLIInputReader
 import interpreter.specializedInterpreter.AssignmentInterpreter
 import interpreter.specializedInterpreter.CallInterpreter
 import interpreter.specializedInterpreter.ConditionalInterpreter
@@ -34,14 +35,17 @@ enum class PrintScriptError(val msg: String) {
 class Interpreter(
     val report: Report = Report(listOf(), listOf()),
     val variables: Map<String, Variable> = mapOf(),
+    val inputReader: InputReader = CLIInputReader(),
 ) {
     fun interpret(sentence: AST): Interpreter =
         when (sentence) {
             is LiteralArgument -> TODO()
             is VariableArgument -> TODO()
             is BooleanCondition -> TODO()
+
             is MethodResult -> interpret(sentence.methodCall)
-            is Call -> CallInterpreter.interpret(this, sentence)
+            is Call -> CallInterpreter.interpret(this, sentence, inputReader)
+
             is VariableDeclaration -> VariableDeclarationInterpreter.interpret(this, sentence)
             is Scope -> ScopeInterpreter.interpret(this, sentence)
             is AssignmentStatement -> AssignmentInterpreter.interpret(this, sentence)
