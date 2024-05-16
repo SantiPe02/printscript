@@ -119,4 +119,116 @@ class ASTFormatterTest {
         val expectedCode = "let a: number = 5 + 3;"
         Assertions.assertEquals(expectedCode, formattedCode)
     }
+
+    @Test
+    fun constDeclarationTest() {
+        val astFormatter = ASTFormatter(lexer, parser, FormatterConfiguration())
+        val sourceCode = "const \n   a  :    number    = 5;"
+        val formattedCode = astFormatter.formatString(sourceCode)
+        val expectedCode = "const a: number = 5;"
+        Assertions.assertEquals(expectedCode, formattedCode)
+    }
+
+    @Test
+    fun testWithDifferentConfigurations2() {
+        val formatterConfig =
+            FormatterConfiguration(
+                spaceBeforeColon = true,
+                spaceAfterColon = true,
+                spaceBeforeAndAfterEqual = true,
+                lineJumpBeforePrintln = 2,
+                indentation = 2,
+            )
+        val astFormatter = ASTFormatter(lexer, parser, formatterConfig)
+        val sourceCode = "let a   :  number= 5;  println   (    \"Hello\", \n 5, 6 )   ;"
+        val formattedCode = astFormatter.formatString(sourceCode)
+        val expectedCode = "let a : number = 5;\n\n\nprintln(\"Hello\", 5, 6);"
+        Assertions.assertEquals(expectedCode, formattedCode)
+    }
+
+    @Test
+    fun testWithDifferentConfigurations3() {
+        val formatterConfig =
+            FormatterConfiguration(
+                spaceBeforeColon = true,
+                spaceAfterColon = false,
+                spaceBeforeAndAfterEqual = true,
+                lineJumpBeforePrintln = 2,
+                indentation = 2,
+            )
+        val astFormatter = ASTFormatter(lexer, parser, formatterConfig)
+        val sourceCode = "let a   :  number= 5;  println   (    \"Hello\", \n 5, 6 )   ;"
+        val formattedCode = astFormatter.formatString(sourceCode)
+        val expectedCode = "let a :number = 5;\n\n\nprintln(\"Hello\", 5, 6);"
+        Assertions.assertEquals(expectedCode, formattedCode)
+    }
+
+    @Test
+    fun testWithDifferentConfigurations4() {
+        val formatterConfig =
+            FormatterConfiguration(
+                spaceBeforeColon = false,
+                spaceAfterColon = true,
+                spaceBeforeAndAfterEqual = true,
+                lineJumpBeforePrintln = 2,
+                indentation = 2,
+            )
+        val astFormatter = ASTFormatter(lexer, parser, formatterConfig)
+        val sourceCode = "let a   :  number= 5;  println   (    \"Hello\", \n 5, 6 )   ;"
+        val formattedCode = astFormatter.formatString(sourceCode)
+        val expectedCode = "let a: number = 5;\n\n\nprintln(\"Hello\", 5, 6);"
+        Assertions.assertEquals(expectedCode, formattedCode)
+    }
+
+    @Test
+    fun declarationStatementWithDefaultConfigurations() {
+        val astFormatter = ASTFormatter(lexer, parser, FormatterConfiguration())
+        val sourceCode = "let a   :  number;"
+        val formattedCode = astFormatter.formatString(sourceCode)
+        val expectedCode = "let a: number;"
+        Assertions.assertEquals(expectedCode, formattedCode)
+    }
+
+    @Test
+    fun declarationStatementWithDifferentConfigurations() {
+        val formatterConfig =
+            FormatterConfiguration(
+                spaceBeforeColon = true,
+                spaceAfterColon = true,
+                spaceBeforeAndAfterEqual = true,
+                lineJumpBeforePrintln = 2,
+                indentation = 2,
+            )
+        val astFormatter = ASTFormatter(lexer, parser, formatterConfig)
+        val sourceCode = "let a   :  number;"
+        val formattedCode = astFormatter.formatString(sourceCode)
+        val expectedCode = "let a : number;"
+        Assertions.assertEquals(expectedCode, formattedCode)
+    }
+
+    @Test
+    fun assingmentStatementWithDefaultConfiguration() {
+        val astFormatter = ASTFormatter(lexer, parser, FormatterConfiguration())
+        val sourceCode = "a    = 5;"
+        val formattedCode = astFormatter.formatString(sourceCode)
+        val expectedCode = "a = 5;"
+        Assertions.assertEquals(expectedCode, formattedCode)
+    }
+
+    @Test
+    fun assingmentStatementWithDifferentConfiguration() {
+        val formatterConfig =
+            FormatterConfiguration(
+                spaceBeforeColon = true,
+                spaceAfterColon = true,
+                spaceBeforeAndAfterEqual = false,
+                lineJumpBeforePrintln = 2,
+                indentation = 2,
+            )
+        val astFormatter = ASTFormatter(lexer, parser, formatterConfig)
+        val sourceCode = "a    =5;"
+        val formattedCode = astFormatter.formatString(sourceCode)
+        val expectedCode = "a=5;"
+        Assertions.assertEquals(expectedCode, formattedCode)
+    }
 }
