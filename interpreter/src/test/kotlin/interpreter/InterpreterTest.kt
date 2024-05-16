@@ -9,6 +9,7 @@ import ast.Range
 import ast.Scope
 import lexer.LexerImpl
 import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 import parser.MyParser
@@ -135,5 +136,40 @@ class InterpreterTest {
             )
         val newInterpreter = interpreter.interpret(ast)
         assertEquals("failure", newInterpreter.report.outputs.first())
+    }
+
+    @Test
+    fun test006_testDeclareAConstVariable() {
+        val code = """
+     const a : number = 10;
+     """
+
+        val tokens = LexerImpl().tokenize(code)
+        val parser: Parser = MyParser()
+        val ast = parser.parseTokens(tokens)
+        ast.onSuccess {
+            val newInterpreter = interpreter.interpret(it)
+
+            assertEquals(Variable("number", "10", true), newInterpreter.variables["a"])
+            assertTrue(newInterpreter.report.errors.isEmpty())
+        }
+    }
+
+    @Test
+    fun test007_testDeclareAConstVariableAndTryToChangeTheValueLaterGettingAnError() {
+        val code = """
+     const a : number = 10;
+     a = 5;
+     """
+
+        val tokens = LexerImpl().tokenize(code)
+        val parser: Parser = MyParser()
+        val ast = parser.parseTokens(tokens)
+        ast.onSuccess {
+            val newInterpreter = interpreter.interpret(it)
+
+            assertEquals(Variable("number", "10", true), newInterpreter.variables["a"])
+            assertFalse(newInterpreter.report.errors.isEmpty())
+        }
     }
 }
