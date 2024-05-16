@@ -42,44 +42,40 @@ class ASTFormatter(private val lexer: Lexer, private val parser: Parser, private
     private fun processDeclaration(declaration: Declaration): String {
         return when (declaration) {
             is DeclarationStatement -> {
-                if (config.spaceAfterColon && config.spaceBeforeColon) {
-                    declaration.variableName + " : " + declaration.variableType + ";"
-                } else if (!config.spaceAfterColon && !config.spaceBeforeColon) {
-                    declaration.variableName + ":" + declaration.variableType + ";"
-                } else if (config.spaceAfterColon) {
-                    declaration.variableName + ": " + declaration.variableType + ";"
-                } else {
-                    declaration.variableName + ": " + declaration.variableType + ";"
-                }
+                "let ${declaration.variableName}${colonSpaceManager()}${declaration.variableType};"
             }
             is AssignmentStatement -> {
-                if (config.spaceBeforeAndAfterEqual) {
-                    declaration.variableName + " = " + processAST(declaration.value) + ";"
-                } else {
-                    declaration.variableName + "=" + processAST(declaration.value) + ";"
-                }
+                "${declaration.variableName}${equalSpaceManager()}${processAST(declaration.value)};"
             }
             is VariableDeclaration -> {
-                val colon =
-                    if (config.spaceBeforeColon && config.spaceAfterColon) {
-                        " : "
-                    } else if (config.spaceBeforeColon) {
-                        " :"
-                    } else if (config.spaceAfterColon) {
-                        ": "
-                    } else {
-                        ":"
-                    }
-                val equals =
-                    if (config.spaceBeforeAndAfterEqual) {
-                        " = "
-                    } else {
-                        "="
-                    }
-                "let ${declaration.variableName}$colon${declaration.variableType}$equals${processAST(declaration.value)};"
+                "let ${declaration.variableName}${colonSpaceManager()}${declaration.variableType}${equalSpaceManager()}${processAST(
+                    declaration.value,
+                )};"
             }
+            is ConstantDeclaration ->
+                "const ${declaration.variableName}${colonSpaceManager()}${declaration.variableType}${equalSpaceManager()}${processAST(
+                    declaration.value,
+                )};"
+        }
+    }
 
-            is ConstantDeclaration -> TODO()
+    private fun colonSpaceManager(): String {
+        return if (config.spaceBeforeColon && config.spaceAfterColon) {
+            " : "
+        } else if (config.spaceBeforeColon) {
+            " :"
+        } else if (config.spaceAfterColon) {
+            ": "
+        } else {
+            ":"
+        }
+    }
+
+    private fun equalSpaceManager(): String {
+        return if (config.spaceBeforeAndAfterEqual) {
+            " = "
+        } else {
+            "="
         }
     }
 
