@@ -4,11 +4,11 @@ import ast.AST
 import ast.Scope
 import result.validation.ValidationResult
 
-class PrintlnWithoutExpressionRule : LinterRule {
+class ReadInputWithoutExpressionRule : LinterRule {
     override fun ruleIsValid(
         scope: Scope,
         tree: AST,
     ): ValidationResult {
-        return FunctionCallWithoutExpressionRule().validate(tree, "println")
+        return FunctionCallWithoutExpressionRule().validate(tree, "readInput")
     }
 }
