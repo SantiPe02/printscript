@@ -9,9 +9,12 @@ repositories {
 
 dependencies {
     jacocoAggregation project(':ast')
+    jacocoAggregation project(':cli')
     jacocoAggregation project(':formatter')
     jacocoAggregation project(':interpreter')
+    jacocoAggregation project(':largefilereading')
     jacocoAggregation project(':lexer')
+    jacocoAggregation project(':linter')
     jacocoAggregation project(':parser')
     jacocoAggregation project(':token')
     jacocoAggregation project(':util')
