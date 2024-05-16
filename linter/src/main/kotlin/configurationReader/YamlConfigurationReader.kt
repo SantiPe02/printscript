@@ -19,9 +19,10 @@ object YamlConfigurationReader : IConfigurationReader {
         val camelCaseRule = configMap["camelCase"] as? Boolean ?: true
         val printlnWithoutException = configMap["printlnWithoutException"] as? Boolean ?: true
         val undeclaredVariableStatement = configMap["undeclaredVariableStatement"] as? Boolean ?: true
+        val readInputWithoutExpression = configMap["readInputWithoutExpression"] as? Boolean ?: true
 
         return Result.success(
-            LinterConfiguration(camelCaseRule, printlnWithoutException, undeclaredVariableStatement),
+            LinterConfiguration(camelCaseRule, printlnWithoutException, undeclaredVariableStatement, readInputWithoutExpression),
         )
     }
 }

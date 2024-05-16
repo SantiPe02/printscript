@@ -4,8 +4,10 @@ import ast.VariableDeclaration
 import lexer.LexerImpl
 import linterRules.CamelCaseRule
 import linterRules.PrintlnWithoutExpressionRule
+import linterRules.ReadInputWithoutExpressionRule
 import linterRules.UndeclaratedVariableStatementRule
 import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.fail
 import org.junit.jupiter.api.Test
 import parser.MyParser
 import parser.Parser
@@ -22,7 +24,7 @@ class LinterTest {
         val ast = parser.parseTokens(tokens)
         ast.onSuccess {
             assertEquals(camelCaseRule.ruleIsValid(it, it.body.first()), ValidResult())
-        }
+        }.onFailure { fail("ast could not be successfully created") }
     }
 
     @Test
@@ -34,7 +36,7 @@ class LinterTest {
         val ast = parser.parseTokens(tokens)
         ast.onSuccess {
             assertEquals(camelCaseRule.ruleIsValid(it, it.body.first())::class, WarningResult::class)
-        }
+        }.onFailure { fail("ast could not be successfully created") }
     }
 
     @Test
@@ -47,7 +49,7 @@ class LinterTest {
             val rule = PrintlnWithoutExpressionRule()
             val first = it.body.first() as MethodResult
             assertEquals(rule.ruleIsValid(it, first.methodCall), ValidResult())
-        }
+        }.onFailure { fail("ast could not be successfully created") }
     }
 
     @Test
@@ -60,7 +62,7 @@ class LinterTest {
             val rule = PrintlnWithoutExpressionRule()
             val first = it.body.first() as MethodResult
             assertEquals(rule.ruleIsValid(it, first.methodCall)::class, WarningResult::class)
-        }
+        }.onFailure { fail("ast could not be successfully created") }
     }
 
     @Test
@@ -75,7 +77,7 @@ class LinterTest {
             val wrongVar = it.body.elementAtOrNull(1) as VariableDeclaration
             val expectedResult = listOf(WarningResult(Range(32, 42), "${wrongVar.variableName} is not in Camel Case"))
             assertEquals(linter.lintScope(it, rules), expectedResult)
-        }
+        }.onFailure { fail("ast could not be successfully created") }
     }
 
     @Test
@@ -90,7 +92,7 @@ class LinterTest {
             val expectedResult =
                 listOf(WarningResult(Range(36, 54), "println should not have an expression inside it."))
             assertEquals(linter.lintScope(it, rules), expectedResult)
-        }
+        }.onFailure { fail("ast could not be successfully created") }
     }
 
     @Test
@@ -104,7 +106,7 @@ class LinterTest {
         ast.onSuccess {
             val expectedResult = listOf(WarningResult(Range(4, 13), "myVariable is never declared."))
             assertEquals(linter.lintScope(it, rules), expectedResult)
-        }
+        }.onFailure { fail("ast could not be successfully created") }
     }
 
     @Test
@@ -118,6 +120,46 @@ class LinterTest {
         val expectedResult = listOf<WarningResult>()
         ast.onSuccess {
             assertEquals(linter.lintScope(it, rules), expectedResult)
-        }
+        }.onFailure { fail("ast could not be successfully created") }
+    }
+
+    @Test
+    fun `test009 test readInput with a sum expression inside should return warning`() {
+        val code = "readInput(1 + 4);"
+        val tokens = LexerImpl().tokenize(code)
+        val parser: Parser = MyParser()
+        val ast = parser.parseTokens(tokens)
+        ast.onSuccess {
+            val rule = ReadInputWithoutExpressionRule()
+            val first = it.body.first() as MethodResult
+            assertEquals(rule.ruleIsValid(it, first.methodCall)::class, WarningResult::class)
+        }.onFailure { fail("ast could not be successfully created") }
+    }
+
+    @Test
+    fun `test010 test readInput with a method expression inside should return warning`() {
+        val code = "readInput(boque());"
+        val tokens = LexerImpl().tokenize(code)
+        val parser: Parser = MyParser()
+        val ast = parser.parseTokens(tokens)
+        ast.onSuccess {
+            val rule = ReadInputWithoutExpressionRule()
+            println(it.body.first().javaClass)
+            val first = it.body.first() as MethodResult
+            assertEquals(rule.ruleIsValid(it, first.methodCall)::class, WarningResult::class)
+        }.onFailure { fail("ast could not be successfully created") }
+    }
+
+    @Test
+    fun `test011 test readInput without an expression inside should not return warning`() {
+        val code = "readInput(1);"
+        val tokens = LexerImpl().tokenize(code)
+        val parser: Parser = MyParser()
+        val ast = parser.parseTokens(tokens)
+        ast.onSuccess {
+            val rule = ReadInputWithoutExpressionRule()
+            val first = it.body.first() as MethodResult
+            assertEquals(rule.ruleIsValid(it, first.methodCall), ValidResult())
+        }.onFailure { fail("ast could not be successfully created") }
     }
 }
