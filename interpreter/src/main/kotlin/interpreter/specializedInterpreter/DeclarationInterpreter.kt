@@ -25,6 +25,7 @@ object DeclarationInterpreter : SpecializedInterpreter<DeclarationStatement> {
                             getDefaultValueForType(sentence.variableType),
                         )
                 ),
+            interpreter.inputReader,
         )
     }
 

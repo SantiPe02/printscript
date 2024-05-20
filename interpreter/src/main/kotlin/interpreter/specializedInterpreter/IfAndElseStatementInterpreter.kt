@@ -9,11 +9,10 @@ object IfAndElseStatementInterpreter : SpecializedInterpreter<IfAndElseStatement
         interpreter: Interpreter,
         sentence: IfAndElseStatement,
     ): Interpreter {
-        val condition =
-            analyzeCondition(interpreter, sentence.conditions.first()).getOrElse {
-                return interpreter.reportError(it.message ?: "")
-            }
-        return if (condition) {
+        val condition = analyzeCondition(interpreter, sentence.conditions.first())
+        if (condition.data == null) return interpreter
+
+        return if (condition.data) {
             interpreter.interpret(sentence.ifScope)
         } else {
             interpreter.interpret(sentence.elseScope)

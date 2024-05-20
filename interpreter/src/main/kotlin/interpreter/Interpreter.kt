@@ -45,7 +45,7 @@ class Interpreter(
             is BooleanCondition -> TODO()
 
             is MethodResult -> interpret(sentence.methodCall)
-            is Call -> CallInterpreter.interpret(this, sentence, inputReader)
+            is Call -> CallInterpreter.interpret(this, sentence).interpreter
 
             is VariableDeclaration -> VariableDeclarationInterpreter.interpret(this, sentence)
             is Scope -> ScopeInterpreter.interpret(this, sentence)
@@ -55,5 +55,5 @@ class Interpreter(
             is ConstantDeclaration -> ConstantDeclarationInterpreter.interpret(this, sentence)
         }
 
-    fun reportError(error: String) = Interpreter(Report(report.outputs, report.errors + error), variables)
+    fun reportError(error: String) = Interpreter(Report(report.outputs, report.errors + error), variables, inputReader)
 }
