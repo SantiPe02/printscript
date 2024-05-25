@@ -11,99 +11,38 @@ object ArgumentInterpreter {
     fun interpret(
         interpreter: Interpreter,
         arg: Argument,
-    ): Result<Variable> {
+    ): ComposedResult<Variable?> {
         return when (arg) {
-            is LiteralArgument -> Result.success(Variable(arg.type, arg.value))
-            is MethodResult -> interpret(interpreter, interpretMethodResult(interpreter, arg))
-            is VariableArgument -> {
-                val variable: Variable? = interpreter.variables.get(arg.name)
-                if (variable == null) {
-                    Result.failure(Error("variable ${arg.name} not declared in this scope. ${arg.range.start}"))
-                } else {
-                    Result.success(variable)
-                }
-            }
+            is LiteralArgument -> ComposedResult(Variable(arg.type, arg.value), interpreter)
+            is MethodResult -> interpretMethodResult(interpreter, arg)
+            is VariableArgument -> interpretVariable(interpreter, arg)
         }
     }
 
     fun interpretVariable(
         interpreter: Interpreter,
         expression: VariableArgument,
-    ): LiteralArgument {
-        val value: Variable = interpreter.variables[expression.name]!!
-
-        return LiteralArgument(
-            expression.range,
-            value.value!!,
-            value.type,
-        )
+    ): ComposedResult<Variable?> {
+        val variable: Variable? = interpreter.variables.get(expression.name)
+        return if (variable == null) {
+            ComposedResult(
+                null,
+                interpreter.reportError("variable ${expression.name} not declared in this scope. ${expression.range.start}"),
+            )
+        } else {
+            ComposedResult(variable, interpreter)
+        }
     }
 
     fun interpretMethodResult(
         interpreter: Interpreter,
         expression: MethodResult,
-    ): LiteralArgument {
-        val literals = mutableListOf<LiteralArgument>()
-
-        for (argument in expression.methodCall.arguments) {
-            literals.add(
-                when (argument) {
-                    is MethodResult -> interpretMethodResult(interpreter, argument)
-                    is LiteralArgument -> argument
-                    is VariableArgument -> interpretVariable(interpreter, argument)
-                },
-            )
-        }
-
-        if (matchTypes(literals[0], literals[1])) {
-            return when (expression.methodCall.name) {
-                "*" ->
-                    LiteralArgument(
-                        expression.range,
-                        binaryOperation(literals[0], literals[1]) { a, b -> a * b },
-                        literals[0].type,
-                    )
-
-                "+" ->
-                    LiteralArgument(
-                        expression.range,
-                        binaryOperation(literals[0], literals[1]) { a, b -> a + b },
-                        literals[0].type,
-                    )
-
-                "-" ->
-                    LiteralArgument(
-                        expression.range,
-                        binaryOperation(literals[0], literals[1]) { a, b -> a - b },
-                        literals[0].type,
-                    )
-
-                "/" ->
-                    LiteralArgument(
-                        expression.range,
-                        binaryOperation(literals[0], literals[1]) { a, b -> a / b },
-                        literals[0].type,
-                    )
-
-                else -> LiteralArgument(expression.range, literals[0].type, literals[0].value)
-            }
+    ): ComposedResult<Variable?> {
+        val result = CallInterpreter.interpret(interpreter, expression.methodCall)
+        return if (result.data == null) {
+            ComposedResult(null, result.interpreter)
         } else {
-            return LiteralArgument(literals[0].range, literals[0].value + literals[1].value, "string")
+            interpret(result.interpreter, result.data)
         }
-    }
-
-    private fun matchTypes(
-        aLiteral: LiteralArgument,
-        otherLiteral: LiteralArgument,
-    ): Boolean = aLiteral.type == otherLiteral.type
-
-    private fun binaryOperation(
-        n: LiteralArgument,
-        m: LiteralArgument,
-        operation: (Double, Double) -> Double,
-    ): String {
-        val nValue = n.value.toDoubleOrNull()!!
-        val mValue = m.value.toDoubleOrNull()!!
-        return operation(nValue, mValue).toString()
     }
 }

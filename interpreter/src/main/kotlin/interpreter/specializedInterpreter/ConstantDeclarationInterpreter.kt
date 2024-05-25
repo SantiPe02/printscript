@@ -1,9 +1,6 @@
 package interpreter.specializedInterpreter
 
 import ast.ConstantDeclaration
-import ast.LiteralArgument
-import ast.MethodResult
-import ast.VariableArgument
 import interpreter.Interpreter
 import interpreter.SpecializedInterpreter
 import interpreter.Variable
@@ -13,19 +10,17 @@ object ConstantDeclarationInterpreter : SpecializedInterpreter<ConstantDeclarati
         interpreter: Interpreter,
         sentence: ConstantDeclaration,
     ): Interpreter {
-        val value: LiteralArgument =
-            when (val value = sentence.value) {
-                is MethodResult -> ArgumentInterpreter.interpretMethodResult(interpreter, value)
-                is LiteralArgument -> value
-                is VariableArgument -> ArgumentInterpreter.interpretVariable(interpreter, value)
-            }
+        val argResult = ArgumentInterpreter.interpret(interpreter, sentence.value)
+        if (argResult.data == null) return argResult.interpreter
 
         return Interpreter(
             interpreter.report,
             interpreter.variables + (
-                sentence.variableName to
-                    Variable(sentence.variableType, value.value, true)
+                sentence.variableName
+                    to
+                    Variable(sentence.variableType, argResult.data.value, true)
             ),
+            interpreter.inputReader,
         )
     }
 }
