@@ -6,6 +6,7 @@ import interpreter.Interpreter
 import interpreter.specializedInterpreter.printscriptMethods.AddOperation
 import interpreter.specializedInterpreter.printscriptMethods.BinaryOperation
 import interpreter.specializedInterpreter.printscriptMethods.PrintLine
+import interpreter.specializedInterpreter.printscriptMethods.ReadEnv
 import interpreter.specializedInterpreter.printscriptMethods.ReadInput
 
 object CallInterpreter {
@@ -13,6 +14,7 @@ object CallInterpreter {
         mapOf(
             ("println" to PrintLine),
             ("readInput" to ReadInput),
+            ("readEnv" to ReadEnv),
             ("+" to AddOperation),
             ("-" to BinaryOperation { a, b -> a - b }),
             ("*" to BinaryOperation { a, b -> a * b }),
