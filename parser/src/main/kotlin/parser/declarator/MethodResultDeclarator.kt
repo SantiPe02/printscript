@@ -29,6 +29,8 @@ class MethodResultDeclarator : ArgumentDeclarator {
         arguments: List<TokenInfo>,
         currentRange: Range,
     ): Result<MethodResult> {
+        verifySyntax(tokens).onFailure { return Result.failure(it) }
+
         val operator: Result<TokenInfo>
         val finalMethodOp: Int
 
@@ -122,6 +124,7 @@ class MethodResultDeclarator : ArgumentDeclarator {
         endIndex: Int,
         methodOperator: Int,
     ): Result<List<List<TokenInfo>>> {
+        verifySyntax(tokens).onFailure { return Result.failure(it) }
         return when (tokens[methodOperator].token.text) {
             "+", "-", "*", "/" -> Result.success(separateArguments(tokens, i, endIndex, methodOperator))
             "(" -> getParenthesesArguments(tokens, methodOperator)
@@ -299,5 +302,28 @@ class MethodResultDeclarator : ArgumentDeclarator {
                 Call(range, operator.token.text, listOf()),
             ),
         )
+    }
+
+    /**
+     * Invalid syntax cases:
+     * Two consecutive LITERALS or IDENTIFIERS (or any combination between them)
+     */
+
+    private fun verifySyntax(tokens: List<TokenInfo>): Result<Boolean> {
+        for (i in 0 until tokens.size - 1) {
+            if (tokenIsLiteralOrIdentifierNorComma(tokens[i]) && tokenIsLiteralOrIdentifierNorComma(tokens[i + 1])) {
+                return Result.failure(Exception("Invalid syntax: two consecutive literals"))
+            }
+        }
+        return Result.success(true)
+    }
+
+    private fun tokenIsLiteralOrIdentifierNorComma(token: TokenInfo): Boolean {
+        if (token.token.type == TokenInfo.TokenType.LITERAL || token.token.type == TokenInfo.TokenType.IDENTIFIER) {
+            if (token.token.text != ",") {
+                return true
+            }
+        }
+        return false
     }
 }
