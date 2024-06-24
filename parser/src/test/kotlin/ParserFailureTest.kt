@@ -50,4 +50,50 @@ public class ParserFailureTest {
         val ast = parser.parseTokens(tokens)
         assert(ast.isFailure)
     }
+
+    @Test
+    fun `test006 a LITERAL followed imediately by a IDENTIFIER in declaration throws error`() {
+        val code = "let a : string = \"FOO\" println(readEnv(a));"
+        val tokens = lexer.tokenize(code)
+        val parser: Parser = MyParser()
+        val ast = parser.parseTokens(tokens)
+        println(ast)
+        assert(ast.isFailure)
+    }
+
+    @Test
+    fun `test007 two consecutive OPERATORS in declaration throws error`() {
+        val code = "let a: int = 1 + + 2;"
+        val tokens = lexer.tokenize(code)
+        val parser: Parser = MyParser()
+        val ast = parser.parseTokens(tokens)
+        assert(ast.isFailure)
+    }
+
+    @Test
+    fun `test008 two consecutive IDENTIFIERS in declaration throws error`() {
+        val code = "let a: int = b c;"
+        val tokens = lexer.tokenize(code)
+        val parser: Parser = MyParser()
+        val ast = parser.parseTokens(tokens)
+        assert(ast.isFailure)
+    }
+
+    @Test
+    fun `test009 two consecutive LITERALS in declaration throws error`() {
+        val code = "let a: int = 1 2;"
+        val tokens = lexer.tokenize(code)
+        val parser: Parser = MyParser()
+        val ast = parser.parseTokens(tokens)
+        assert(ast.isFailure)
+    }
+
+    @Test
+    fun `test008 two consecutive IDENTIFIERS in throws error`() {
+        val code = "let a b: int = c;"
+        val tokens = lexer.tokenize(code)
+        val parser: Parser = MyParser()
+        val ast = parser.parseTokens(tokens)
+        assert(ast.isFailure)
+    }
 }

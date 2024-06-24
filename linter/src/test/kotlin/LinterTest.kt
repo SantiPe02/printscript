@@ -164,4 +164,18 @@ class LinterTest {
             assertEquals(rule.ruleIsValid(it, first.methodCall), ValidResult())
         }.onFailure { fail("ast could not be successfully created") }
     }
+
+    @Test
+    fun `test009 test ReadEnv inside println should return warning`() {
+        val code = "println(readEnv(a));"
+        val tokens = lexer.tokenize(code)
+        val parser: Parser = MyParser()
+        val ast = parser.parseTokens(tokens)
+        val linter = MyLinter()
+        val rules = listOf(PrintlnWithoutExpressionRule())
+        ast.onSuccess {
+            val expectedResult = listOf(WarningResult(Range(8, 17), "println should not have an expression inside it."))
+            assertEquals(linter.lintScope(it, rules), expectedResult)
+        }
+    }
 }
