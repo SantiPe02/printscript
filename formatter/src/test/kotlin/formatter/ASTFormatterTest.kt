@@ -1,14 +1,14 @@
 package formatter
 
+import factory.LexerFactoryImpl
 import formater.FormatterConfiguration
 import formater.astFormatter.ASTFormatter
-import lexer.LexerImpl
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 import parser.MyParser
 
 class ASTFormatterTest {
-    private val lexer = LexerImpl()
+    private val lexer = LexerFactoryImpl("1.1").create()
     private val parser = MyParser()
 
     @Test

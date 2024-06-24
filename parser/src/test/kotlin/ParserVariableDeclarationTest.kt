@@ -3,17 +3,19 @@ import ast.Range
 import ast.Scope
 import ast.VariableArgument
 import ast.VariableDeclaration
-import lexer.LexerImpl
+import factory.LexerFactoryImpl
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 import parser.MyParser
 import parser.Parser
 
 class ParserVariableDeclarationTest {
+    private val lexer = LexerFactoryImpl("1.1").create()
+
     @Test
     fun test001_testSimpleLiteralVariableDeclarationNumber() {
         val code = "let a: number = 5;" // range 14, including spaces...
-        val tokens = LexerImpl().tokenize(code)
+        val tokens = lexer.tokenize(code)
         val parser: Parser = MyParser()
         val ast = parser.parseTokens(tokens)
         val expected =
@@ -33,7 +35,7 @@ class ParserVariableDeclarationTest {
     @Test
     fun test002_testSimpleLiteralVariableDeclarationBool() {
         val code = "let a: boolean = true;"
-        val tokens = LexerImpl().tokenize(code)
+        val tokens = lexer.tokenize(code)
         val parser: Parser = MyParser()
         val ast = parser.parseTokens(tokens)
         val expected =
@@ -53,7 +55,7 @@ class ParserVariableDeclarationTest {
     @Test
     fun test003_testSimpleLiteralVariableDeclarationNumber() {
         val code = "let a: number = 3.5;"
-        val tokens = LexerImpl().tokenize(code)
+        val tokens = lexer.tokenize(code)
         val parser: Parser = MyParser()
         val ast = parser.parseTokens(tokens)
         val expected =
@@ -73,7 +75,7 @@ class ParserVariableDeclarationTest {
     @Test
     fun test004_testSimpleLiteralVariableDeclarationStringOfOneWord() {
         val code = "let a: string = \"Juan\";"
-        val tokens = LexerImpl().tokenize(code)
+        val tokens = lexer.tokenize(code)
 
         val parser: Parser = MyParser()
         val ast = parser.parseTokens(tokens)
@@ -99,7 +101,7 @@ class ParserVariableDeclarationTest {
     @Test
     fun test005_testConsecutiveLiteralDeclarations() {
         val code = "let a: string = \"Juan\"; let b: number = 5; let c: boolean = true;"
-        val tokens = LexerImpl().tokenize(code)
+        val tokens = lexer.tokenize(code)
 
         val parser: Parser = MyParser()
         val ast = parser.parseTokens(tokens)
@@ -132,7 +134,7 @@ class ParserVariableDeclarationTest {
     @Test
     fun test006_testDeclarationWithVariableArgument() {
         val code = "let a: number = b;"
-        val tokens = LexerImpl().tokenize(code)
+        val tokens = lexer.tokenize(code)
         val parser: Parser = MyParser()
         val ast = parser.parseTokens(tokens)
         val expected =
@@ -154,7 +156,7 @@ class ParserVariableDeclarationTest {
     @Test
     fun test007_testDeclarationsWithLiteralAndVariableArguments() {
         val code = "let a: number = 5; let b: string = a;"
-        val tokens = LexerImpl().tokenize(code)
+        val tokens = lexer.tokenize(code)
         val parser: Parser = MyParser()
         val ast = parser.parseTokens(tokens)
         val expected =
@@ -175,7 +177,7 @@ class ParserVariableDeclarationTest {
     @Test
     fun `test008 test declaration with equals but no argument`() {
         val code = "let a: number = ;"
-        val tokens = LexerImpl().tokenize(code)
+        val tokens = lexer.tokenize(code)
         val parser: Parser = MyParser()
         val ast = parser.parseTokens(tokens)
 

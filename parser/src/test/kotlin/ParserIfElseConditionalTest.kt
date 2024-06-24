@@ -5,17 +5,19 @@ import ast.Range
 import ast.Scope
 import ast.VariableArgument
 import ast.VariableDeclaration
-import lexer.LexerImpl
+import factory.LexerFactoryImpl
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 import parser.MyParser
 import parser.Parser
 
 class ParserIfElseConditionalTest {
+    private val lexer = LexerFactoryImpl("1.1").create()
+
     @Test
     fun `test001 test simple boolean if and else with empty scopes`() {
         val code = "if(a){} else{}"
-        val tokens = LexerImpl().tokenize(code)
+        val tokens = lexer.tokenize(code)
         val parser: Parser = MyParser()
         val ast = parser.parseTokens(tokens)
         val expected =
@@ -38,7 +40,7 @@ class ParserIfElseConditionalTest {
     @Test
     fun `test002 test simple boolean if and else with empty scopes but spaces inside else`() {
         val code = "if(a){} else{  }"
-        val tokens = LexerImpl().tokenize(code)
+        val tokens = lexer.tokenize(code)
         val parser: Parser = MyParser()
         val ast = parser.parseTokens(tokens)
         val expected =
@@ -61,7 +63,7 @@ class ParserIfElseConditionalTest {
     @Test
     fun `test003 test simple boolean if and else with scope in both`() {
         val code = "if(a){let b: number = 1;}else{let b: number = 1;}"
-        val tokens = LexerImpl().tokenize(code)
+        val tokens = lexer.tokenize(code)
         val parser: Parser = MyParser()
         val ast = parser.parseTokens(tokens)
         val expected =

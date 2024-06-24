@@ -13,6 +13,6 @@ class Formatting : CliktCommand() {
     override fun run() {
         val configFile = File(config)
         if (!configFile.exists()) throw CliktError("the configuration file was not found in $config")
-        format(file, configFile).onFailure { throw CliktError(it.message) }
+        format(file, configFile, "1.1").onFailure { throw CliktError(it.message) }
     }
 }

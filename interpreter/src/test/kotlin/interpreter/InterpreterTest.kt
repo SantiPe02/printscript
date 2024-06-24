@@ -7,7 +7,8 @@ import ast.IfStatement
 import ast.LiteralArgument
 import ast.Range
 import ast.Scope
-import lexer.LexerImpl
+import factory.InterpreterFactoryImpl
+import factory.LexerFactoryImpl
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertTrue
@@ -16,7 +17,9 @@ import parser.MyParser
 import parser.Parser
 
 class InterpreterTest {
+    private val init = InterpreterFactoryImpl("1.0").create()
     private val interpreter = Interpreter()
+    private val lexer = LexerFactoryImpl("1.1").create()
 
     @Test
     fun test01_completeTestOfVersion1OfPrintscriptWhenValidCodeWithExitExpectedOfValue6() {
@@ -29,7 +32,7 @@ class InterpreterTest {
 
      println("Result: " + a);"""
 
-        val tokens = LexerImpl().tokenize(code)
+        val tokens = lexer.tokenize(code)
         val parser: Parser = MyParser()
         val ast = parser.parseTokens(tokens)
         ast.onSuccess {
@@ -144,7 +147,7 @@ class InterpreterTest {
      const a : number = 10;
      """
 
-        val tokens = LexerImpl().tokenize(code)
+        val tokens = lexer.tokenize(code)
         val parser: Parser = MyParser()
         val ast = parser.parseTokens(tokens)
         ast.onSuccess {
@@ -162,7 +165,7 @@ class InterpreterTest {
      a = 5;
      """
 
-        val tokens = LexerImpl().tokenize(code)
+        val tokens = lexer.tokenize(code)
         val parser: Parser = MyParser()
         val ast = parser.parseTokens(tokens)
         ast.onSuccess {

@@ -4,14 +4,16 @@ import commands.Execute
 import commands.Formatting
 import commands.Printscript
 import commands.Validate
+import factory.LexerFactoryImpl
 import interpreter.Interpreter
-import lexer.LexerImpl
 import parser.MyParser
+
+val lexer = LexerFactoryImpl("1.1").create()
 
 fun main(args: Array<String>): Unit =
     Printscript().subcommands(
-        Validate(LexerImpl(), MyParser()),
+        Validate(lexer, MyParser()),
         Formatting(),
-        Analyzing(LexerImpl(), MyParser(), MyLinter()),
-        Execute(LexerImpl(), MyParser(), Interpreter()),
+        Analyzing(lexer, MyParser(), MyLinter()),
+        Execute(lexer, MyParser(), Interpreter()),
     ).main(args)

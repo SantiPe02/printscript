@@ -3,28 +3,22 @@ package interpreter.specializedInterpreter
 import ast.Argument
 import ast.Call
 import interpreter.Interpreter
-import interpreter.specializedInterpreter.printscriptMethods.AddOperation
-import interpreter.specializedInterpreter.printscriptMethods.BinaryOperation
-import interpreter.specializedInterpreter.printscriptMethods.PrintLine
-import interpreter.specializedInterpreter.printscriptMethods.ReadEnv
-import interpreter.specializedInterpreter.printscriptMethods.ReadInput
 
 object CallInterpreter {
-    private val printScriptFunctions: Map<String, PrintScriptMethod> =
-        mapOf(
-            ("println" to PrintLine),
-            ("readInput" to ReadInput),
-            ("readEnv" to ReadEnv),
-            ("+" to AddOperation),
-            ("-" to BinaryOperation { a, b -> a - b }),
-            ("*" to BinaryOperation { a, b -> a * b }),
-            ("/" to BinaryOperation { a, b -> a / b }),
-        )
+    private var isInitialized = false
+    private lateinit var printScriptFunctions: Map<String, PrintScriptMethod>
+
+    fun initialize(functions: Map<String, PrintScriptMethod>) {
+        if (isInitialized) return
+        printScriptFunctions = functions
+        isInitialized = true
+    }
 
     fun interpret(
         interpreter: Interpreter,
         sentence: Call,
     ): ComposedResult<Argument?> {
+        if (!isInitialized) throw IllegalStateException("CallInterpreter not initialized")
         val method: PrintScriptMethod =
             printScriptFunctions[sentence.name] ?: return ComposedResult(
                 null,
@@ -34,7 +28,7 @@ object CallInterpreter {
     }
 }
 
-internal interface PrintScriptMethod {
+interface PrintScriptMethod {
     fun execute(
         interpreter: Interpreter,
         sentence: Call,

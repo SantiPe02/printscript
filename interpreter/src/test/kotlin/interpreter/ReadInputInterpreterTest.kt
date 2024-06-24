@@ -1,7 +1,8 @@
 package interpreter
 
+import factory.InterpreterFactoryImpl
+import factory.LexerFactoryImpl
 import interpreter.inputReaderImp.MockInputReader
-import lexer.LexerImpl
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
@@ -9,13 +10,16 @@ import parser.MyParser
 import parser.Parser
 
 class ReadInputInterpreterTest {
+    private val lexer = LexerFactoryImpl("1.1").create()
+    val init = InterpreterFactoryImpl("1.1").create()
+
     @Test
     fun test001_testGetAnInputString() {
         val code = """
             let a : string = readInput("What is your name?");
             """
 
-        val tokens = LexerImpl().tokenize(code)
+        val tokens = lexer.tokenize(code)
         val parser: Parser = MyParser()
         val ast = parser.parseTokens(tokens)
         ast.onSuccess {
@@ -34,7 +38,7 @@ class ReadInputInterpreterTest {
             println("Hello there " + a);
             """
 
-        val tokens = LexerImpl().tokenize(code)
+        val tokens = lexer.tokenize(code)
         val parser: Parser = MyParser()
         val ast = parser.parseTokens(tokens)
         ast.onSuccess {
@@ -54,7 +58,7 @@ class ReadInputInterpreterTest {
             let b : boolean = readInput("");
             """.trimIndent()
 
-        val tokens = LexerImpl().tokenize(code)
+        val tokens = lexer.tokenize(code)
         val parser: Parser = MyParser()
         val ast = parser.parseTokens(tokens)
         ast.onSuccess {
