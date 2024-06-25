@@ -3,15 +3,24 @@ package interpreter
 import factory.InterpreterFactoryImpl
 import factory.LexerFactoryImpl
 import interpreter.inputReaderImp.MockInputReader
+import lexer.Lexer
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertTrue
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import parser.MyParser
 import parser.Parser
 
 class ReadInputInterpreterTest {
-    private val lexer = LexerFactoryImpl("1.1").create()
-    val init = InterpreterFactoryImpl("1.1").create()
+    private lateinit var lexer: Lexer
+    private lateinit var interpreter: Interpreter
+
+    @BeforeEach
+    fun setUp() {
+        lexer = LexerFactoryImpl("1.1").create()
+        InterpreterFactoryImpl("1.1").create()
+        interpreter = Interpreter()
+    }
 
     @Test
     fun test001_testGetAnInputString() {
