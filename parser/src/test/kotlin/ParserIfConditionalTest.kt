@@ -155,4 +155,106 @@ class ParserIfConditionalTest {
 
         assertEquals(Result.success(expected), ast)
     }
+
+    @Test
+    fun `test006 test if after variable declaration`(){
+        val code = "let a: number = 1; if(a){}"
+        val tokens = LexerImpl().tokenize(code)
+        val parser: Parser = MyParser()
+        val ast = parser.parseTokens(tokens)
+        val expected =
+            Scope(
+                "program",
+                Range(0, 25),
+                listOf(
+                    VariableDeclaration(
+                        Range(4, 4),
+                        "a",
+                        "number",
+                        LiteralArgument(Range(16, 16), "1", "number"),
+                    ),
+                    IfStatement(
+                        Range(19, 25),
+                        listOf(BooleanCondition(Range(22, 22), VariableArgument(Range(22, 22), "a"))),
+                        Scope("program", Range(24, 24), emptyList()),
+                    ),
+                ),
+            )
+        assertEquals(Result.success(expected), ast)
+    }
+
+    @Test
+    fun `test007 test if with println inside after a variable declaration`(){
+        val code = "let a: number = 1; if(a){println(a);}"
+        val tokens = LexerImpl().tokenize(code)
+        val parser: Parser = MyParser()
+        val ast = parser.parseTokens(tokens)
+        val expected =
+            Scope(
+                "program",
+                Range(0, 36),
+                listOf(
+                    VariableDeclaration(
+                        Range(4, 4),
+                        "a",
+                        "number",
+                        LiteralArgument(Range(16, 16), "1", "number"),
+                    ),
+                    IfStatement(
+                        Range(19, 36),
+                        listOf(BooleanCondition(Range(22, 22), VariableArgument(Range(22, 22), "a"))),
+                        Scope(
+                            "program",
+                            Range(25, 35),
+                            listOf(
+                                MethodResult(
+                                    Range(25, 31),
+                                    Call(Range(33, 33), "println", listOf(VariableArgument(Range(33, 33), "a"))),
+                                ),
+                            ),
+                        ),
+                    ),
+                ),
+            )
+        println(ast);
+        assertEquals(Result.success(expected), ast)
+    }
+
+    @Test
+    fun `test008 test if with println inside after a variable boolean declaration`(){
+        val code = "let a: boolean = true; if(a){println(a);}"
+        val tokens = LexerImpl().tokenize(code)
+        val parser: Parser = MyParser()
+        val ast = parser.parseTokens(tokens)
+        val expected =
+            Scope(
+                "program",
+                Range(0, 40),
+                listOf(
+                    VariableDeclaration(
+                        Range(4, 4),
+                        "a",
+                        "boolean",
+                        LiteralArgument(Range(17, 20), "true", "boolean"),
+                    ),
+                    IfStatement(
+                        Range(23, 40),
+                        listOf(BooleanCondition(Range(26, 26), VariableArgument(Range(26, 26), "a"))),
+                        Scope(
+                            "program",
+                            Range(29, 39),
+                            listOf(
+                                MethodResult(
+                                    Range(29, 35),
+                                    Call(Range(37, 37), "println", listOf(VariableArgument(Range(37, 37), "a"))),
+                                ),
+                            ),
+                        ),
+                    ),
+                ),
+            )
+
+        println(ast);
+        assertEquals(Result.success(expected), ast)
+    }
 }

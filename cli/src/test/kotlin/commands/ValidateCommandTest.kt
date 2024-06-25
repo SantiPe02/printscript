@@ -30,7 +30,6 @@ class ValidateCommandTest {
 
         val command = Validate(LexerImpl(), MyParser())
         val result = command.test(sourceFile.path.replace("\\", "/"))
-
         assertEquals(0, result.statusCode)
         assertTrue(result.output.contains("The file was validated correctly"))
         sourceFile.deleteOnExit()
