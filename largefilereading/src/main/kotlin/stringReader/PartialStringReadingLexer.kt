@@ -1,3 +1,5 @@
+package stringReader
+
 import lexer.Context
 import lexer.Lexer
 import token.TokenInfo
