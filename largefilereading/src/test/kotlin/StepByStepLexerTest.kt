@@ -1,6 +1,7 @@
 import lexer.LexerImpl
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
+import stringReader.PartialStringReadingLexer
 
 class StepByStepLexerTest {
     @Test
