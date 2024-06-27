@@ -1,6 +1,6 @@
 package commands
 
-import PartialStringReadingLexer
+import stringReader.PartialStringReadingLexer
 import com.github.ajalt.clikt.core.CliktCommand
 import com.github.ajalt.clikt.core.CliktError
 import com.github.ajalt.clikt.parameters.arguments.argument
