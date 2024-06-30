@@ -31,7 +31,7 @@ internal object PrintLine : PrintScriptMethod {
         )
     }
 
-    private fun formatNumbers(data: String) : String {
+    private fun formatNumbers(data: String): String {
         return data.replace(Regex("""\b(\d+)\.0\b""")) { matchResult ->
             matchResult.groupValues[1]
         }
