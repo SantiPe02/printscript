@@ -7,9 +7,8 @@ import token.TokenInfo
 class PartialStringReadingLexer(
     val lexer: Lexer,
     val notProcessed: String = "",
-    val context: Context = Context(0), // Sería como un puntero, cuando lee "fer", el context terminará en 3 (o 2 nose)
+    val context: Context = Context(0),
 ) {
-    // en let ...; if()... el if no te lo tokeniza, porque está después del último ;
     fun tokenizeString(text: String): Pair<PartialStringReadingLexer, List<TokenInfo>> {
         var notProcessedAux = ""
         var toProcessText = notProcessed + text
