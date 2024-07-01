@@ -5,17 +5,19 @@ import ast.Range
 import ast.Scope
 import ast.VariableArgument
 import ast.VariableDeclaration
-import lexer.LexerImpl
+import factory.LexerFactoryImpl
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 import parser.MyParser
 import parser.Parser
 
 class ParserMethodResultTest {
+    private val lexer = LexerFactoryImpl("1.1").create()
+
     @Test
     fun test001_testSumMethodDeclaration() {
         val code = "let sum: number = 3 + 5;"
-        val tokens = LexerImpl().tokenize(code)
+        val tokens = lexer.tokenize(code)
         val parser: Parser = MyParser()
         val ast = parser.parseTokens(tokens)
         val expected =
@@ -50,7 +52,7 @@ class ParserMethodResultTest {
     @Test
     fun test002_testSumMethodDeclarationWithVariable() {
         val code = "let sum: number = a + 5;"
-        val tokens = LexerImpl().tokenize(code)
+        val tokens = lexer.tokenize(code)
         val parser: Parser = MyParser()
         val ast = parser.parseTokens(tokens)
         val expected =
@@ -85,7 +87,7 @@ class ParserMethodResultTest {
     @Test
     fun test003_testSumAndMultiplicationMethodDeclaration() {
         val code = "let sum: number = 3 + 5 * 2;"
-        val tokens = LexerImpl().tokenize(code)
+        val tokens = lexer.tokenize(code)
         val parser: Parser = MyParser()
         val ast = parser.parseTokens(tokens)
         val expected =
@@ -130,7 +132,7 @@ class ParserMethodResultTest {
     @Test
     fun test004_testMultiplicationAndSumMethodDeclaration() {
         val code = "let sum: number = 3 * 5 + 2;"
-        val tokens = LexerImpl().tokenize(code)
+        val tokens = lexer.tokenize(code)
         val parser: Parser = MyParser()
         val ast = parser.parseTokens(tokens)
         val expected =
@@ -174,7 +176,7 @@ class ParserMethodResultTest {
     @Test
     fun test005_testVeryComplexMethodDeclarationWithOutParentheses() {
         val code = "let sum: number = 3 * 5 + 2 - 4 / 2;"
-        val tokens = LexerImpl().tokenize(code)
+        val tokens = lexer.tokenize(code)
         val parser: Parser = MyParser()
         val ast = parser.parseTokens(tokens)
         val expected =
@@ -238,7 +240,7 @@ class ParserMethodResultTest {
     @Test
     fun test006_testMethodDeclarationWithParentheses() {
         val code = "let sum: number = (3 + 5) * 2;"
-        val tokens = LexerImpl().tokenize(code)
+        val tokens = lexer.tokenize(code)
         val parser: Parser = MyParser()
         val ast = parser.parseTokens(tokens)
         val expected =
@@ -283,7 +285,7 @@ class ParserMethodResultTest {
     @Test
     fun test007_testMethodDeclarationMultOfTwoParentheses() {
         val code = "let sum: number = (3 + 5) * (2 + 4);"
-        val tokens = LexerImpl().tokenize(code)
+        val tokens = lexer.tokenize(code)
         val parser: Parser = MyParser()
         val ast = parser.parseTokens(tokens)
         val expected =
@@ -339,7 +341,7 @@ class ParserMethodResultTest {
     @Test
     fun test008_testParenthesesInsideParentheses() {
         val code = "let sum: number = ((3 + 5) * (2 + 4));"
-        val tokens = LexerImpl().tokenize(code)
+        val tokens = lexer.tokenize(code)
         val parser: Parser = MyParser()
         val ast = parser.parseTokens(tokens)
         val expected =
@@ -396,7 +398,7 @@ class ParserMethodResultTest {
     @Test
     fun test009_testMethodDeclarationOfAMethodCall() {
         val code = "let test: number = sum(3, 5);"
-        val tokens = LexerImpl().tokenize(code)
+        val tokens = lexer.tokenize(code)
         val parser: Parser = MyParser()
         val ast = parser.parseTokens(tokens)
         val expected =
@@ -431,7 +433,7 @@ class ParserMethodResultTest {
     @Test
     fun test010_testMethodDeclarationWithOperationInside() {
         val code = "let test: number = sum(3, 5 + 2);"
-        val tokens = LexerImpl().tokenize(code)
+        val tokens = lexer.tokenize(code)
         val parser: Parser = MyParser()
         val ast = parser.parseTokens(tokens)
         val expected =
@@ -476,7 +478,7 @@ class ParserMethodResultTest {
     @Test
     fun test011_testMethodInsideMethod() {
         val code = "let test: number = sum(3, sum(5, 2));"
-        val tokens = LexerImpl().tokenize(code)
+        val tokens = lexer.tokenize(code)
         val parser: Parser = MyParser()
         val ast = parser.parseTokens(tokens)
         val expected =
@@ -521,7 +523,7 @@ class ParserMethodResultTest {
     @Test
     fun test012_testComplexEcuationWithParenthesesButParenthesesAreNotIncludedNumberheAST() {
         val code = "let test: number = 3 + (5 * 2) + 4;"
-        val tokens = LexerImpl().tokenize(code)
+        val tokens = lexer.tokenize(code)
         val parser: Parser = MyParser()
         val ast = parser.parseTokens(tokens)
         val expected =
@@ -576,7 +578,7 @@ class ParserMethodResultTest {
     @Test
     fun test013_testSumOfTwoVariableArguments() {
         val code = "let sum: number = a + b;"
-        val tokens = LexerImpl().tokenize(code)
+        val tokens = lexer.tokenize(code)
         val parser: Parser = MyParser()
         val ast = parser.parseTokens(tokens)
         val expected =
@@ -610,7 +612,7 @@ class ParserMethodResultTest {
     @Test
     fun test014_testSumOfTwoVariableArguments_withFirstVariableArgBeingAlsoTheIdentifier() {
         val code = "let a: number = a + b;"
-        val tokens = LexerImpl().tokenize(code)
+        val tokens = lexer.tokenize(code)
         val parser: Parser = MyParser()
         val ast = parser.parseTokens(tokens)
         val expected =
@@ -644,7 +646,7 @@ class ParserMethodResultTest {
     @Test
     fun test015_testIsolatedMethodCall() {
         val code = "println(34);"
-        val tokens = LexerImpl().tokenize(code)
+        val tokens = lexer.tokenize(code)
         val parser: Parser = MyParser()
         val ast = parser.parseTokens(tokens)
         val expected =
@@ -666,7 +668,7 @@ class ParserMethodResultTest {
     @Test
     fun test016_testIsolatedMethodCallWithInsideMethod() {
         val code = "println(34 + 4);"
-        val tokens = LexerImpl().tokenize(code)
+        val tokens = lexer.tokenize(code)
         val parser: Parser = MyParser()
         val ast = parser.parseTokens(tokens)
         val expected =
@@ -704,7 +706,7 @@ class ParserMethodResultTest {
     @Test
     fun test017_testEmptyMethodCall() {
         val code = "object();"
-        val tokens = LexerImpl().tokenize(code)
+        val tokens = lexer.tokenize(code)
         val parser: Parser = MyParser()
         val ast = parser.parseTokens(tokens)
 
@@ -716,7 +718,7 @@ class ParserMethodResultTest {
     @Test
     fun test018_testEmptyMethodCallWithVariableDeclaration() {
         val code = "let a: String = object();"
-        val tokens = LexerImpl().tokenize(code)
+        val tokens = lexer.tokenize(code)
         val parser: Parser = MyParser()
         val ast = parser.parseTokens(tokens)
         val expected =
@@ -740,7 +742,7 @@ class ParserMethodResultTest {
     @Test
     fun test019_testVariableDeclarationWithAnObjectThatANumberStringNorNumberNorBool() {
         val code = "let a: object = object();"
-        val tokens = LexerImpl().tokenize(code)
+        val tokens = lexer.tokenize(code)
         val parser: Parser = MyParser()
         val ast = parser.parseTokens(tokens)
         val expected =
@@ -764,7 +766,7 @@ class ParserMethodResultTest {
     @Test
     fun test020_testprintlnWithSumOfStringAndNumber() {
         val code = "println(\"Hello\" + 4);"
-        val tokens = LexerImpl().tokenize(code)
+        val tokens = lexer.tokenize(code)
         val parser: Parser = MyParser()
         val ast = parser.parseTokens(tokens)
 
@@ -804,7 +806,7 @@ class ParserMethodResultTest {
     @Test
     fun test021_testWithStringsOFTripleQuote() {
         val code = """println("Hello" + 4);"""
-        val tokens = LexerImpl().tokenize(code)
+        val tokens = lexer.tokenize(code)
         val parser: Parser = MyParser()
         val ast = parser.parseTokens(tokens)
 

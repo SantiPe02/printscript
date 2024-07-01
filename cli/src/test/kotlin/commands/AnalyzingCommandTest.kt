@@ -4,7 +4,7 @@ import Linter
 import ast.Range
 import ast.Scope
 import com.github.ajalt.clikt.testing.test
-import lexer.LexerImpl
+import factory.LexerFactoryImpl
 import linterRules.LinterRule
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertNotEquals
@@ -15,9 +15,11 @@ import result.validation.WarningResult
 import java.io.File
 
 class AnalyzingCommandTest {
+    private val lexer = LexerFactoryImpl("1.0").create()
+
     @Test
     fun test001_ifCallAnalyzingCommandWithoutArgumentsFailWithUsageMessage() {
-        val result = Analyzing(LexerImpl(), MyParser(), MockLinter(listOf())).test("")
+        val result = Analyzing(lexer, MyParser(), MockLinter(listOf())).test("")
         assertNotEquals(0, result.statusCode)
         assertTrue(result.output.contains("Usage"))
     }
@@ -26,7 +28,7 @@ class AnalyzingCommandTest {
     fun test002_ifCallAnalyzingCommandWithoutExistingSourcecodeFileThenError() {
         val fileDir = "souce.ps"
         val configFile = File.createTempFile("config", ".json")
-        val command = Analyzing(LexerImpl(), MyParser(), MockLinter(listOf()))
+        val command = Analyzing(lexer, MyParser(), MockLinter(listOf()))
 
         val result = command.test("$fileDir ${configFile.path.replace("\\", "/")}")
 
@@ -39,7 +41,7 @@ class AnalyzingCommandTest {
     fun test003_ifCallAnalyzingCommandWithoutExistingConfigFileThenError() {
         val fileDir = "config.json"
         val sourceFile = File.createTempFile("source", ".ps")
-        val command = Analyzing(LexerImpl(), MyParser(), MockLinter(listOf()))
+        val command = Analyzing(lexer, MyParser(), MockLinter(listOf()))
 
         val result = command.test("${sourceFile.path.replace("\\", "/")} $fileDir")
 
@@ -54,7 +56,7 @@ class AnalyzingCommandTest {
         sourceFile.writeText("let a : number = 1;")
         val configFile = File.createTempFile("config", ".json")
         configFile.writeText("{\"one\":\"two\"}")
-        val command = Analyzing(LexerImpl(), MyParser(), MockLinter(listOf()))
+        val command = Analyzing(lexer, MyParser(), MockLinter(listOf()))
 
         val result = command.test("${sourceFile.path.replace("\\", "/")} ${configFile.path.replace("\\", "/")}")
 
@@ -72,7 +74,7 @@ class AnalyzingCommandTest {
         configFile.writeText("{\"one\":\"two\"}")
         val command =
             Analyzing(
-                LexerImpl(),
+                lexer,
                 MyParser(),
                 MockLinter(
                     listOf(

@@ -7,17 +7,19 @@ import ast.Range
 import ast.Scope
 import ast.VariableArgument
 import ast.VariableDeclaration
-import lexer.LexerImpl
+import factory.LexerFactoryImpl
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 import parser.MyParser
 import parser.Parser
 
 class ParserIfConditionalTest {
+    private val lexer = LexerFactoryImpl("1.1").create()
+
     @Test
     fun `test001 test simple boolean if with empty scope`() {
         val code = "if(a){}"
-        val tokens = LexerImpl().tokenize(code)
+        val tokens = lexer.tokenize(code)
         val parser: Parser = MyParser()
         val ast = parser.parseTokens(tokens)
 
@@ -41,7 +43,7 @@ class ParserIfConditionalTest {
     @Test
     fun `test002 test simple boolean if with empty scope but lots of spaces inside`() {
         val code = "if(a){   }"
-        val tokens = LexerImpl().tokenize(code)
+        val tokens = lexer.tokenize(code)
         val parser: Parser = MyParser()
         val ast = parser.parseTokens(tokens)
         val expected =
@@ -63,7 +65,7 @@ class ParserIfConditionalTest {
     @Test
     fun `test003 test if with a variable declaration inside`() {
         val code = "if(a){let b: number = 1;}"
-        val tokens = LexerImpl().tokenize(code)
+        val tokens = lexer.tokenize(code)
         val parser: Parser = MyParser()
         val ast = parser.parseTokens(tokens)
         val expected =
@@ -95,7 +97,7 @@ class ParserIfConditionalTest {
     @Test
     fun `test004 test if with a println of a text`() {
         val code = "if (a) {println(\"Hello\");}"
-        val tokens = LexerImpl().tokenize(code)
+        val tokens = lexer.tokenize(code)
         val parser: Parser = MyParser()
         val ast = parser.parseTokens(tokens)
         val expected =
@@ -125,7 +127,7 @@ class ParserIfConditionalTest {
     @Test
     fun `test005 test simple consecutive ifs with empty scope`() {
         val code = "if(a){}if(a){}if(a){}"
-        val tokens = LexerImpl().tokenize(code)
+        val tokens = lexer.tokenize(code)
         val parser: Parser = MyParser()
         val ast = parser.parseTokens(tokens)
 

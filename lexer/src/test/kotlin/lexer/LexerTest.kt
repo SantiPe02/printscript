@@ -1,5 +1,6 @@
 package lexer
 
+import factory.LexerFactoryImpl
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 import token.TokenInfo
@@ -8,10 +9,11 @@ import token.TokenInfo.Token
 import token.TokenInfo.TokenType
 
 class LexerTest {
+    val lexer = LexerFactoryImpl("1.1").create()
+
     @Test
     fun lexerNumberTest() {
         val input = "let a: number = 3;"
-        val lexer = LexerImpl()
         val token1 = TokenInfo(Token(TokenType.KEYWORD, "let"), Position(0, 2))
         val token2 = TokenInfo(Token(TokenType.IDENTIFIER, "a"), Position(4, 4))
         val token3 = TokenInfo(Token(TokenType.SPECIAL_SYMBOL, ":"), Position(5, 5))
@@ -26,7 +28,6 @@ class LexerTest {
     @Test
     fun lexerStringTest() {
         val input = "let a: string = \"hello\";"
-        val lexer = LexerImpl()
         val token1 = TokenInfo(Token(TokenType.KEYWORD, "let"), Position(0, 2))
         val token2 = TokenInfo(Token(TokenType.IDENTIFIER, "a"), Position(4, 4))
         val token3 = TokenInfo(Token(TokenType.SPECIAL_SYMBOL, ":"), Position(5, 5))
@@ -41,7 +42,6 @@ class LexerTest {
     @Test
     fun lexerStringOfMultipleWordsTest() {
         val input = "let a: string = \"hello world\";"
-        val lexer = LexerImpl()
         val token1 = TokenInfo(Token(TokenType.KEYWORD, "let"), Position(0, 2))
         val token2 = TokenInfo(Token(TokenType.IDENTIFIER, "a"), Position(4, 4))
         val token3 = TokenInfo(Token(TokenType.SPECIAL_SYMBOL, ":"), Position(5, 5))
@@ -56,7 +56,6 @@ class LexerTest {
     @Test
     fun lexerSumOperatorTest() {
         val input = "let a: number = 3 + 2;"
-        val lexer = LexerImpl()
         val token1 = TokenInfo(Token(TokenType.KEYWORD, "let"), Position(0, 2))
         val token2 = TokenInfo(Token(TokenType.IDENTIFIER, "a"), Position(4, 4))
         val token3 = TokenInfo(Token(TokenType.SPECIAL_SYMBOL, ":"), Position(5, 5))
@@ -73,7 +72,6 @@ class LexerTest {
     @Test
     fun lexerDivideOperatorTest() {
         val input = "let a: number = 3 / 2;"
-        val lexer = LexerImpl()
         val token1 = TokenInfo(Token(TokenType.KEYWORD, "let"), Position(0, 2))
         val token2 = TokenInfo(Token(TokenType.IDENTIFIER, "a"), Position(4, 4))
         val token3 = TokenInfo(Token(TokenType.SPECIAL_SYMBOL, ":"), Position(5, 5))
@@ -90,7 +88,6 @@ class LexerTest {
     @Test
     fun lexerMultiplyOperatorTest() {
         val input = "let a: number = 3 * 2;"
-        val lexer = LexerImpl()
         val token1 = TokenInfo(Token(TokenType.KEYWORD, "let"), Position(0, 2))
         val token2 = TokenInfo(Token(TokenType.IDENTIFIER, "a"), Position(4, 4))
         val token3 = TokenInfo(Token(TokenType.SPECIAL_SYMBOL, ":"), Position(5, 5))
@@ -107,7 +104,6 @@ class LexerTest {
     @Test
     fun lexerSubtractOperatorTest() {
         val input = "let a: number = 3 - 2;"
-        val lexer = LexerImpl()
         val token1 = TokenInfo(Token(TokenType.KEYWORD, "let"), Position(0, 2))
         val token2 = TokenInfo(Token(TokenType.IDENTIFIER, "a"), Position(4, 4))
         val token3 = TokenInfo(Token(TokenType.SPECIAL_SYMBOL, ":"), Position(5, 5))
@@ -124,7 +120,6 @@ class LexerTest {
     @Test
     fun lexerBooleanTest() {
         val input = "let a: boolean = true;"
-        val lexer = LexerImpl()
         val token1 = TokenInfo(Token(TokenType.KEYWORD, "let"), Position(0, 2))
         val token2 = TokenInfo(Token(TokenType.IDENTIFIER, "a"), Position(4, 4))
         val token3 = TokenInfo(Token(TokenType.SPECIAL_SYMBOL, ":"), Position(5, 5))
@@ -139,7 +134,6 @@ class LexerTest {
     @Test
     fun lexerIfElseTest() {
         val input = "if (a < b) { let c: string = \"hello\"; } else { let c: number = 2; }"
-        val lexer = LexerImpl()
         val token1 = TokenInfo(Token(TokenType.KEYWORD, "if"), Position(0, 1))
         val token2 = TokenInfo(Token(TokenType.SPECIAL_SYMBOL, "("), Position(3, 3))
         val token3 = TokenInfo(Token(TokenType.IDENTIFIER, "a"), Position(4, 4))
@@ -199,7 +193,6 @@ class LexerTest {
     @Test
     fun lexerDeclaredVariableTest() {
         val input = "x = 5;"
-        val lexer = LexerImpl()
         val token1 = TokenInfo(Token(TokenType.IDENTIFIER, "x"), Position(0, 0))
         val token2 = TokenInfo(Token(TokenType.OPERATOR, "="), Position(2, 2))
         val token3 = TokenInfo(Token(TokenType.LITERAL, "5"), Position(4, 4))
@@ -211,7 +204,6 @@ class LexerTest {
     @Test
     fun lexerGreaterEqualTest() {
         val input = "if (a >= b) {return true;}"
-        val lexer = LexerImpl()
         val token1 = TokenInfo(Token(TokenType.KEYWORD, "if"), Position(0, 1))
         val token2 = TokenInfo(Token(TokenType.SPECIAL_SYMBOL, "("), Position(3, 3))
         val token3 = TokenInfo(Token(TokenType.IDENTIFIER, "a"), Position(4, 4))
@@ -230,7 +222,6 @@ class LexerTest {
     @Test
     fun lexerLessEqualTest() {
         val input = "if (a <= b) {return true;}"
-        val lexer = LexerImpl()
         val token1 = TokenInfo(Token(TokenType.KEYWORD, "if"), Position(0, 1))
         val token2 = TokenInfo(Token(TokenType.SPECIAL_SYMBOL, "("), Position(3, 3))
         val token3 = TokenInfo(Token(TokenType.IDENTIFIER, "a"), Position(4, 4))
@@ -249,7 +240,6 @@ class LexerTest {
     @Test
     fun lexerDifferentTest() {
         val input = "if (a != b) {return true;}"
-        val lexer = LexerImpl()
         val token1 = TokenInfo(Token(TokenType.KEYWORD, "if"), Position(0, 1))
         val token2 = TokenInfo(Token(TokenType.SPECIAL_SYMBOL, "("), Position(3, 3))
         val token3 = TokenInfo(Token(TokenType.IDENTIFIER, "a"), Position(4, 4))
@@ -268,7 +258,6 @@ class LexerTest {
     @Test
     fun lexerEqualTest() {
         val input = "if (a == b) {return true;}"
-        val lexer = LexerImpl()
         val token1 = TokenInfo(Token(TokenType.KEYWORD, "if"), Position(0, 1))
         val token2 = TokenInfo(Token(TokenType.SPECIAL_SYMBOL, "("), Position(3, 3))
         val token3 = TokenInfo(Token(TokenType.IDENTIFIER, "a"), Position(4, 4))
@@ -287,7 +276,6 @@ class LexerTest {
     @Test
     fun lexerStringWithSpacesInBetweenTest() {
         val input = "let a: String = \"hello world\";"
-        val lexer = LexerImpl()
         val token1 = TokenInfo(Token(TokenType.KEYWORD, "let"), Position(0, 2))
         val token2 = TokenInfo(Token(TokenType.IDENTIFIER, "a"), Position(4, 4))
         val token3 = TokenInfo(Token(TokenType.SPECIAL_SYMBOL, ":"), Position(5, 5))
@@ -302,7 +290,6 @@ class LexerTest {
     @Test
     fun lexerStringWithKeywordNameTest() {
         val input = "let a: String = \"String\";"
-        val lexer = LexerImpl()
         val token1 = TokenInfo(Token(TokenType.KEYWORD, "let"), Position(0, 2))
         val token2 = TokenInfo(Token(TokenType.IDENTIFIER, "a"), Position(4, 4))
         val token3 = TokenInfo(Token(TokenType.SPECIAL_SYMBOL, ":"), Position(5, 5))
@@ -317,7 +304,6 @@ class LexerTest {
     @Test
     fun lexerNumberNumberTest() {
         val input = "let a: number = 3.14;"
-        val lexer = LexerImpl()
         val token1 = TokenInfo(Token(TokenType.KEYWORD, "let"), Position(0, 2))
         val token2 = TokenInfo(Token(TokenType.IDENTIFIER, "a"), Position(4, 4))
         val token3 = TokenInfo(Token(TokenType.SPECIAL_SYMBOL, ":"), Position(5, 5))

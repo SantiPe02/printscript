@@ -3,17 +3,19 @@ import ast.DeclarationStatement
 import ast.LiteralArgument
 import ast.Range
 import ast.Scope
-import lexer.LexerImpl
+import factory.LexerFactoryImpl
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 import parser.MyParser
 import parser.Parser
 
 class ParserStatementTest {
+    private val lexer = LexerFactoryImpl("1.1").create()
+
     @Test
     fun test001_expressionStatementTest() {
         val code = "let a: number;"
-        val tokens = LexerImpl().tokenize(code)
+        val tokens = lexer.tokenize(code)
         val parser: Parser = MyParser()
         val ast = parser.parseTokens(tokens)
         val expected =
@@ -30,7 +32,7 @@ class ParserStatementTest {
     @Test
     fun test002_variableDeclarationNumberInTwoDifferentParts() {
         val code = "let a: number; a = 54;"
-        val tokens = LexerImpl().tokenize(code)
+        val tokens = lexer.tokenize(code)
         val parser: Parser = MyParser()
         val ast = parser.parseTokens(tokens)
         val expected =
@@ -51,7 +53,7 @@ class ParserStatementTest {
     @Test
     fun test003_assignementStatement() {
         val code = "a = 54;"
-        val tokens = LexerImpl().tokenize(code)
+        val tokens = lexer.tokenize(code)
         val parser: Parser = MyParser()
         val ast = parser.parseTokens(tokens)
         val expected =
@@ -69,7 +71,7 @@ class ParserStatementTest {
     @Test
     fun test004_assignementStatementArgumentIsLiteralAndCorrect() {
         val code = "a = 54;"
-        val tokens = LexerImpl().tokenize(code)
+        val tokens = lexer.tokenize(code)
         val parser: Parser = MyParser()
         val ast = parser.parseTokens(tokens)
         ast.onSuccess {

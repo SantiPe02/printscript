@@ -1,7 +1,7 @@
 import ast.MethodResult
 import ast.Range
 import ast.VariableDeclaration
-import lexer.LexerImpl
+import factory.LexerFactoryImpl
 import linterRules.CamelCaseRule
 import linterRules.PrintlnWithoutExpressionRule
 import linterRules.ReadInputWithoutExpressionRule
@@ -15,11 +15,13 @@ import result.validation.ValidResult
 import result.validation.WarningResult
 
 class LinterTest {
+    private val lexer = LexerFactoryImpl("1.1").create()
+
     @Test
     fun test001_testIsCamelCase() {
         val code = "let myVariable: number = 1;"
         val camelCaseRule = CamelCaseRule()
-        val tokens = LexerImpl().tokenize(code)
+        val tokens = lexer.tokenize(code)
         val parser: Parser = MyParser()
         val ast = parser.parseTokens(tokens)
         ast.onSuccess {
@@ -31,7 +33,7 @@ class LinterTest {
     fun test002_testIsNotCamelCase() {
         val code = "let my_variable: number = 1;" // ¡Es un scope! El primer elemento del body es el variableDeclaration
         val camelCaseRule = CamelCaseRule()
-        val tokens = LexerImpl().tokenize(code)
+        val tokens = lexer.tokenize(code)
         val parser: Parser = MyParser()
         val ast = parser.parseTokens(tokens)
         ast.onSuccess {
@@ -42,7 +44,7 @@ class LinterTest {
     @Test
     fun test003_testPrintlnWithoutExpression_notUsingExpression() {
         val code = "println(\"Hello, World!\");" // actually, creo que el parser todavía no soporta esto
-        val tokens = LexerImpl().tokenize(code)
+        val tokens = lexer.tokenize(code)
         val parser: Parser = MyParser()
         val ast = parser.parseTokens(tokens)
         ast.onSuccess {
@@ -55,7 +57,7 @@ class LinterTest {
     @Test
     fun test004_testprintlnWithoutExpression_usingExpression() {
         val code = "println(\"Hello, World!\" + 1);"
-        val tokens = LexerImpl().tokenize(code)
+        val tokens = lexer.tokenize(code)
         val parser: Parser = MyParser()
         val ast = parser.parseTokens(tokens)
         ast.onSuccess {
@@ -68,7 +70,7 @@ class LinterTest {
     @Test
     fun test005_testlinterWithCamelCaseRule() {
         val code = "let myVariable: number = 1; let my_variable: number = 1;"
-        val tokens = LexerImpl().tokenize(code)
+        val tokens = lexer.tokenize(code)
         val parser: Parser = MyParser()
         val ast = parser.parseTokens(tokens)
         val linter = MyLinter()
@@ -83,7 +85,7 @@ class LinterTest {
     @Test
     fun test006_testlinterWithCamelCaseAndPrintlnRule() {
         val code = "let myVariable: number = 1; println(\"Hello, World!\" + 1);"
-        val tokens = LexerImpl().tokenize(code)
+        val tokens = lexer.tokenize(code)
         val parser: Parser = MyParser()
         val ast = parser.parseTokens(tokens)
         val linter = MyLinter()
@@ -98,7 +100,7 @@ class LinterTest {
     @Test
     fun test007_UndeclaredVariableStatementRule_itIsNeverDeclared() {
         val code = "let myVariable: number;"
-        val tokens = LexerImpl().tokenize(code)
+        val tokens = lexer.tokenize(code)
         val parser: Parser = MyParser()
         val ast = parser.parseTokens(tokens)
         val linter = MyLinter()
@@ -112,7 +114,7 @@ class LinterTest {
     @Test
     fun test008_UndeclaredVariableStatementRule_itIsDeclared() {
         val code = "let myVariable: number; myVariable = 1;"
-        val tokens = LexerImpl().tokenize(code)
+        val tokens = lexer.tokenize(code)
         val parser: Parser = MyParser()
         val ast = parser.parseTokens(tokens)
         val linter = MyLinter()
@@ -126,7 +128,7 @@ class LinterTest {
     @Test
     fun `test009 test readInput with a sum expression inside should return warning`() {
         val code = "readInput(1 + 4);"
-        val tokens = LexerImpl().tokenize(code)
+        val tokens = lexer.tokenize(code)
         val parser: Parser = MyParser()
         val ast = parser.parseTokens(tokens)
         ast.onSuccess {
@@ -139,7 +141,7 @@ class LinterTest {
     @Test
     fun `test010 test readInput with a method expression inside should return warning`() {
         val code = "readInput(boque());"
-        val tokens = LexerImpl().tokenize(code)
+        val tokens = lexer.tokenize(code)
         val parser: Parser = MyParser()
         val ast = parser.parseTokens(tokens)
         ast.onSuccess {
@@ -153,7 +155,7 @@ class LinterTest {
     @Test
     fun `test011 test readInput without an expression inside should not return warning`() {
         val code = "readInput(1);"
-        val tokens = LexerImpl().tokenize(code)
+        val tokens = lexer.tokenize(code)
         val parser: Parser = MyParser()
         val ast = parser.parseTokens(tokens)
         ast.onSuccess {
@@ -166,7 +168,7 @@ class LinterTest {
     @Test
     fun `test009 test ReadEnv inside println should return warning`() {
         val code = "println(readEnv(a));"
-        val tokens = LexerImpl().tokenize(code)
+        val tokens = lexer.tokenize(code)
         val parser: Parser = MyParser()
         val ast = parser.parseTokens(tokens)
         val linter = MyLinter()
