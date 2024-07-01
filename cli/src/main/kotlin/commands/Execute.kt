@@ -1,12 +1,12 @@
 package commands
 
-import PartialStringReadingLexer
 import com.github.ajalt.clikt.core.CliktCommand
 import com.github.ajalt.clikt.core.CliktError
 import com.github.ajalt.clikt.parameters.arguments.argument
 import interpreter.Interpreter
 import lexer.Lexer
 import parser.Parser
+import stringReader.PartialStringReadingLexer
 import java.io.BufferedInputStream
 import java.io.File
 import java.nio.charset.Charset

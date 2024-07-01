@@ -8,6 +8,7 @@ class ReadInputInterpreterTest {
     fun testTrue() {
         assertTrue(true)
     }
+
 //    private lateinit var lexer: Lexer
 //
 //    @BeforeEach
@@ -72,4 +73,25 @@ class ReadInputInterpreterTest {
 //            assertTrue(newInterpreter.report.errors.isEmpty())
 //        }
 //    }
+
+
+    @Test
+    fun test004_testFailedFromTSKWhereNameWasNotPrinted() {
+        val code =
+            """
+            const name: string = readInput("Name:");
+            println("Hello " + name + "!");
+            """.trimIndent()
+
+        val tokens = LexerImpl().tokenize(code)
+        val parser: Parser = MyParser()
+        val ast = parser.parseTokens(tokens)
+        ast.onSuccess {
+            val newInterpreter = Interpreter(inputReader = MockInputReader(listOf("world"))).interpret(it)
+
+            assertEquals("Name:", newInterpreter.report.outputs[0])
+            assertEquals("Hello world!", newInterpreter.report.outputs[1])
+            assertTrue(newInterpreter.report.errors.isEmpty())
+        }
+    }
 }

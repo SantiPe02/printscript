@@ -38,7 +38,7 @@ class InterpreterTest {
         ast.onSuccess {
             val newInterpreter = interpreter.interpret(it)
 
-            assertEquals("Result: 6.0", newInterpreter.report.outputs[0])
+            assertEquals("Result: 6", newInterpreter.report.outputs[0])
             assertTrue(newInterpreter.report.errors.isEmpty())
         }
     }

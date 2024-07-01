@@ -14,13 +14,13 @@ object ConstantDeclarationInterpreter : SpecializedInterpreter<ConstantDeclarati
         if (argResult.data == null) return argResult.interpreter
 
         return Interpreter(
-            interpreter.report,
-            interpreter.variables + (
+            argResult.interpreter.report,
+            argResult.interpreter.variables + (
                 sentence.variableName
                     to
                     Variable(sentence.variableType, argResult.data.value, true)
             ),
-            interpreter.inputReader,
+            argResult.interpreter.inputReader,
         )
     }
 }

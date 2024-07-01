@@ -20,14 +20,20 @@ internal object PrintLine : PrintScriptMethod {
                 argResult.interpreter,
             )
         }
-        val value = argResult.data
+        val value = formatNumbers(argResult.data.value!!)
         return ComposedResult(
             null,
             Interpreter(
-                Report(interpreter.report.outputs + value.value!!, interpreter.report.errors),
+                Report(interpreter.report.outputs + value, interpreter.report.errors),
                 interpreter.variables,
                 interpreter.inputReader,
             ),
         )
+    }
+
+    private fun formatNumbers(data: String): String {
+        return data.replace(Regex("""\b(\d+)\.0\b""")) { matchResult ->
+            matchResult.groupValues[1]
+        }
     }
 }

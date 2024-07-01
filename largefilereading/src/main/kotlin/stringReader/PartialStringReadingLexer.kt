@@ -1,3 +1,5 @@
+package stringReader
+
 import lexer.Context
 import lexer.Lexer
 import token.TokenInfo
@@ -13,11 +15,15 @@ class PartialStringReadingLexer(
         val auxContext: Context
 
         val lastColonIndex = toProcessText.lastIndexOf(';')
-        if (lastColonIndex != -1 && lastColonIndex != toProcessText.length - 1) {
-            notProcessedAux = toProcessText.substring(lastColonIndex + 1)
-            toProcessText = toProcessText.substring(0, lastColonIndex)
+        val lastBracketIndex = toProcessText.lastIndexOf('}')
+        val lastIndex = maxOf(lastColonIndex, lastBracketIndex)
+
+        if (lastIndex != -1 && lastIndex != toProcessText.length - 1) {
+            notProcessedAux = toProcessText.substring(lastIndex + 1)
+            toProcessText = toProcessText.substring(0, lastIndex + 1)
             auxContext = Context(context.startingLength + toProcessText.length + 1)
-        } else if (lastColonIndex == -1) {
+        } else if (lastIndex == -1) {
+            // if last index does not exist
             notProcessedAux = toProcessText
             toProcessText = ""
             auxContext = Context(context.startingLength)
