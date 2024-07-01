@@ -9,7 +9,6 @@ object CallInterpreter {
     private lateinit var printScriptFunctions: Map<String, PrintScriptMethod>
 
     fun initialize(functions: Map<String, PrintScriptMethod>) {
-        if (isInitialized) return
         printScriptFunctions = functions
         isInitialized = true
     }
