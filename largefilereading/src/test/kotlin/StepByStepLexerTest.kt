@@ -36,7 +36,7 @@ class StepByStepLexerTest {
 
     @Test
     fun `test004 two variable declarations`() {
-        var reader = PartialStringReadingLexer(LexerImpl())
+        var reader = PartialStringReadingLexer(lexer)
         val text = "let a : number = 10; let b : number = 20;"
 
         val split = 10
@@ -47,12 +47,12 @@ class StepByStepLexerTest {
 
         tokens += reader.tokenizeString(text.substring(split)).second
 
-        assertEquals(LexerImpl().tokenize(text), tokens)
+        assertEquals(lexer.tokenize(text), tokens)
     }
 
     @Test
     fun `test005 test if statement`() {
-        var reader = PartialStringReadingLexer(LexerImpl())
+        var reader = PartialStringReadingLexer(lexer)
         val text = "if (a) { println(\"a is 10\"); }"
 
         val split = 10
@@ -63,7 +63,7 @@ class StepByStepLexerTest {
 
         tokens += reader.tokenizeString(text.substring(split)).second
 
-        assertEquals(LexerImpl().tokenize(text), tokens)
+        assertEquals(lexer.tokenize(text), tokens)
     }
 
     /*@Test
