@@ -6,4 +6,8 @@ class ValidResult : ValidationResult {
         if (other !is ValidResult) return false
         return true
     }
+
+    override fun hashCode(): Int {
+        return javaClass.hashCode()
+    }
 }
