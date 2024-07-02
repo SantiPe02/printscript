@@ -2,9 +2,6 @@ package parser
 import ast.AST
 import ast.Conditional
 import ast.Declaration
-import ast.LiteralArgument
-import ast.Range
-import ast.VariableArgument
 import parser.declarator.ConditionalDeclarator
 import parser.declarator.MethodResultDeclarator
 import parser.declarator.VariableDeclarator
@@ -59,7 +56,7 @@ class ParserDeclarator {
     }
 
     private fun parseLiteral(token: TokenInfo.Token): Result<AST> {
-        return Result.success(LiteralArgument(Range(0, 0), token.text, "String"))
+        return Result.failure(Exception("Cannot handle literal: ${token.text}"))
     }
 
     // two cases, as for now
@@ -89,10 +86,10 @@ class ParserDeclarator {
 
     // I don't think you can start with operators If you can't, this method should throw always error.
     private fun parseOperator(token: TokenInfo.Token): Result<AST> {
-        return Result.success(VariableArgument(Range(0, 0), token.text))
+        return Result.failure(Exception("Cannot handle operator: ${token.text}"))
     }
 
     private fun parseSpecial(token: TokenInfo.Token): Result<AST> {
-        return Result.success(VariableArgument(Range(0, 0), token.text))
+        return Result.failure(Exception("Cannot handle special character: ${token.text}"))
     }
 }
