@@ -23,7 +23,7 @@ object ReadEnv : PrintScriptMethod {
         if (argInterpretation.data == null) {
             return ComposedResult(
                 null,
-                argInterpretation.interpreter.reportError("readEnv requires at list one value on ${sentence.range}"),
+                argInterpretation.interpreter.reportError("readEnv requires at least one value on ${sentence.range}"),
             )
         }
 

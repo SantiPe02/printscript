@@ -14,4 +14,10 @@ class WarningResult(val range: Range, val message: String) : ValidationResult {
 
         return true
     }
+
+    override fun hashCode(): Int {
+        var result = range.hashCode()
+        result = 31 * result + message.hashCode()
+        return result
+    }
 }

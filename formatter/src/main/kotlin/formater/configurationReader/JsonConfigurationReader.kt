@@ -81,13 +81,13 @@ object JsonConfigurationReader : IConfigurationReader {
                 if (jsonFieldIndentation != null) {
                     try {
                         val indentationAux = jsonFieldIndentation.asInt
-                        if (indentationAux < 0) {
-                            println("WARNING: indentation was not a positive value")
+                        if (indentationAux !in 0..8) {
+                            println("WARNING: indentation was not a value between 0 and 8 (inclusive)")
                         } else {
                             indentation = indentationAux
                         }
                     } catch (e: Exception) {
-                        println("WARNING: the field of indentation was not a int type")
+                        println("WARNING: the field of indentation was not an int type")
                     }
                 }
 
