@@ -46,14 +46,25 @@ class Execute(val lexer: Lexer, val parser: Parser, val interpreter: Interpreter
 
         while (bytesRead != -1) {
             val textBlock = String(buffer, 0, bytesRead, Charset.defaultCharset())
-            val tokenizerAndTokens = tokenizer.tokenizeString(textBlock)
-            tokenizer = tokenizerAndTokens.first
-            val tokens = tokenizerAndTokens.second
+            val tokenizerAndTokens = tokenizer.tokenizeString(textBlock, false)
+            tokenizer = tokenizerAndTokens.first // PartialStringReadingLexer
+            val tokens = tokenizerAndTokens.second // List<TokenInfo>
 
             val ast = parser.parseTokens(tokens).getOrElse { throw CliktError(it.message) }
             interpreter = interpreter.interpret(ast)
             bytesRead = stream.read(buffer)
         }
+
+        // Process any remaining text after the stream has been read
+        if (tokenizer.notProcessed.isNotEmpty()) {
+            val tokenizerAndTokens = tokenizer.tokenizeString(tokenizer.notProcessed, true)
+            val tokens = tokenizerAndTokens.second
+            if (tokens.isNotEmpty()) {
+                val ast = parser.parseTokens(tokens).getOrElse { throw CliktError(it.message) }
+                interpreter = interpreter.interpret(ast)
+            }
+        }
+
         stream.close()
         return interpreter
     }

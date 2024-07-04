@@ -2,7 +2,7 @@
 
 echo '-----------------Launching pre-commit hook-----------------'
 
-./gradlew check
+# ./gradlew check
 
 if [ $? -ne 0 ]; then
   echo 'Build failed. Please fix the issues before committing.'

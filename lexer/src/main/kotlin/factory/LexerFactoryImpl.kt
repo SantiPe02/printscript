@@ -8,6 +8,7 @@ import util.LITERAL_PATTERN
 import util.OPERATOR_PATTERN
 import util.SPECIAL_SYMBOL_PATTERN
 
+// para versionado. hay factory al lexer y factory para el interpreter. Según la versión pasa diferente keyWordPattern.
 class LexerFactoryImpl(val version: String) : LexerFactory {
     override fun create(): Lexer {
         return when (version) {

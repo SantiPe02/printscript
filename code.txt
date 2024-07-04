@@ -1,0 +1,4 @@
+let a : boolean = true;
+if (a) {
+    println(a);
+}

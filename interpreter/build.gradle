@@ -4,7 +4,6 @@ plugins {
 
 dependencies {
     implementation(project(":ast"))
-
     testImplementation(project(":lexer"))
     testImplementation(project(":parser"))
 }

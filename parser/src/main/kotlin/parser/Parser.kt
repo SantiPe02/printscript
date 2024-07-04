@@ -28,6 +28,7 @@ class MyParser : Parser {
                 .onSuccess { i = it }
                 .onFailure { return Result.failure(it) }
         }
+
         return Result.success(Scope("program", commons.getRangeOfTokenList(tokenList), astNodes))
     }
 
@@ -41,7 +42,8 @@ class MyParser : Parser {
         i: Int,
     ): Result<Int> {
         return when (token.type) {
-            TokenType.KEYWORD -> lengthOfKeywordDeclaration(tokens, token, i)
+            TokenType.KEYWORD -> lengthOfKeywordDeclaration(tokens, token, i) // let, if, else, while, for, fun, return
+            // a, name, password
             TokenType.IDENTIFIER -> commons.lengthTillFirstAppearanceNextOfToken(tokens, TokenType.SPECIAL_SYMBOL, ";", i)
             else -> Result.success(1)
         }
@@ -55,6 +57,7 @@ class MyParser : Parser {
         return when (token.text) {
             "let" -> commons.lengthTillFirstAppearanceNextOfToken(tokens, TokenType.SPECIAL_SYMBOL, ";", i)
             "if" -> closingBracketsIndex(tokens, i)
+            "const" -> commons.lengthTillFirstAppearanceNextOfToken(tokens, TokenType.SPECIAL_SYMBOL, ";", i)
             else -> commons.lengthTillFirstAppearanceNextOfToken(tokens, TokenType.SPECIAL_SYMBOL, ";", i)
         }
     }
