@@ -314,6 +314,9 @@ class MethodResultDeclarator : ArgumentDeclarator {
             if (tokenIsLiteralOrIdentifierNorComma(tokens[i]) && tokenIsLiteralOrIdentifierNorComma(tokens[i + 1])) {
                 return Result.failure(Exception("Invalid syntax: two consecutive literals"))
             }
+            if (tokens[i].token.text == ")" && !tokenIsOperatorOrSpecial(tokens[i + 1])) {
+                return Result.failure(Exception("Invalid syntax: ')' must be followed by an operator or special symbol"))
+            }
         }
         return Result.success(true)
     }
@@ -323,6 +326,16 @@ class MethodResultDeclarator : ArgumentDeclarator {
             if (token.token.text != ",") {
                 return true
             }
+        }
+        return false
+    }
+
+    private fun tokenIsOperatorOrSpecial(token: TokenInfo): Boolean {
+        if (token.token.type == TokenInfo.TokenType.OPERATOR || token.token.type == TokenInfo.TokenType.SPECIAL_SYMBOL) {
+            return true
+        }
+        if (token.token.text == ",") {
+            return true
         }
         return false
     }

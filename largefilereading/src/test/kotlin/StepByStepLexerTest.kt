@@ -11,11 +11,11 @@ class StepByStepLexerTest {
         var reader = PartialStringReadingLexer(lexer)
         val text = "let a : number = 10;"
 
-        val result = reader.tokenizeString(text.substring(0, 15))
+        val result = reader.tokenizeString(text.substring(0, 15), false)
         reader = result.first
         var tokens = result.second
 
-        tokens += reader.tokenizeString(text.substring(15)).second
+        tokens += reader.tokenizeString(text.substring(15), false).second
         assertEquals(lexer.tokenize(text), tokens)
     }
 
@@ -26,11 +26,11 @@ class StepByStepLexerTest {
 
         val split = 10
 
-        val result = reader.tokenizeString(text.substring(0, split))
+        val result = reader.tokenizeString(text.substring(0, split), false)
         reader = result.first
         var tokens = result.second
 
-        tokens += reader.tokenizeString(text.substring(split)).second
+        tokens += reader.tokenizeString(text.substring(split), false).second
         assertEquals(lexer.tokenize(text), tokens)
     }
 
@@ -41,11 +41,11 @@ class StepByStepLexerTest {
 
         val split = 10
 
-        val result = reader.tokenizeString(text.substring(0, split))
+        val result = reader.tokenizeString(text.substring(0, split), false)
         reader = result.first
         var tokens = result.second
 
-        tokens += reader.tokenizeString(text.substring(split)).second
+        tokens += reader.tokenizeString(text.substring(split), false).second
 
         assertEquals(lexer.tokenize(text), tokens)
     }
@@ -57,57 +57,27 @@ class StepByStepLexerTest {
 
         val split = 10
 
-        val result = reader.tokenizeString(text.substring(0, split))
+        val result = reader.tokenizeString(text.substring(0, split), false)
         reader = result.first
         var tokens = result.second
 
-        tokens += reader.tokenizeString(text.substring(split)).second
+        tokens += reader.tokenizeString(text.substring(split), false).second
 
         assertEquals(lexer.tokenize(text), tokens)
     }
 
-    /*@Test
-    fun `test006 should lex even if there ain't no semicolon or closing bracket`(){
-        var reader = PartialStringReadingLexer(LexerImpl())
+    @Test
+    fun `test006 should lex even if there ain't no semicolon or closing bracket`() {
+        var reader = PartialStringReadingLexer(lexer)
         val text = "println(\"a is true\")"
 
         val split = 10
 
-        val result = reader.tokenizeString(text.substring(0, split))
+        val result = reader.tokenizeString(text.substring(0, split), false)
         reader = result.first
         var tokens = result.second
 
-        tokens += reader.tokenizeString(text.substring(split)).second
-        assertEquals(LexerImpl().tokenize(text), tokens)
+        tokens += reader.tokenizeString(text.substring(split), true).second
+        assertEquals(lexer.tokenize(text), tokens)
     }
-    @Test
-    fun `test007 should lex the code that continues after last bracket or semicolon`(){
-        var reader = PartialStringReadingLexer(LexerImpl())
-        val text = "println(\"a is true\"); println(\"a is tr"
-
-        val split = 10
-
-        val result = reader.tokenizeString(text.substring(0, split))
-        reader = result.first
-        var tokens = result.second
-
-        tokens += reader.tokenizeString(text.substring(split)).second
-        assertEquals(LexerImpl().tokenize(text), tokens)
-
-    }
-
-    @Test
-    fun test003_colonInsideString() {
-        var reader = PartialStringReading(LexerImpl())
-        val text = "let a : number = \"here goes the ; thanks\";"
-
-        val split = 36
-
-        val result = reader.tokenizeString(text.substring(0, split))
-        reader = result.first
-        var tokens = result.second
-
-        tokens += reader.tokenizeString(text.substring(split)).second
-        assertEquals(LexerImpl().tokenize(text), tokens)
-    }*/
 }

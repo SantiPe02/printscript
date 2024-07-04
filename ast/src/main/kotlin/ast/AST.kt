@@ -32,7 +32,11 @@ class Range(val start: Int, val end: Int) {
  * @param type: refers to the scale of the scope: program, package, file, class, method
  * @param body: the things that the scope is composed of.
  */
-class Scope(val type: String, override val range: Range, val body: Collection<AST>) : AST {
+class Scope(
+    val type: String,
+    override val range: Range,
+    val body: Collection<AST>,
+) : AST {
     override fun toString(): String {
         return "Scope(type='$type', range=$range, body=$body)"
     }
@@ -69,7 +73,11 @@ class Scope(val type: String, override val range: Range, val body: Collection<AS
  * @param name: the identifier of the method.
  * @param arguments: the values that the method is going to get.
  */
-class Call(override val range: Range, val name: String, val arguments: Collection<Argument>) : AST {
+class Call(
+    override val range: Range,
+    val name: String,
+    val arguments: Collection<Argument>,
+) : AST {
     override fun toString(): String {
         return "Call(range=$range, name='$name', arguments=$arguments)"
     }
@@ -293,7 +301,10 @@ sealed interface Condition : AST
 /**
  * A simple condition only takes one boolean argument, e.g.: if(a)
  * */
-class BooleanCondition(override val range: Range, val argument: Argument) : Condition {
+class BooleanCondition(
+    override val range: Range,
+    val argument: Argument,
+) : Condition {
     override fun toString(): String {
         return "BooleanCondition(range=$range, argument=$argument)"
     }
