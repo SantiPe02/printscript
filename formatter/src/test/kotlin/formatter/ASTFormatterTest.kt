@@ -11,6 +11,11 @@ class ASTFormatterTest {
     private val lexer = LexerFactoryImpl("1.1").create()
     private val parser = MyParser()
 
+
+    @Test
+    fun assertFalse(){
+        Assertions.assertEquals(false, true)
+    }
     @Test
     fun testBasicASTFormatter() {
         val astFormatter = ASTFormatter(lexer, parser, FormatterConfiguration())
