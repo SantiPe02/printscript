@@ -15,23 +15,17 @@ class FunctionCallWithoutExpressionRule {
         // la lista del call .size == 1 && !MethodDeclaration.
         return if (tree is Call) {
             if (tree.name != funcName) {
-                println("Acá")
-                println(tree.name)
-                println(funcName)
                 ValidResult()
             } else {
                 if (tree.arguments.size == 1 && !(tree.arguments.first() is MethodResult)) {
-                    println("Acá 1")
                     ValidResult()
                 } else if (tree.arguments.isEmpty()) {
-                    println("Acá 2")
                     ValidResult()
                 } else {
                     WarningResult(tree.range, "$funcName should not have an expression inside it.")
                 }
             }
         } else {
-            println("Acá 3")
             ValidResult()
         }
     }
